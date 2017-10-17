@@ -27,6 +27,8 @@ public class CustomerEntity implements Serializable {
     private String firstName;
     private String lastName;
     @Column(unique = true)
+    private String identificationNo;
+    @Column(unique = true)
     private String phoneNumber;
     private BigDecimal creditBalance;
     @Column(unique = true)
@@ -135,6 +137,14 @@ public class CustomerEntity implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getIdentificationNo() {
+        return identificationNo;
+    }
+
+    public void setIdentificationNo(String identificationNo) {
+        this.identificationNo = identificationNo;
     }
     
 }
