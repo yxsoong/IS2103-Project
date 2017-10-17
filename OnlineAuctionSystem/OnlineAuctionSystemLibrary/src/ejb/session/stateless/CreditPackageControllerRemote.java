@@ -6,6 +6,6 @@
 package ejb.session.stateless;
 
 
-public interface CustomerEntityControllerRemote {
+public interface CreditPackageControllerRemote {
     
 }
