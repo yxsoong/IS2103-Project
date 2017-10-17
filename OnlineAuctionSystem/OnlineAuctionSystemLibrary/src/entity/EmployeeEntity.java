@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,6 +14,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import util.enumeration.EmployeeAccessRightEnum;
 
 /**
@@ -33,6 +35,8 @@ public class EmployeeEntity implements Serializable {
     @Column(unique = true)
     private String username;
     private String password;
+    @OneToMany(mappedBy = "employeeEntity")
+    private List<CreditPackage> creditPackages;
 
     public EmployeeEntity() {
     }
@@ -108,6 +112,14 @@ public class EmployeeEntity implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<CreditPackage> getCreditPackages() {
+        return creditPackages;
+    }
+
+    public void setCreditPackages(List<CreditPackage> creditPackages) {
+        this.creditPackages = creditPackages;
     }
     
     
