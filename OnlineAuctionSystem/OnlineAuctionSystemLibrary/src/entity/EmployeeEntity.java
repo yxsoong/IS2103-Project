@@ -36,9 +36,17 @@ public class EmployeeEntity implements Serializable {
     private String username;
     private String password;
     @OneToMany(mappedBy = "employeeEntity")
-    private List<CreditPackage> creditPackages;
+    private List<CreditPackageEntity> creditPackagesEntities;
 
     public EmployeeEntity() {
+    }
+
+    public EmployeeEntity(String firstName, String lastName, EmployeeAccessRightEnum accessRight, String username, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.accessRight = accessRight;
+        this.username = username;
+        this.password = password;
     }
     
     @Override
@@ -114,12 +122,12 @@ public class EmployeeEntity implements Serializable {
         this.password = password;
     }
 
-    public List<CreditPackage> getCreditPackages() {
-        return creditPackages;
+    public List<CreditPackageEntity> getCreditPackages() {
+        return creditPackagesEntities;
     }
 
-    public void setCreditPackages(List<CreditPackage> creditPackages) {
-        this.creditPackages = creditPackages;
+    public void setCreditPackages(List<CreditPackageEntity> creditPackagesEntities) {
+        this.creditPackagesEntities = creditPackagesEntities;
     }
     
     

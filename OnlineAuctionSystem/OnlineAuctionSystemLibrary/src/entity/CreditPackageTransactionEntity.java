@@ -20,7 +20,7 @@ import javax.persistence.ManyToOne;
  * @author User
  */
 @Entity
-public class CreditPackageTransaction implements Serializable {
+public class CreditPackageTransactionEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -28,16 +28,16 @@ public class CreditPackageTransaction implements Serializable {
     private Long creditPackageTransactionId;
     private BigDecimal numberOfCredits;
     @Enumerated(EnumType.STRING)
-    private CreditPackageTransaction transactionType;
+    private CreditPackageTransactionEntity transactionType;
     @ManyToOne
     private CustomerEntity customerEntity;
     @ManyToOne
-    private CreditPackage creditPackage;
+    private CreditPackageEntity creditPackageEntity;
 
-    public CreditPackageTransaction() {
+    public CreditPackageTransactionEntity() {
     }
 
-    public CreditPackageTransaction(BigDecimal numberOfCredits, CreditPackageTransaction transactionType) {
+    public CreditPackageTransactionEntity(BigDecimal numberOfCredits, CreditPackageTransactionEntity transactionType) {
         this.numberOfCredits = numberOfCredits;
         this.transactionType = transactionType;
     }
@@ -52,10 +52,10 @@ public class CreditPackageTransaction implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CreditPackageTransaction)) {
+        if (!(object instanceof CreditPackageTransactionEntity)) {
             return false;
         }
-        CreditPackageTransaction other = (CreditPackageTransaction) object;
+        CreditPackageTransactionEntity other = (CreditPackageTransactionEntity) object;
         if ((this.creditPackageTransactionId == null && other.creditPackageTransactionId != null) || (this.creditPackageTransactionId != null && !this.creditPackageTransactionId.equals(other.creditPackageTransactionId))) {
             return false;
         }
@@ -83,12 +83,28 @@ public class CreditPackageTransaction implements Serializable {
         this.numberOfCredits = numberOfCredits;
     }
 
-    public CreditPackageTransaction getTransactionType() {
+    public CreditPackageTransactionEntity getTransactionType() {
         return transactionType;
     }
 
-    public void setTransactionType(CreditPackageTransaction transactionType) {
+    public void setTransactionType(CreditPackageTransactionEntity transactionType) {
         this.transactionType = transactionType;
+    }
+
+    public CustomerEntity getCustomerEntity() {
+        return customerEntity;
+    }
+
+    public void setCustomerEntity(CustomerEntity customerEntity) {
+        this.customerEntity = customerEntity;
+    }
+
+    public CreditPackageEntity getCreditPackageEntity() {
+        return creditPackageEntity;
+    }
+
+    public void setCreditPackageEntity(CreditPackageEntity creditPackageEntity) {
+        this.creditPackageEntity = creditPackageEntity;
     }
     
     

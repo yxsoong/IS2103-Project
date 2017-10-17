@@ -20,7 +20,7 @@ import javax.persistence.OneToMany;
  * @author User
  */
 @Entity
-public class CreditPackage implements Serializable {
+public class CreditPackageEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -33,12 +33,12 @@ public class CreditPackage implements Serializable {
     @ManyToOne
     private EmployeeEntity employeeEntity;
     @OneToMany(mappedBy = "creditPackage")
-    private List<CreditPackageTransaction> creditPackageTransaction;
+    private List<CreditPackageTransactionEntity> creditPackageTransactionEntities;
 
-    public CreditPackage() {
+    public CreditPackageEntity() {
     }
 
-    public CreditPackage(String creditPackageName, BigDecimal price, BigDecimal numberOfCredits, Boolean enable) {
+    public CreditPackageEntity(String creditPackageName, BigDecimal price, BigDecimal numberOfCredits, Boolean enable) {
         this.creditPackageName = creditPackageName;
         this.price = price;
         this.numberOfCredits = numberOfCredits;
@@ -55,10 +55,10 @@ public class CreditPackage implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CreditPackage)) {
+        if (!(object instanceof CreditPackageEntity)) {
             return false;
         }
-        CreditPackage other = (CreditPackage) object;
+        CreditPackageEntity other = (CreditPackageEntity) object;
         if ((this.creditPackageId == null && other.creditPackageId != null) || (this.creditPackageId != null && !this.creditPackageId.equals(other.creditPackageId))) {
             return false;
         }
@@ -110,12 +110,12 @@ public class CreditPackage implements Serializable {
         this.enable = enable;
     }
 
-    public List<CreditPackageTransaction> getCreditPackageTransaction() {
-        return creditPackageTransaction;
+    public List<CreditPackageTransactionEntity> getCreditPackageTransaction() {
+        return creditPackageTransactionEntities;
     }
 
-    public void setCreditPackageTransaction(List<CreditPackageTransaction> creditPackageTransaction) {
-        this.creditPackageTransaction = creditPackageTransaction;
+    public void setCreditPackageTransaction(List<CreditPackageTransactionEntity> creditPackageTransactionEntities) {
+        this.creditPackageTransactionEntities = creditPackageTransactionEntities;
     }
 
     public EmployeeEntity getEmployeeEntity() {

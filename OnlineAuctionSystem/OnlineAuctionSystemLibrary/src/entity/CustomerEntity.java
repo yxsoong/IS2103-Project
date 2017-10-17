@@ -41,7 +41,7 @@ public class CustomerEntity implements Serializable {
     @OneToMany(mappedBy = "customerEntity")
     private List<AddressEntity> addressEntities;
     @OneToMany(mappedBy = "customerEntity")
-    private List<CreditPackageTransaction> creditPackageTransactions;
+    private List<CreditPackageTransactionEntity> creditPackageTransactions;
 
     public CustomerEntity() {
         addressEntities = new ArrayList<>();
@@ -164,11 +164,11 @@ public class CustomerEntity implements Serializable {
         this.addressEntities = addressEntities;
     }
 
-    public List<CreditPackageTransaction> getCreditPackageTransactions() {
+    public List<CreditPackageTransactionEntity> getCreditPackageTransactions() {
         return creditPackageTransactions;
     }
 
-    public void setCreditPackageTransactions(List<CreditPackageTransaction> creditPackageTransactions) {
+    public void setCreditPackageTransactions(List<CreditPackageTransactionEntity> creditPackageTransactions) {
         this.creditPackageTransactions = creditPackageTransactions;
     }
 
