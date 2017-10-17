@@ -32,23 +32,23 @@ public class CustomerEntity implements Serializable {
     private String phoneNumber;
     private BigDecimal creditBalance;
     @Column(unique = true)
-    private String emailAddress;
-    @Column(unique = true)
     private String username;
     private String password;
 
     public CustomerEntity() {
     }
 
-    public CustomerEntity(String firstName, String lastName, String phoneNumber, BigDecimal creditBalance, String emailAddress, String username, String password) {
+    public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, String username, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.identificationNo = identificationNo;
         this.phoneNumber = phoneNumber;
         this.creditBalance = creditBalance;
-        this.emailAddress = emailAddress;
         this.username = username;
         this.password = password;
     }
+    
+    
 
     @Override
     public int hashCode() {
@@ -113,14 +113,6 @@ public class CustomerEntity implements Serializable {
 
     public void setCreditBalance(BigDecimal creditBalance) {
         this.creditBalance = creditBalance;
-    }
-
-    public String getEmailAddress() {
-        return emailAddress;
-    }
-
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
     }
 
     public String getUsername() {
