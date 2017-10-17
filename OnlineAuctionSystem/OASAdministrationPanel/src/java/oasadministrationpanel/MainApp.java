@@ -15,22 +15,24 @@ import util.exception.InvalidLoginCredentialException;
  * @author User
  */
 public class MainApp {
+
     private EmployeeEntityControllerRemote employeeEntityControllerRemote;
-    
+
     private EmployeeEntity currentEmployeeEntity;
+
     public MainApp() {
     }
 
     public MainApp(EmployeeEntityControllerRemote employeeEntityControllerRemote) {
         this.employeeEntityControllerRemote = employeeEntityControllerRemote;
     }
-    
-    public void runApp(){
+
+    public void runApp() {
         Scanner sc = new Scanner(System.in);
         Integer response = 0;
 
         while (true) {
-            System.out.println("*** Welcome to Retail-Core-Banking-System (RCBS) System ***\n");
+            System.out.println("*** Welcome to OAS Administration Panel ***\n");
             System.out.println("1: Login");
             System.out.println("2: Exit\n");
             response = 0;
@@ -47,7 +49,7 @@ public class MainApp {
                             mainMenu();
                         }
                     } catch (InvalidLoginCredentialException ex) {
-                        System.out.println("Invalid login credential \n");
+                        System.out.println("Invalid login credential!\n");
                     }
                 } else if (response == 2) {
                     break;
@@ -61,14 +63,47 @@ public class MainApp {
                 break;
             }
         }
-        
+
     }
-    
-    private void mainMenu(){
-        
+
+    private void mainMenu() {
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+
+        while (true) {
+            System.out.println("*** OAS Administration Panel ***\n");
+            System.out.println("You are login as " + currentEmployeeEntity.getFirstName() + " " + currentEmployeeEntity.getLastName() + " with " + currentEmployeeEntity.getAccessRight() + " rights\n");
+            System.out.println("1: System Administrator");
+            System.out.println("2: Finance Staff");
+            System.out.println("3: Sales Staff");
+            System.out.println("4: Back\n");
+            response = 0;
+
+            while (response < 1 || response > 4) {
+                System.out.print("> ");
+
+                response = scanner.nextInt();
+
+                if (response == 1) {
+                    systemAdminMenu();
+                } else if (response == 2) {
+                    financeStaffMenu();
+                } else if (response == 3) {
+                    salesStaffMenu();
+                } else if (response == 4) {
+                    break;
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
+                }
+            }
+
+            if (response == 4) {
+                break;
+            }
+        }
     }
-    
-    private boolean doLogin() throws InvalidLoginCredentialException{
+
+    private boolean doLogin() throws InvalidLoginCredentialException {
         Scanner sc = new Scanner(System.in);
         String username = "";
         String password = "";
@@ -78,17 +113,63 @@ public class MainApp {
         username = sc.nextLine().trim();
         System.out.print("Enter password> ");
         password = sc.nextLine().trim();
-        if (username.length() > 0 && password.length() > 0) {
-            try {
-                currentEmployeeEntity = employeeEntityControllerRemote.employeeLogin(username, password);
-                System.out.println("Login successful!\n");
-                return true;
-            } catch (InvalidLoginCredentialException ex) {
-                throw new InvalidLoginCredentialException();
+        while (true) {
+            if (username.length() > 0 && password.length() > 0) {
+                try {
+                    currentEmployeeEntity = employeeEntityControllerRemote.employeeLogin(username, password);
+                    System.out.println("Login successful!\n");
+                    return true;
+                } catch (InvalidLoginCredentialException ex) {
+                    throw new InvalidLoginCredentialException();
+                }
+            } else {
+                System.out.println("Please enter valid username/password!\n");
             }
-        } else {
-            System.out.println("Invalid login credential!");
-            return false;
         }
     }
+    
+    private void systemAdminMenu(){
+         Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+
+        while (true) {
+            System.out.println("*** OAS System Administration Menu ***\n");
+            System.out.println("1: System Administrator");
+            System.out.println("2: Finance Staff");
+            System.out.println("3: Sales Staff");
+            System.out.println("4: Back\n");
+            response = 0;
+
+            while (response < 1 || response > 4) {
+                System.out.print("> ");
+
+                response = scanner.nextInt();
+
+                if (response == 1) {
+                    systemAdminMenu();
+                } else if (response == 2) {
+                    financeStaffMenu();
+                } else if (response == 3) {
+                    salesStaffMenu();
+                } else if (response == 4) {
+                    break;
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
+                }
+            }
+
+            if (response == 4) {
+                break;
+            }
+        }
+    }
+    
+    private void financeStaffMenu(){
+        
+    }
+    
+    private void salesStaffMenu(){
+        
+    }
+    
 }
