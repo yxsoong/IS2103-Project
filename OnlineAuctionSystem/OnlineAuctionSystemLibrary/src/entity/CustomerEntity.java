@@ -32,6 +32,7 @@ public class CustomerEntity implements Serializable {
     @Column(unique = true)
     private String phoneNumber;
     private BigDecimal creditBalance;
+    private Boolean premium;
     @Column(unique = true)
     private String username;
     private String password;
@@ -41,17 +42,18 @@ public class CustomerEntity implements Serializable {
     public CustomerEntity() {
     }
 
-    public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, String username, String password) {
+    public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, Boolean premium, String username, String password, AddressEntity addressEntity) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.identificationNo = identificationNo;
         this.phoneNumber = phoneNumber;
         this.creditBalance = creditBalance;
+        this.premium = premium;
         this.username = username;
         this.password = password;
+        this.addressEntity = addressEntity;
     }
-    
-    
+
 
     @Override
     public int hashCode() {
@@ -102,6 +104,14 @@ public class CustomerEntity implements Serializable {
         this.lastName = lastName;
     }
 
+    public String getIdentificationNo() {
+        return identificationNo;
+    }
+
+    public void setIdentificationNo(String identificationNo) {
+        this.identificationNo = identificationNo;
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -116,6 +126,14 @@ public class CustomerEntity implements Serializable {
 
     public void setCreditBalance(BigDecimal creditBalance) {
         this.creditBalance = creditBalance;
+    }
+
+    public Boolean getPremium() {
+        return premium;
+    }
+
+    public void setPremium(Boolean premium) {
+        this.premium = premium;
     }
 
     public String getUsername() {
@@ -134,14 +152,6 @@ public class CustomerEntity implements Serializable {
         this.password = password;
     }
 
-    public String getIdentificationNo() {
-        return identificationNo;
-    }
-
-    public void setIdentificationNo(String identificationNo) {
-        this.identificationNo = identificationNo;
-    }
-
     public AddressEntity getAddressEntity() {
         return addressEntity;
     }
@@ -149,5 +159,7 @@ public class CustomerEntity implements Serializable {
     public void setAddressEntity(AddressEntity addressEntity) {
         this.addressEntity = addressEntity;
     }
+
+    
     
 }
