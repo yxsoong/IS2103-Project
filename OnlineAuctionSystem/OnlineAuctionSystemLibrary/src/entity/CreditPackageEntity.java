@@ -32,7 +32,7 @@ public class CreditPackageEntity implements Serializable {
     private Boolean enable;
     @ManyToOne
     private EmployeeEntity employeeEntity;
-    @OneToMany(mappedBy = "creditPackage")
+    @OneToMany(mappedBy = "creditPackageEntity")
     private List<CreditPackageTransactionEntity> creditPackageTransactionEntities;
 
     public CreditPackageEntity() {
