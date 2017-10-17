@@ -76,10 +76,11 @@ public class MainApp {
             System.out.println("1: System Administrator");
             System.out.println("2: Finance Staff");
             System.out.println("3: Sales Staff");
-            System.out.println("4: Back\n");
+            System.out.println("4: Change Password");
+            System.out.println("5: Back\n");
             response = 0;
 
-            while (response < 1 || response > 4) {
+            while (response < 1 || response > 5) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
@@ -91,6 +92,14 @@ public class MainApp {
                 } else if (response == 3) {
                     salesStaffMenu();
                 } else if (response == 4) {
+                    System.out.print("Provide current password> ");
+                    String currentPassword = scanner.nextLine().trim();
+                    if(currentPassword.equals(currentEmployeeEntity.getPassword())){
+                        changePassword();
+                    } else {
+                        System.out.println("Password do not match!");
+                    }
+                } else if (response == 5) {
                     break;
                 } else {
                     System.out.println("Invalid option, please try again!\n");
@@ -133,10 +142,10 @@ public class MainApp {
         Integer response = 0;
 
         while (true) {
-            System.out.println("*** OAS System Administration Menu ***\n");
-            System.out.println("1: System Administrator");
-            System.out.println("2: Finance Staff");
-            System.out.println("3: Sales Staff");
+            System.out.println("*** OAS System Administrator Menu ***\n");
+            System.out.println("1: Create New Employee");
+            System.out.println("2: View Employee Details");
+            System.out.println("3: View All Employees");
             System.out.println("4: Back\n");
             response = 0;
 
@@ -146,7 +155,7 @@ public class MainApp {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-                    systemAdminMenu();
+//                    doCreateEmployee();
                 } else if (response == 2) {
                     financeStaffMenu();
                 } else if (response == 3) {
@@ -172,4 +181,7 @@ public class MainApp {
         
     }
     
+     private void changePassword() {
+
+    }
 }
