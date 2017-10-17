@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -28,6 +29,10 @@ public class CreditPackageTransaction implements Serializable {
     private BigDecimal numberOfCredits;
     @Enumerated(EnumType.STRING)
     private CreditPackageTransaction transactionType;
+    @ManyToOne
+    private CustomerEntity customerEntity;
+    @ManyToOne
+    private CreditPackage creditPackage;
 
     public CreditPackageTransaction() {
     }
