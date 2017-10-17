@@ -45,7 +45,7 @@ public class CustomerEntity implements Serializable {
         addressEntities = new ArrayList<>();
     }
 
-    public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, Boolean premium, String username, String password, List<AddressEntity> addressEntities) {
+    public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, Boolean premium, String username, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.identificationNo = identificationNo;
@@ -54,7 +54,6 @@ public class CustomerEntity implements Serializable {
         this.premium = premium;
         this.username = username;
         this.password = password;
-        this.addressEntities = addressEntities;
     }
 
 
