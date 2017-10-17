@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import util.enumeration.CreditTransactionTypeEnum;
 
 /**
  *
@@ -28,7 +29,7 @@ public class CreditPackageTransactionEntity implements Serializable {
     private Long creditPackageTransactionId;
     private BigDecimal numberOfCredits;
     @Enumerated(EnumType.STRING)
-    private CreditPackageTransactionEntity transactionType;
+    private CreditTransactionTypeEnum transactionType;
     @ManyToOne
     private CustomerEntity customerEntity;
     @ManyToOne
@@ -37,7 +38,7 @@ public class CreditPackageTransactionEntity implements Serializable {
     public CreditPackageTransactionEntity() {
     }
 
-    public CreditPackageTransactionEntity(BigDecimal numberOfCredits, CreditPackageTransactionEntity transactionType) {
+    public CreditPackageTransactionEntity(BigDecimal numberOfCredits, CreditTransactionTypeEnum transactionType) {
         this.numberOfCredits = numberOfCredits;
         this.transactionType = transactionType;
     }
@@ -83,11 +84,11 @@ public class CreditPackageTransactionEntity implements Serializable {
         this.numberOfCredits = numberOfCredits;
     }
 
-    public CreditPackageTransactionEntity getTransactionType() {
+    public CreditTransactionTypeEnum getTransactionType() {
         return transactionType;
     }
 
-    public void setTransactionType(CreditPackageTransactionEntity transactionType) {
+    public void setTransactionType(CreditTransactionTypeEnum transactionType) {
         this.transactionType = transactionType;
     }
 
