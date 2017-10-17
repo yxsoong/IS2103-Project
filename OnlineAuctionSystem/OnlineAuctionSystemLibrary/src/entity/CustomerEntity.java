@@ -40,6 +40,8 @@ public class CustomerEntity implements Serializable {
     private String password;
     @OneToMany(mappedBy = "customerEntity")
     private List<AddressEntity> addressEntities;
+    @OneToMany(mappedBy = "customerEntity")
+    private List<CreditPackageTransaction> creditPackageTransactions;
 
     public CustomerEntity() {
         addressEntities = new ArrayList<>();
@@ -160,6 +162,14 @@ public class CustomerEntity implements Serializable {
 
     public void setAddressEntities(List<AddressEntity> addressEntities) {
         this.addressEntities = addressEntities;
+    }
+
+    public List<CreditPackageTransaction> getCreditPackageTransactions() {
+        return creditPackageTransactions;
+    }
+
+    public void setCreditPackageTransactions(List<CreditPackageTransaction> creditPackageTransactions) {
+        this.creditPackageTransactions = creditPackageTransactions;
     }
 
     
