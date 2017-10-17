@@ -8,6 +8,7 @@ package oasadministrationpanel;
 import ejb.session.stateless.EmployeeEntityControllerRemote;
 import entity.EmployeeEntity;
 import java.util.Scanner;
+import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;
 
 /**
@@ -19,6 +20,10 @@ public class MainApp {
     private EmployeeEntityControllerRemote employeeEntityControllerRemote;
 
     private EmployeeEntity currentEmployeeEntity;
+
+    private SystemAdministratorModule systemAdministratorModule;
+    private FinanceStaffModule financeStaffModule;
+    private SalesStaffModule salesStaffModule;
 
     public MainApp() {
     }
@@ -86,13 +91,26 @@ public class MainApp {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-                    systemAdminMenu();
+                    try {
+                        systemAdministratorModule.menuSystemAdministration();
+                    } catch (InvalidAccessRightException ex) {
+                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
+                    }
                 } else if (response == 2) {
-                    financeStaffMenu();
+                    try {
+                        financeStaffModule.financeStaffMenu();
+                    } catch (InvalidAccessRightException ex) {
+                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
+                    }
                 } else if (response == 3) {
-                    salesStaffMenu();
+                    try {
+                        salesStaffModule.salesStaffMenu();
+                    } catch (InvalidAccessRightException ex) {
+                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
+                    }
                 } else if (response == 4) {
                     System.out.print("Provide current password> ");
+                    scanner.next();
                     String currentPassword = scanner.nextLine().trim();
                     if (currentPassword.equals(currentEmployeeEntity.getPassword())) {
                         changePassword();
@@ -137,117 +155,6 @@ public class MainApp {
         }
     }
 
-    private void systemAdminMenu() {
-        Scanner scanner = new Scanner(System.in);
-        Integer response = 0;
-
-        while (true) {
-            System.out.println("*** OAS System Administrator Menu ***\n");
-            System.out.println("1: Create New Employee");
-            System.out.println("2: View Employee Details");
-            System.out.println("3: View All Employees");
-            System.out.println("4: Back\n");
-            response = 0;
-
-            while (response < 1 || response > 4) {
-                System.out.print("> ");
-
-                response = scanner.nextInt();
-
-                if (response == 1) {
-                    createNewEmployee();
-                } else if (response == 2) {
-                    viewEmployeeDetails();
-                } else if (response == 3) {
-                    viewAllEmployees();
-                } else if (response == 4) {
-                    break;
-                } else {
-                    System.out.println("Invalid option, please try again!\n");
-                }
-            }
-
-            if (response == 4) {
-                break;
-            }
-        }
-    }
-
-    private void financeStaffMenu() {
-        Scanner scanner = new Scanner(System.in);
-        Integer response = 0;
-
-        while (true) {
-            System.out.println("*** OAS Finance Staff Menu ***\n");
-            System.out.println("1: Create Credit Package");
-            System.out.println("2: View Credit Package Details");
-            System.out.println("3: View All Credit Packages");
-            System.out.println("4: Back\n");
-            response = 0;
-
-            while (response < 1 || response > 4) {
-                System.out.print("> ");
-
-                response = scanner.nextInt();
-
-                if (response == 1) {
-                    createNewCreditPackage();
-                } else if (response == 2) {
-                    viewCreditPackageDetails();
-                } else if (response == 3) {
-                    viewAllCreditPackages();
-                } else if (response == 4) {
-                    break;
-                } else {
-                    System.out.println("Invalid option, please try again!\n");
-                }
-            }
-
-            if (response == 4) {
-                break;
-            }
-        }
-    }
-
-    private void salesStaffMenu() {
-        Scanner scanner = new Scanner(System.in);
-        Integer response = 0;
-
-        while (true) {
-            System.out.println("*** OAS Sales Staff Menu ***\n");
-            System.out.println("1: Create Auction Listing");
-            System.out.println("2: View Auction Listing Details");
-            System.out.println("3: View All Auction Listings");
-            System.out.println("4: View All Auction Listings with Bids Below Reserve Price");
-            System.out.println("5: Back\n");
-            response = 0;
-
-            while (response < 1 || response > 5) {
-                System.out.print("> ");
-
-                response = scanner.nextInt();
-
-                if (response == 1) {
-                    createAuctionListing();
-                } else if (response == 2) {
-                    viewAuctionListingDetails();
-                } else if (response == 3) {
-                    viewAllAuctionListings();
-                } else if (response == 4) {
-                    viewListingsBelowReservePrice();
-                } else if (response == 5) {
-                    break;
-                } else {
-                    System.out.println("Invalid option, please try again!\n");
-                }
-            }
-
-            if (response == 5) {
-                break;
-            }
-        }
-    }
-
     private void changePassword() {
         Scanner scanner = new Scanner(System.in);
 
@@ -262,43 +169,4 @@ public class MainApp {
         System.out.println("Password Changed Successfully!");
     }
 
-    private void createNewEmployee() {
-
-    }
-
-    private void viewEmployeeDetails() {
-
-    }
-
-    private void viewAllEmployees() {
-
-    }
-    
-    private void createNewCreditPackage(){
-        
-    }
-    
-    private void viewCreditPackageDetails(){
-        
-    }
-    
-    private void viewAllCreditPackages(){
-        
-    }
-    
-    private void createAuctionListing(){
-        
-    }
-    
-    private void viewAuctionListingDetails(){
-        
-    }
-    
-    private void viewAllAuctionListings(){
-        
-    }
-    
-    private void viewListingsBelowReservePrice(){
-        
-    }
 }
