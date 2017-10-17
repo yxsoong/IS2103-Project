@@ -37,7 +37,9 @@ public class EmployeeEntity implements Serializable {
     private String password;
     @OneToMany(mappedBy = "employeeEntity")
     private List<CreditPackageEntity> creditPackagesEntities;
-
+    @OneToMany(mappedBy = "employeeEntity")
+    private List<AuctionListingEntity> auctionListingEntities;
+    
     public EmployeeEntity() {
     }
 
@@ -128,6 +130,22 @@ public class EmployeeEntity implements Serializable {
 
     public void setCreditPackages(List<CreditPackageEntity> creditPackagesEntities) {
         this.creditPackagesEntities = creditPackagesEntities;
+    }
+
+    public List<CreditPackageEntity> getCreditPackagesEntities() {
+        return creditPackagesEntities;
+    }
+
+    public void setCreditPackagesEntities(List<CreditPackageEntity> creditPackagesEntities) {
+        this.creditPackagesEntities = creditPackagesEntities;
+    }
+
+    public List<AuctionListingEntity> getAuctionListingEntities() {
+        return auctionListingEntities;
+    }
+
+    public void setAuctionListingEntities(List<AuctionListingEntity> auctionListingEntities) {
+        this.auctionListingEntities = auctionListingEntities;
     }
     
     
