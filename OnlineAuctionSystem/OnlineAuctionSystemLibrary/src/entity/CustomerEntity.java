@@ -7,6 +7,8 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,22 +29,23 @@ public class CustomerEntity implements Serializable {
     private Long customerId;
     private String firstName;
     private String lastName;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String identificationNo;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String phoneNumber;
     private BigDecimal creditBalance;
     private Boolean premium;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
     private String password;
     @OneToMany(mappedBy = "customerEntity")
-    private AddressEntity addressEntity;
+    private List<AddressEntity> addressEntities;
 
     public CustomerEntity() {
+        addressEntities = new ArrayList<>();
     }
 
-    public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, Boolean premium, String username, String password, AddressEntity addressEntity) {
+    public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, Boolean premium, String username, String password, List<AddressEntity> addressEntities) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.identificationNo = identificationNo;
@@ -51,7 +54,7 @@ public class CustomerEntity implements Serializable {
         this.premium = premium;
         this.username = username;
         this.password = password;
-        this.addressEntity = addressEntity;
+        this.addressEntities = addressEntities;
     }
 
 
@@ -152,14 +155,13 @@ public class CustomerEntity implements Serializable {
         this.password = password;
     }
 
-    public AddressEntity getAddressEntity() {
-        return addressEntity;
+    public List<AddressEntity> getAddressEntities() {
+        return addressEntities;
     }
 
-    public void setAddressEntity(AddressEntity addressEntity) {
-        this.addressEntity = addressEntity;
+    public void setAddressEntities(List<AddressEntity> addressEntities) {
+        this.addressEntities = addressEntities;
     }
 
-    
     
 }
