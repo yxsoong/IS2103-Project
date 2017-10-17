@@ -155,9 +155,9 @@ public class MainApp {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-//                    doCreateEmployee();
+                    createNewEmployee();
                 } else if (response == 2) {
-                    financeStaffMenu();
+                    viewEmployeeById();
                 } else if (response == 3) {
                     salesStaffMenu();
                 } else if (response == 4) {
@@ -184,4 +184,12 @@ public class MainApp {
      private void changePassword() {
 
     }
+     
+     private void createNewEmployee(){
+         
+     }
+     
+     private void viewEmployeeById(){
+         
+     }
 }
