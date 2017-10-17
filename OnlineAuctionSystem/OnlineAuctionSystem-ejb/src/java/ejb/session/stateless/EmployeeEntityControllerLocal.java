@@ -5,7 +5,10 @@
  */
 package ejb.session.stateless;
 
+import entity.EmployeeEntity;
 import javax.ejb.Local;
+import util.exception.EmployeeNotFoundException;
+import util.exception.InvalidLoginCredentialException;
 
 /**
  *
@@ -14,6 +17,7 @@ import javax.ejb.Local;
 @Local
 public interface EmployeeEntityControllerLocal {
 
-    public void helloWorld();
-    
+    public EmployeeEntity retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException;
+
+    public EmployeeEntity employeeLogin(String username, String password) throws InvalidLoginCredentialException;
 }

@@ -5,9 +5,15 @@
  */
 package ejb.session.stateless;
 
+import entity.EmployeeEntity;
+import util.exception.EmployeeNotFoundException;
+import util.exception.InvalidLoginCredentialException;
+
 
 public interface EmployeeEntityControllerRemote {
 
-    public void helloWorld();
+    public EmployeeEntity retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException;
+
+    public EmployeeEntity employeeLogin(String username, String password) throws InvalidLoginCredentialException;
     
 }
