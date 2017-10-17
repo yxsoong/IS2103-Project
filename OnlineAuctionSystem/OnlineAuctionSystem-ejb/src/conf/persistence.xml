@@ -3,6 +3,7 @@
   <persistence-unit name="OnlineAuctionSystem-ejbPU" transaction-type="JTA">
     <jta-data-source>jdbc/onlineAuctionSystem</jta-data-source>
     <class>entity.CustomerEntity</class>
+    <class>entity.EmployeeEntity</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
