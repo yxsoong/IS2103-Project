@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -29,6 +30,8 @@ public class CreditPackage implements Serializable {
     private BigDecimal price;
     private BigDecimal numberOfCredits;
     private Boolean enable;
+    @ManyToOne
+    private EmployeeEntity employeeEntity;
     @OneToMany(mappedBy = "creditPackage")
     private List<CreditPackageTransaction> creditPackageTransaction;
 
@@ -113,6 +116,14 @@ public class CreditPackage implements Serializable {
 
     public void setCreditPackageTransaction(List<CreditPackageTransaction> creditPackageTransaction) {
         this.creditPackageTransaction = creditPackageTransaction;
+    }
+
+    public EmployeeEntity getEmployeeEntity() {
+        return employeeEntity;
+    }
+
+    public void setEmployeeEntity(EmployeeEntity employeeEntity) {
+        this.employeeEntity = employeeEntity;
     }
     
 }
