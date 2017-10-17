@@ -32,8 +32,7 @@ public class CreditPackageTransaction implements Serializable {
     public CreditPackageTransaction() {
     }
 
-    public CreditPackageTransaction(Long creditPackageTransactionId, BigDecimal numberOfCredits, CreditPackageTransaction transactionType) {
-        this.creditPackageTransactionId = creditPackageTransactionId;
+    public CreditPackageTransaction(BigDecimal numberOfCredits, CreditPackageTransaction transactionType) {
         this.numberOfCredits = numberOfCredits;
         this.transactionType = transactionType;
     }
