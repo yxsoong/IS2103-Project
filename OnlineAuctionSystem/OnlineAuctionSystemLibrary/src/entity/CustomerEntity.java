@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -34,6 +35,8 @@ public class CustomerEntity implements Serializable {
     @Column(unique = true)
     private String username;
     private String password;
+    @OneToMany(mappedBy = "customerEntity")
+    private AddressEntity addressEntity;
 
     public CustomerEntity() {
     }
@@ -137,6 +140,14 @@ public class CustomerEntity implements Serializable {
 
     public void setIdentificationNo(String identificationNo) {
         this.identificationNo = identificationNo;
+    }
+
+    public AddressEntity getAddressEntity() {
+        return addressEntity;
+    }
+
+    public void setAddressEntity(AddressEntity addressEntity) {
+        this.addressEntity = addressEntity;
     }
     
 }
