@@ -94,7 +94,7 @@ public class MainApp {
                 } else if (response == 4) {
                     System.out.print("Provide current password> ");
                     String currentPassword = scanner.nextLine().trim();
-                    if(currentPassword.equals(currentEmployeeEntity.getPassword())){
+                    if (currentPassword.equals(currentEmployeeEntity.getPassword())) {
                         changePassword();
                     } else {
                         System.out.println("Password do not match!");
@@ -136,9 +136,9 @@ public class MainApp {
             }
         }
     }
-    
-    private void systemAdminMenu(){
-         Scanner scanner = new Scanner(System.in);
+
+    private void systemAdminMenu() {
+        Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
         while (true) {
@@ -157,9 +157,9 @@ public class MainApp {
                 if (response == 1) {
                     createNewEmployee();
                 } else if (response == 2) {
-                    viewEmployeeById();
+                    viewEmployeeDetails();
                 } else if (response == 3) {
-                    salesStaffMenu();
+                    viewAllEmployees();
                 } else if (response == 4) {
                     break;
                 } else {
@@ -172,24 +172,38 @@ public class MainApp {
             }
         }
     }
-    
-    private void financeStaffMenu(){
-        
-    }
-    
-    private void salesStaffMenu(){
-        
-    }
-    
-     private void changePassword() {
+
+    private void financeStaffMenu() {
 
     }
-     
-     private void createNewEmployee(){
-         
-     }
-     
-     private void viewEmployeeById(){
-         
-     }
+
+    private void salesStaffMenu() {
+
+    }
+
+    private void changePassword() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter New Password> ");
+        String newPin = scanner.nextLine().trim();
+        System.out.print("Confirm New Password> ");
+        String newPinConfirm = scanner.nextLine().trim();
+
+        currentEmployeeEntity.setPassword(newPin);
+
+        employeeEntityControllerRemote.changePassword(currentEmployeeEntity);
+        System.out.println("Password Changed Successfully!");
+    }
+
+    private void createNewEmployee() {
+
+    }
+
+    private void viewEmployeeDetails() {
+
+    }
+
+    private void viewAllEmployees() {
+
+    }
 }
