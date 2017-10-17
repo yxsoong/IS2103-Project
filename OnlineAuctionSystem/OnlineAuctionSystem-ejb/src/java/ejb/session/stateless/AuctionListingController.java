@@ -11,13 +11,14 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-@Local(CustomerEntityControllerLocal.class)
-@Remote(CustomerEntityControllerRemote.class)
+@Local(AuctionListingControllerLocal.class)
+@Remote(AuctionListingControllerRemote.class)
 @Stateless
-public class CustomerEntityController implements CustomerEntityControllerRemote, CustomerEntityControllerLocal {
+public class AuctionListingController implements AuctionListingControllerRemote, AuctionListingControllerLocal {
 
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
+
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")

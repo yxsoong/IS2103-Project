@@ -11,10 +11,10 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-@Local(CustomerEntityControllerLocal.class)
-@Remote(CustomerEntityControllerRemote.class)
+@Local(CreditPackageControllerLocal.class)
+@Remote(CreditPackageControllerRemote.class)
 @Stateless
-public class CustomerEntityController implements CustomerEntityControllerRemote, CustomerEntityControllerLocal {
+public class CreditPackageController implements CreditPackageControllerRemote, CreditPackageControllerLocal {
 
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;

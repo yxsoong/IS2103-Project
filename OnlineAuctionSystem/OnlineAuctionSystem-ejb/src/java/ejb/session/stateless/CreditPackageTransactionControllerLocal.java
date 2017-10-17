@@ -6,6 +6,6 @@
 package ejb.session.stateless;
 
 
-public interface CustomerEntityControllerLocal {
+public interface CreditPackageTransactionControllerLocal {
     
 }
