@@ -5,13 +5,7 @@
  */
 package ejb.session.stateless;
 
-import javax.ejb.Remote;
 
-/**
- *
- * @author User
- */
-@Remote
 public interface AuctionTransactionControllerRemote {
     
 }

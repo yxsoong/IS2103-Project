@@ -5,13 +5,7 @@
  */
 package ejb.session.stateless;
 
-import javax.ejb.Local;
 
-/**
- *
- * @author User
- */
-@Local
 public interface AuctionTransactionControllerLocal {
     
 }

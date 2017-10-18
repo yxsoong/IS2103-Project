@@ -5,12 +5,16 @@
  */
 package ejb.session.stateless;
 
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 
 /**
  *
  * @author User
  */
+@Local(AuctionListingControllerLocal.class)
+@Remote(AuctionListingControllerRemote.class)
 @Stateless
 public class AuctionTransactionController implements AuctionTransactionControllerRemote, AuctionTransactionControllerLocal {
 
