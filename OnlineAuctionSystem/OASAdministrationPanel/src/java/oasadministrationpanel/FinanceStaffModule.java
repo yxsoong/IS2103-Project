@@ -8,6 +8,15 @@ import util.exception.InvalidAccessRightException;
 
 public class FinanceStaffModule {
     private EmployeeEntity currentEmployeeEntity;
+
+    public FinanceStaffModule() {
+    }
+
+    public FinanceStaffModule(EmployeeEntity currentEmployeeEntity) {
+        this.currentEmployeeEntity = currentEmployeeEntity;
+    }
+
+    
     
     public void financeStaffMenu() throws InvalidAccessRightException {
         if (currentEmployeeEntity.getAccessRight() != EmployeeAccessRightEnum.FINANCE) {

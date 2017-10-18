@@ -9,6 +9,15 @@ public class SalesStaffModule {
 
     private EmployeeEntity currentEmployeeEntity;
 
+    public SalesStaffModule() {
+    }
+
+    public SalesStaffModule(EmployeeEntity currentEmployeeEntity) {
+        this.currentEmployeeEntity = currentEmployeeEntity;
+    }
+    
+    
+
     public void salesStaffMenu() throws InvalidAccessRightException {
         if (currentEmployeeEntity.getAccessRight() != EmployeeAccessRightEnum.SALES) {
             throw new InvalidAccessRightException("You don't have SALES rights to access the system administrator module.");
