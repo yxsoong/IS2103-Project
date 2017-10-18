@@ -60,4 +60,13 @@ public class EmployeeEntityController implements EmployeeEntityControllerRemote,
     public void changePassword(EmployeeEntity employeeEntity){
         em.merge(employeeEntity);
     }
+    
+    @Override
+    public EmployeeEntity createEmployee(EmployeeEntity employeeEntity){
+        em.persist(employeeEntity);
+        em.flush();
+        em.refresh(employeeEntity);
+        
+        return employeeEntity;
+    }
 }

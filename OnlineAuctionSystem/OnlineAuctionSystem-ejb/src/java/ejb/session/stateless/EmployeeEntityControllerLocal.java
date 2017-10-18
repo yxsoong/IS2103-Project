@@ -22,4 +22,6 @@ public interface EmployeeEntityControllerLocal {
     public EmployeeEntity employeeLogin(String username, String password) throws InvalidLoginCredentialException;
     
     public void changePassword(EmployeeEntity employeeEntity);
+    
+    public EmployeeEntity createEmployee(EmployeeEntity employeeEntity);
 }
