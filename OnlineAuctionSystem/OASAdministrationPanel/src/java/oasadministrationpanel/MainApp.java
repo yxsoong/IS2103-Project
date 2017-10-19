@@ -3,6 +3,7 @@ package oasadministrationpanel;
 import ejb.session.stateless.EmployeeEntityControllerRemote;
 import entity.EmployeeEntity;
 import java.util.Scanner;
+import util.enumeration.EmployeeAccessRightEnum;
 import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;
 
@@ -41,9 +42,13 @@ public class MainApp {
 
                     try {
                         if (doLogin()) {
-                            systemAdministratorModule = new SystemAdministratorModule(employeeEntityControllerRemote, currentEmployeeEntity);
-                            financeStaffModule = new FinanceStaffModule(currentEmployeeEntity);
-                            salesStaffModule = new SalesStaffModule(currentEmployeeEntity);
+                            EmployeeAccessRightEnum accessRight = currentEmployeeEntity.getAccessRight();
+                            if(accessRight == EmployeeAccessRightEnum.SYSTEM_ADMINISTRATOR)
+                                systemAdministratorModule = new SystemAdministratorModule(employeeEntityControllerRemote, currentEmployeeEntity);
+                            else if(accessRight == EmployeeAccessRightEnum.FINANCE)
+                                financeStaffModule = new FinanceStaffModule(currentEmployeeEntity);
+                            else if(accessRight == EmployeeAccessRightEnum.SALES)
+                                salesStaffModule = new SalesStaffModule(currentEmployeeEntity);
                             mainMenu();
                         }
                     } catch (InvalidLoginCredentialException ex) {
