@@ -23,7 +23,7 @@ public class SystemAdministratorModule {
     }
 
     public void menuSystemAdministration() throws InvalidAccessRightException {
-        if (currentEmployeeEntity.getAccessRight() != EmployeeAccessRightEnum.SYSTEM_ADMIN) {
+        if (currentEmployeeEntity.getAccessRight() != EmployeeAccessRightEnum.SYSADMIN) {
             throw new InvalidAccessRightException("You don't have SYSTEM_ADMINISTRATOR rights to access the system administrator module.");
         }
 
