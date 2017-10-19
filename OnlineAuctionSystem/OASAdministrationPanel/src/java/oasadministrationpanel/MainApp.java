@@ -110,14 +110,7 @@ public class MainApp {
                         System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
                     }
                 } else if (response == 4) {
-                    System.out.print("Provide current password> ");
-                    scanner.next();
-                    String currentPassword = scanner.nextLine().trim();
-                    if (currentPassword.equals(currentEmployeeEntity.getPassword())) {
-                        changePassword();
-                    } else {
-                        System.out.println("Password do not match!");
-                    }
+                    changePassword();
                 } else if (response == 5) {
                     break;
                 } else {
@@ -157,17 +150,28 @@ public class MainApp {
     }
 
     private void changePassword() {
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
 
-        System.out.print("Enter New Password> ");
-        String newPin = scanner.nextLine().trim();
-        System.out.print("Confirm New Password> ");
-        String newPinConfirm = scanner.nextLine().trim();
+        System.out.print("Provide current password> ");
+        sc.nextLine();  // consume the enter character
+        String currentPassword = sc.nextLine().trim();
+        if (currentPassword.equals(currentEmployeeEntity.getPassword())) {
+            System.out.print("Enter New Password> ");
+            String newPassword = sc.nextLine().trim();
+            System.out.print("Confirm New Password> ");
+            String newPasswordConfirm = sc.nextLine().trim();
+            
+            if(newPassword.equals(newPasswordConfirm)){
+                currentEmployeeEntity.setPassword(newPassword);
+                employeeEntityControllerRemote.changePassword(currentEmployeeEntity);
+            } else {
+                System.out.println("Passwords do not match!");
+            }
+            System.out.println("Password Changed Successfully!");
+        } else {
+            System.out.println("Password do not match!");
+        }
 
-        currentEmployeeEntity.setPassword(newPin);
-
-        employeeEntityControllerRemote.changePassword(currentEmployeeEntity);
-        System.out.println("Password Changed Successfully!");
     }
 
 }
