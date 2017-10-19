@@ -180,7 +180,7 @@ public class SystemAdministratorModule {
         try {
             EmployeeEntity employeeEntity = employeeEntityControllerRemote.retrieveEmployeeById(employeeId);
             System.out.println("Employee ID\tFirst Name\tLast Name\tAccess Right\t\t\tUsername\tPassword");
-            System.out.println(employeeEntity.getEmployeeID().toString()+"\t\t"+employeeEntity.getFirstName()+"\t\t"+employeeEntity.getLastName()+"\t\t"+employeeEntity.getAccessRight().toString()+"\t\t\t\t"+employeeEntity.getUsername()+"\t\t"+employeeEntity.getPassword());
+            System.out.println(employeeEntity.getEmployeeID().toString()+"\t\t"+employeeEntity.getFirstName()+"\t\t"+employeeEntity.getLastName()+"\t\t"+employeeEntity.getAccessRight().toString()+" \t\t\t"+employeeEntity.getUsername()+"\t\t"+employeeEntity.getPassword());
             System.out.println("------------------------");
             System.out.println("1: Update Employee");
             System.out.println("2: Delete Employee");
