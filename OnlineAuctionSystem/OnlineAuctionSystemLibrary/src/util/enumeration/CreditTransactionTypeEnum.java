@@ -11,5 +11,6 @@ package util.enumeration;
  */
 public enum CreditTransactionTypeEnum {
     TOPUP,
-    USAGE
+    USAGE,
+    REFUND
 }
