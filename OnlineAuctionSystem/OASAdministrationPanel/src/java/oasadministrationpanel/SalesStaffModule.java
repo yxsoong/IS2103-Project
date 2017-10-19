@@ -62,7 +62,7 @@ public class SalesStaffModule {
     }
 
     private void createAuctionListing() {
-
+        
     }
 
     private void viewAuctionListingDetails() {
