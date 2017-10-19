@@ -24,4 +24,6 @@ public interface EmployeeEntityControllerLocal {
     public void changePassword(EmployeeEntity employeeEntity);
     
     public EmployeeEntity createEmployee(EmployeeEntity employeeEntity);
+    
+    public Boolean checkUsername(String username);
 }

@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import util.enumeration.EmployeeAccessRightEnum;
 
@@ -28,7 +30,9 @@ public class EmployeeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeID;
+    @Column(nullable = false)
     private String firstName;
+    @Column(nullable = false)
     private String lastName;
     @Enumerated(EnumType.STRING)
     private EmployeeAccessRightEnum accessRight;
@@ -36,11 +40,15 @@ public class EmployeeEntity implements Serializable {
     private String username;
     private String password;
     @OneToMany(mappedBy = "employeeEntity")
+    @JoinColumn(nullable = true)
     private List<CreditPackageEntity> creditPackagesEntities;
     @OneToMany(mappedBy = "employeeEntity")
+    @JoinColumn(nullable = true)
     private List<AuctionListingEntity> auctionListingEntities;
     
     public EmployeeEntity() {
+        creditPackagesEntities = new ArrayList<>();
+        auctionListingEntities = new ArrayList<>();
     }
 
     public EmployeeEntity(String firstName, String lastName, EmployeeAccessRightEnum accessRight, String username, String password) {

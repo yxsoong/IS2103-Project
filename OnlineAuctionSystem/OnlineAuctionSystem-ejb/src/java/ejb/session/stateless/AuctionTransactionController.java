@@ -13,8 +13,8 @@ import javax.ejb.Stateless;
  *
  * @author User
  */
-@Local(AuctionListingControllerLocal.class)
-@Remote(AuctionListingControllerRemote.class)
+@Local(AuctionTransactionControllerLocal.class)
+@Remote(AuctionTransactionControllerRemote.class)
 @Stateless
 public class AuctionTransactionController implements AuctionTransactionControllerRemote, AuctionTransactionControllerLocal {
 

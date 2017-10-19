@@ -69,4 +69,14 @@ public class EmployeeEntityController implements EmployeeEntityControllerRemote,
         
         return employeeEntity;
     }
+    
+    @Override
+    public Boolean checkUsername(String username){
+        Query query = em.createQuery("SELECT COUNT(s) FROM EmployeeEntity s WHERE s.username = :inUsername");
+        query.setParameter("inUsername", username);
+        
+        Long count = (Long)query.getSingleResult();
+        
+        return count > 0;
+    }
 }

@@ -19,5 +19,7 @@ public interface EmployeeEntityControllerRemote {
     public void changePassword(EmployeeEntity employeeEntity);
 
     public EmployeeEntity createEmployee(EmployeeEntity employeeEntity);
+
+    public Boolean checkUsername(String username);
     
 }

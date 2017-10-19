@@ -6,16 +6,14 @@ import java.util.Scanner;
 import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;
 
-
 public class MainApp {
 
     private EmployeeEntityControllerRemote employeeEntityControllerRemote;
-
-    private EmployeeEntity currentEmployeeEntity;
-
     private SystemAdministratorModule systemAdministratorModule;
     private FinanceStaffModule financeStaffModule;
     private SalesStaffModule salesStaffModule;
+
+    private EmployeeEntity currentEmployeeEntity;
 
     public MainApp() {
     }
@@ -43,7 +41,7 @@ public class MainApp {
 
                     try {
                         if (doLogin()) {
-                            systemAdministratorModule = new SystemAdministratorModule(currentEmployeeEntity);
+                            systemAdministratorModule = new SystemAdministratorModule(employeeEntityControllerRemote, currentEmployeeEntity);
                             financeStaffModule = new FinanceStaffModule(currentEmployeeEntity);
                             salesStaffModule = new SalesStaffModule(currentEmployeeEntity);
                             mainMenu();

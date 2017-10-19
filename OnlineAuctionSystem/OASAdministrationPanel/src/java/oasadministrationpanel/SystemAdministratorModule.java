@@ -1,21 +1,24 @@
 package oasadministrationpanel;
 
+import ejb.session.stateless.EmployeeEntityControllerRemote;
 import entity.EmployeeEntity;
 import java.util.Scanner;
 import util.enumeration.EmployeeAccessRightEnum;
 import util.exception.InvalidAccessRightException;
 
 public class SystemAdministratorModule {
+    
+    private EmployeeEntityControllerRemote employeeEntityControllerRemote;
 
     private EmployeeEntity currentEmployeeEntity;
 
     public SystemAdministratorModule() {
     }
 
-    public SystemAdministratorModule(EmployeeEntity currentEmployeeEntity) {
+    public SystemAdministratorModule(EmployeeEntityControllerRemote employeeEntityControllerRemote, EmployeeEntity currentEmployeeEntity) {
+        this.employeeEntityControllerRemote = employeeEntityControllerRemote;
         this.currentEmployeeEntity = currentEmployeeEntity;
     }
-    
 
     public void menuSystemAdministration() throws InvalidAccessRightException {
         if (currentEmployeeEntity.getAccessRight() != EmployeeAccessRightEnum.SYSTEM_ADMINISTRATOR) {
@@ -58,7 +61,101 @@ public class SystemAdministratorModule {
     }
 
     private void createNewEmployee() {
+        Scanner sc = new Scanner(System.in);
 
+        String firstName, lastName, username, password;
+        EmployeeAccessRightEnum accessRight;
+        int count = 0;
+        
+        do {
+            if(count > 0)
+                System.out.println("First name cannot be empty!\n");
+            System.out.print("Enter first name> ");
+            firstName = sc.nextLine().trim();
+            count++;
+        } while (firstName.isEmpty());
+        
+        count = 0;
+        
+        do {
+            if(count > 0)
+                System.out.println("Last name cannot be empty!\n");
+            System.out.print("Enter last name> ");
+            lastName = sc.nextLine().trim();
+            count++;
+        } while (lastName.isEmpty());
+                
+        while(true){
+            System.out.print("Select Access Right (1: System Administrator, 2: Finance, 3: Sales)> ");
+            Integer accessRightInt = 0;
+            try{
+                accessRightInt = Integer.parseInt(sc.next());
+            } catch (NumberFormatException ex){
+                System.out.println("Please enter numeric values.\n");
+                continue;
+            }
+
+                if (accessRightInt >= 1 && accessRightInt <= 3) {
+                    accessRight = EmployeeAccessRightEnum.values()[accessRightInt - 1];
+                    break;
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
+                }
+        }
+        
+        sc.nextLine(); //consume the enter character
+        count = 0;
+        Boolean isUnique = true;
+        do {
+            if(!isUnique){
+                System.out.println("Username is not available.\n");
+                count = 0;
+            }
+            if(count > 0){
+                System.out.println("Last name cannot be empty!\n");
+                isUnique = true;
+            }
+            
+            System.out.print("Enter username> ");
+            username = sc.nextLine().trim();
+            
+            isUnique = !employeeEntityControllerRemote.checkUsername(username);
+            
+            count++;
+        } while (lastName.isEmpty() || !isUnique);
+        
+        count = 0;
+        Boolean samePassword = true;
+        do {
+            
+            if(count > 0){
+                System.out.println("Password must not be empty!\n");
+                isUnique = true;
+            }
+   
+            System.out.print("Enter password> ");
+            password = sc.nextLine().trim();
+            System.out.print("Confirm password> ");
+            String confirmPassword = sc.nextLine().trim();
+            
+            samePassword = password.equals(confirmPassword);
+            count++;
+            if(!samePassword){
+                System.out.println("Passwords do not match!\n");
+                count = 0;
+            }
+            
+            
+        } while(password.isEmpty() || !samePassword);
+        
+        System.out.println();
+        
+        EmployeeEntity newEmployeeEntity = new EmployeeEntity(firstName, lastName, accessRight, username, password);
+        
+        newEmployeeEntity = employeeEntityControllerRemote.createEmployee(newEmployeeEntity);
+        
+        System.out.println("Employee created! Employee ID: " + newEmployeeEntity.getEmployeeID()+ "\n\n");
+        
     }
 
     private void viewEmployeeDetails() {
