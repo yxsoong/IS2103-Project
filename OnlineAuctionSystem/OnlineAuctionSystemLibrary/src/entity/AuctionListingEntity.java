@@ -34,20 +34,20 @@ public class AuctionListingEntity implements Serializable {
     private Date endDateTime;
     private BigDecimal reservePrice;
     @OneToOne
-    private AuctionTransactionEntity winningBid;
+    private BidEntity winningBid;
     private Boolean open;
     private Boolean enable;
     @ManyToOne
     private AddressEntity deliveryAddress;
     @OneToMany(mappedBy = "auctionListingEntity")
-    private List<AuctionTransactionEntity> auctionTransactionEntities;
+    private List<BidEntity> bidEntities;
     @ManyToOne
     private EmployeeEntity employeeEntity;
 
     public AuctionListingEntity() {
     }
 
-    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, Date startDateTime, Date endDateTime, BigDecimal reservePrice, AuctionTransactionEntity winningBid, Boolean open, Boolean enable, AddressEntity deliveryAddress) {
+    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, Date startDateTime, Date endDateTime, BigDecimal reservePrice, BidEntity winningBid, Boolean open, Boolean enable, AddressEntity deliveryAddress) {
         this.itemName = itemName;
         this.startingBidAmount = startingBidAmount;
         this.startDateTime = startDateTime;
@@ -131,11 +131,11 @@ public class AuctionListingEntity implements Serializable {
         this.reservePrice = reservePrice;
     }
 
-    public AuctionTransactionEntity getWinningBid() {
+    public BidEntity getWinningBid() {
         return winningBid;
     }
 
-    public void setWinningBid(AuctionTransactionEntity winningBid) {
+    public void setWinningBid(BidEntity winningBid) {
         this.winningBid = winningBid;
     }
 
@@ -163,12 +163,12 @@ public class AuctionListingEntity implements Serializable {
         this.deliveryAddress = deliveryAddress;
     }
 
-    public List<AuctionTransactionEntity> getAuctionTransactionEntities() {
-        return auctionTransactionEntities;
+    public List<BidEntity> getBidEntities() {
+        return bidEntities;
     }
 
-    public void setAuctionTransactionEntities(List<AuctionTransactionEntity> auctionTransactionEntities) {
-        this.auctionTransactionEntities = auctionTransactionEntities;
+    public void setBidEntities(List<BidEntity> bidEntities) {
+        this.bidEntities = bidEntities;
     }
 
     public EmployeeEntity getEmployeeEntity() {

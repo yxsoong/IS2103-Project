@@ -41,9 +41,9 @@ public class CustomerEntity implements Serializable {
     @OneToMany(mappedBy = "customerEntity")
     private List<AddressEntity> addressEntities;
     @OneToMany(mappedBy = "customerEntity")
-    private List<CreditPackageTransactionEntity> creditPackageTransactions;
+    private List<CreditTransactionEntity> creditTransactions;
     @OneToMany(mappedBy = "customerEntity")
-    private List<AuctionTransactionEntity> auctionTransactionEntities;
+    private List<BidEntity> bidEntities;
 
     public CustomerEntity() {
         addressEntities = new ArrayList<>();
@@ -166,20 +166,20 @@ public class CustomerEntity implements Serializable {
         this.addressEntities = addressEntities;
     }
 
-    public List<CreditPackageTransactionEntity> getCreditPackageTransactions() {
-        return creditPackageTransactions;
+    public List<CreditTransactionEntity> getCreditTransactions() {
+        return creditTransactions;
     }
 
-    public void setCreditPackageTransactions(List<CreditPackageTransactionEntity> creditPackageTransactions) {
-        this.creditPackageTransactions = creditPackageTransactions;
+    public void setCreditTransactions(List<CreditTransactionEntity> creditTransactions) {
+        this.creditTransactions = creditTransactions;
     }
 
-    public List<AuctionTransactionEntity> getAuctionTransactionEntities() {
-        return auctionTransactionEntities;
+    public List<BidEntity> getBidEntities() {
+        return bidEntities;
     }
 
-    public void setAuctionTransactionEntities(List<AuctionTransactionEntity> auctionTransactionEntities) {
-        this.auctionTransactionEntities = auctionTransactionEntities;
+    public void setBidEntities(List<BidEntity> bidEntities) {
+        this.bidEntities = bidEntities;
     }
 
     

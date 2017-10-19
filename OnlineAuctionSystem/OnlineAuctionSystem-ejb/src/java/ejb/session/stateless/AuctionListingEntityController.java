@@ -8,15 +8,17 @@ package ejb.session.stateless;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author User
- */
-@Local(AuctionTransactionControllerLocal.class)
-@Remote(AuctionTransactionControllerRemote.class)
+@Local(AuctionListingEntityControllerLocal.class)
+@Remote(AuctionListingEntityControllerRemote.class)
 @Stateless
-public class AuctionTransactionController implements AuctionTransactionControllerRemote, AuctionTransactionControllerLocal {
+public class AuctionListingEntityController implements AuctionListingEntityControllerRemote, AuctionListingEntityControllerLocal {
+
+    @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
+    private EntityManager em;
+
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")

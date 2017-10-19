@@ -33,7 +33,7 @@ public class CreditPackageEntity implements Serializable {
     @ManyToOne
     private EmployeeEntity employeeEntity;
     @OneToMany(mappedBy = "creditPackageEntity")
-    private List<CreditPackageTransactionEntity> creditPackageTransactionEntities;
+    private List<CreditTransactionEntity> creditTransactionEntities;
 
     public CreditPackageEntity() {
     }
@@ -110,12 +110,12 @@ public class CreditPackageEntity implements Serializable {
         this.enable = enable;
     }
 
-    public List<CreditPackageTransactionEntity> getCreditPackageTransaction() {
-        return creditPackageTransactionEntities;
+    public List<CreditTransactionEntity> getCreditTransactionEntities() {
+        return creditTransactionEntities;
     }
 
-    public void setCreditPackageTransaction(List<CreditPackageTransactionEntity> creditPackageTransactionEntities) {
-        this.creditPackageTransactionEntities = creditPackageTransactionEntities;
+    public void setCreditTransactionEntities(List<CreditTransactionEntity> creditTransactionEntities) {
+        this.creditTransactionEntities = creditTransactionEntities;
     }
 
     public EmployeeEntity getEmployeeEntity() {

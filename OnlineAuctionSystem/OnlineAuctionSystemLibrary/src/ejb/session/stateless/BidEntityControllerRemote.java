@@ -6,6 +6,6 @@
 package ejb.session.stateless;
 
 
-public interface AuctionTransactionControllerRemote {
+public interface BidEntityControllerRemote {
     
 }

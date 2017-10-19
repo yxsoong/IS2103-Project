@@ -21,7 +21,7 @@ import util.enumeration.CreditTransactionTypeEnum;
  * @author User
  */
 @Entity
-public class CreditPackageTransactionEntity implements Serializable {
+public class CreditTransactionEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -35,10 +35,10 @@ public class CreditPackageTransactionEntity implements Serializable {
     @ManyToOne
     private CreditPackageEntity creditPackageEntity;
 
-    public CreditPackageTransactionEntity() {
+    public CreditTransactionEntity() {
     }
 
-    public CreditPackageTransactionEntity(BigDecimal numberOfCredits, CreditTransactionTypeEnum transactionType) {
+    public CreditTransactionEntity(BigDecimal numberOfCredits, CreditTransactionTypeEnum transactionType) {
         this.numberOfCredits = numberOfCredits;
         this.transactionType = transactionType;
     }
@@ -53,10 +53,10 @@ public class CreditPackageTransactionEntity implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CreditPackageTransactionEntity)) {
+        if (!(object instanceof CreditTransactionEntity)) {
             return false;
         }
-        CreditPackageTransactionEntity other = (CreditPackageTransactionEntity) object;
+        CreditTransactionEntity other = (CreditTransactionEntity) object;
         if ((this.creditPackageTransactionId == null && other.creditPackageTransactionId != null) || (this.creditPackageTransactionId != null && !this.creditPackageTransactionId.equals(other.creditPackageTransactionId))) {
             return false;
         }

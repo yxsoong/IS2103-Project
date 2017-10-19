@@ -20,7 +20,7 @@ import javax.persistence.OneToOne;
  * @author lowru
  */
 @Entity
-public class AuctionTransactionEntity implements Serializable {
+public class BidEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -34,10 +34,10 @@ public class AuctionTransactionEntity implements Serializable {
     private CustomerEntity customerEntity;
 
 
-    public AuctionTransactionEntity() {
+    public BidEntity() {
     }
 
-    public AuctionTransactionEntity(BigDecimal bidAmount, Date dateTime) {
+    public BidEntity(BigDecimal bidAmount, Date dateTime) {
         this.bidAmount = bidAmount;
         this.dateTime = dateTime;
     }
@@ -52,10 +52,10 @@ public class AuctionTransactionEntity implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof AuctionTransactionEntity)) {
+        if (!(object instanceof BidEntity)) {
             return false;
         }
-        AuctionTransactionEntity other = (AuctionTransactionEntity) object;
+        BidEntity other = (BidEntity) object;
         if ((this.auctionTransactionId == null && other.auctionTransactionId != null) || (this.auctionTransactionId != null && !this.auctionTransactionId.equals(other.auctionTransactionId))) {
             return false;
         }
@@ -116,7 +116,14 @@ public class AuctionTransactionEntity implements Serializable {
     public void setAuctionListingEntity(AuctionListingEntity auctionListingEntity) {
         this.auctionListingEntity = auctionListingEntity;
     }
-    
+
+    public CustomerEntity getCustomerEntity() {
+        return customerEntity;
+    }
+
+    public void setCustomerEntity(CustomerEntity customerEntity) {
+        this.customerEntity = customerEntity;
+    }
     
     
 }
