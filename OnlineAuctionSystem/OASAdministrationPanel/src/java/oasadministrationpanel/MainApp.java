@@ -35,28 +35,23 @@ public class MainApp {
 
             while (response < 1 || response > 2) {
                 System.out.print("> ");
-                
+
                 String input = sc.next();
-                
-                try{
+
+                try {
                     response = Integer.parseInt(input);
-                } catch(NumberFormatException ex){
+                } catch (NumberFormatException ex) {
                     System.out.println("Please enter numeric values.\n");
                     continue;
                 }
-                
 
                 if (response == 1) {
 
                     try {
                         if (doLogin()) {
-                            EmployeeAccessRightEnum accessRight = currentEmployeeEntity.getAccessRight();
-                            if(accessRight == EmployeeAccessRightEnum.SYSTEM_ADMINISTRATOR)
-                                systemAdministratorModule = new SystemAdministratorModule(employeeEntityControllerRemote, currentEmployeeEntity);
-                            else if(accessRight == EmployeeAccessRightEnum.FINANCE)
-                                financeStaffModule = new FinanceStaffModule(currentEmployeeEntity);
-                            else if(accessRight == EmployeeAccessRightEnum.SALES)
-                                salesStaffModule = new SalesStaffModule(currentEmployeeEntity);
+                            systemAdministratorModule = new SystemAdministratorModule(employeeEntityControllerRemote, currentEmployeeEntity);
+                            financeStaffModule = new FinanceStaffModule(currentEmployeeEntity);
+                            salesStaffModule = new SalesStaffModule(currentEmployeeEntity);
                             mainMenu();
                         }
                     } catch (InvalidLoginCredentialException ex) {

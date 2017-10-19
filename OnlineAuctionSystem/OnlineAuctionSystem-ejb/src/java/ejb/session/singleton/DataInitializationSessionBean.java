@@ -49,7 +49,7 @@ public class DataInitializationSessionBean {
     }
     
     private void initializeData(){
-        employeeEntityControllerLocal.createEmployee(new EmployeeEntity("A", "A", EmployeeAccessRightEnum.SYSTEM_ADMINISTRATOR, "admin", "password"));
+        employeeEntityControllerLocal.createEmployee(new EmployeeEntity("A", "A", EmployeeAccessRightEnum.SYSTEM_ADMIN, "admin", "password"));
         employeeEntityControllerLocal.createEmployee(new EmployeeEntity("B", "B", EmployeeAccessRightEnum.FINANCE, "finance", "password"));
         employeeEntityControllerLocal.createEmployee(new EmployeeEntity("C", "C", EmployeeAccessRightEnum.SALES, "sales", "password"));
     }
