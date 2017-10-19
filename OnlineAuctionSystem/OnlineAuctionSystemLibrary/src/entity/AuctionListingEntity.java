@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -32,6 +33,7 @@ public class AuctionListingEntity implements Serializable {
     private Date startDateTime;
     private Date endDateTime;
     private BigDecimal reservePrice;
+    @OneToOne
     private AuctionTransactionEntity winningBid;
     private Boolean open;
     private Boolean enable;
@@ -54,7 +56,6 @@ public class AuctionListingEntity implements Serializable {
         this.winningBid = winningBid;
         this.open = open;
         this.enable = enable;
-        this.deliveryAddress = deliveryAddress;
     }
 
     @Override
@@ -168,6 +169,14 @@ public class AuctionListingEntity implements Serializable {
 
     public void setAuctionTransactionEntities(List<AuctionTransactionEntity> auctionTransactionEntities) {
         this.auctionTransactionEntities = auctionTransactionEntities;
+    }
+
+    public EmployeeEntity getEmployeeEntity() {
+        return employeeEntity;
+    }
+
+    public void setEmployeeEntity(EmployeeEntity employeeEntity) {
+        this.employeeEntity = employeeEntity;
     }
     
     

@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.EmployeeEntity;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -40,6 +41,16 @@ public class EmployeeEntityController implements EmployeeEntityControllerRemote,
             throw new EmployeeNotFoundException("Employee Username " + username + " does not exist!");
         }
     }
+    
+    @Override
+    public EmployeeEntity retrieveEmployeeById(Long employeeId) throws EmployeeNotFoundException {
+        EmployeeEntity employeeEntity = em.find(EmployeeEntity.class, employeeId);
+        
+        if(employeeEntity != null)
+            return employeeEntity;
+        else
+            throw new EmployeeNotFoundException("Employee ID: " + employeeId  + " does not exist");
+    }
 
     @Override
     public EmployeeEntity employeeLogin(String username, String password) throws InvalidLoginCredentialException {
@@ -72,11 +83,33 @@ public class EmployeeEntityController implements EmployeeEntityControllerRemote,
     
     @Override
     public Boolean checkUsername(String username){
-        Query query = em.createQuery("SELECT COUNT(s) FROM EmployeeEntity s WHERE s.username = :inUsername");
+        Query query = em.createQuery("SELECT COUNT(e) FROM EmployeeEntity e WHERE e.username = :inUsername");
         query.setParameter("inUsername", username);
         
         Long count = (Long)query.getSingleResult();
         
         return count > 0;
+    }
+    
+    @Override
+    public void updateEmployee(EmployeeEntity employeeEntity){
+        em.merge(employeeEntity);
+    }
+    
+    @Override
+    public List<EmployeeEntity> retrieveAllEmployees() {
+        Query query = em.createQuery("SELECT e FROM EmployeeEntity e");
+        
+        return query.getResultList();
+    }
+    
+    @Override
+    public void deleteEmployee(Long employeeId){
+        try{
+        EmployeeEntity employeeEntity = retrieveEmployeeById(employeeId);
+        em.remove(employeeEntity);
+        } catch (EmployeeNotFoundException ex){
+            
+        }
     }
 }

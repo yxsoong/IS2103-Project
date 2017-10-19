@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -27,7 +28,7 @@ public class AuctionTransactionEntity implements Serializable {
     private Long auctionTransactionId;
     private BigDecimal bidAmount;
     private Date dateTime;
-    @ManyToOne
+    @OneToOne(mappedBy = "winningBid")
     private AuctionListingEntity auctionListingEntity;
     @ManyToOne
     private CustomerEntity customerEntity;

@@ -35,8 +35,16 @@ public class MainApp {
 
             while (response < 1 || response > 2) {
                 System.out.print("> ");
-
-                response = sc.nextInt();
+                
+                String input = sc.next();
+                
+                try{
+                    response = Integer.parseInt(input);
+                } catch(NumberFormatException ex){
+                    System.out.println("Please enter numeric values.\n");
+                    continue;
+                }
+                
 
                 if (response == 1) {
 
