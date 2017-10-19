@@ -10,7 +10,7 @@ package util.enumeration;
  * @author User
  */
 public enum EmployeeAccessRightEnum {
-    SYSTEM_ADMIN,
+    SYSADMIN,
     FINANCE,
     SALES
 }
