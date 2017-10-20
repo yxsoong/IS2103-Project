@@ -132,7 +132,7 @@ public class FinanceStaffModule {
             try {
                 CreditPackageEntity creditPackageEntity = creditPackageEntityControllerRemote.retrieveCreditPackageById(creditPackageId);
                 System.out.println("Credit Package ID\tCredit Package Name\tPrice\tNumber of Credits\tEnable");
-                System.out.println("\t" + creditPackageEntity.getCreditPackageId().toString() + "\t\t\t" + creditPackageEntity.getCreditPackageName() + "\t" + creditPackageEntity.getPrice() + "\t\t" + creditPackageEntity.getNumberOfCredits() + "\t\t" + creditPackageEntity.getEnable());
+                System.out.println("\t" + creditPackageEntity.getCreditPackageId().toString() + "\t\t\t" + creditPackageEntity.getCreditPackageName() + "\t" + creditPackageEntity.getPrice() + "\t\t" + creditPackageEntity.getNumberOfCredits() + "\t\t" + creditPackageEntity.getEnabled());
                 System.out.println("------------------------");
                 System.out.println("1: Update Credit Package");
                 System.out.println("2: Delete Credit Package");
@@ -182,7 +182,7 @@ public class FinanceStaffModule {
             System.out.printf("%20s%23s%8s%20s%8s\n", "Credit Package ID", "Credit Package Name", "Price", "Number of Credits", "Enable");
 
             for (CreditPackageEntity creditPackageEntity : creditPackageEntities) {
-                System.out.printf("%12s%25s%12s%20s%10s\n", creditPackageEntity.getCreditPackageId().toString(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getPrice().toString(), creditPackageEntity.getNumberOfCredits().toString(), creditPackageEntity.getEnable());
+                System.out.printf("%12s%25s%12s%20s%10s\n", creditPackageEntity.getCreditPackageId().toString(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getPrice().toString(), creditPackageEntity.getNumberOfCredits().toString(), creditPackageEntity.getEnabled());
             }
         } catch (NullPointerException ex) {
             System.out.println(ex);
@@ -221,9 +221,9 @@ public class FinanceStaffModule {
         sc.nextLine(); //Consume enter character
         input = sc.nextLine();
         if (input.equals("Y")) {
-            creditPackageEntity.setEnable(true);
+            creditPackageEntity.setEnabled(true);
         } else if (input.equals("N")) {
-            creditPackageEntity.setEnable(false);
+            creditPackageEntity.setEnabled(false);
         }
 
         creditPackageEntityControllerRemote.updateCreditPackage(creditPackageEntity);

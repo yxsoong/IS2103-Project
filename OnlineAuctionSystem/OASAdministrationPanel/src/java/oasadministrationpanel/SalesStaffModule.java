@@ -5,6 +5,9 @@ import entity.AddressEntity;
 import entity.AuctionListingEntity;
 import entity.EmployeeEntity;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 import util.enumeration.EmployeeAccessRightEnum;
@@ -72,11 +75,15 @@ public class SalesStaffModule {
 
         String itemName, sDateTime, eDateTime, result;
         BigDecimal startingBidAmount, reservePrice;
-        Date startDateTime, endDateTime;
-        Boolean open;
+        Calendar startDateTime = Calendar.getInstance();
+        Calendar endDateTime = Calendar.getInstance();
+        Boolean open = false;
         AddressEntity deliveryAddress = null;
+        int year, month, day, hour, min;
 
         AuctionListingEntity newAuctionListingEntity;
+
+        Calendar now = Calendar.getInstance();
 
         int count = 0;
 
@@ -108,16 +115,21 @@ public class SalesStaffModule {
             }
 
             System.out.print("Enter starting date and time (yyyymmddhhmm)> ");
-            sc.nextLine();      //吃 the enter character
+            sc.nextLine();      //consume the enter character
             sDateTime = sc.nextLine().trim();
             count++;
-        } while (sDateTime.isEmpty());
-        int year = Integer.parseInt(sDateTime.substring(0, 4).trim());
-        int month = Integer.parseInt(sDateTime.substring(4, 6).trim());
-        int day = Integer.parseInt(sDateTime.substring(6, 8).trim());
-        int hour = Integer.parseInt(sDateTime.substring(8, 10).trim());
-        int min = Integer.parseInt(sDateTime.substring(10, 12).trim());
-        startDateTime = new Date(year, month, day, hour, min);
+            if (sDateTime.isEmpty()) {
+                continue;
+            }
+
+            year = Integer.parseInt(sDateTime.substring(0, 4).trim());
+            month = Integer.parseInt(sDateTime.substring(4, 6).trim());
+            day = Integer.parseInt(sDateTime.substring(6, 8).trim());
+            hour = Integer.parseInt(sDateTime.substring(8, 10).trim());
+            min = Integer.parseInt(sDateTime.substring(10, 12).trim());
+            startDateTime.clear();
+            startDateTime.set(year, month - 1, day, hour, min);
+        } while (now.compareTo(startDateTime) > 0);
 
         count = 0;
 
@@ -128,14 +140,21 @@ public class SalesStaffModule {
 
             System.out.print("Enter end date and time (yyyymmddhhmm)> ");
             eDateTime = sc.nextLine().trim();
+
             count++;
-        } while (eDateTime.isEmpty() || Long.parseLong(eDateTime) < Long.parseLong(sDateTime));
-        year = Integer.parseInt(eDateTime.substring(0, 4).trim());
-        month = Integer.parseInt(eDateTime.substring(4, 6).trim());
-        day = Integer.parseInt(eDateTime.substring(6, 8).trim());
-        hour = Integer.parseInt(eDateTime.substring(8, 10).trim());
-        min = Integer.parseInt(eDateTime.substring(10, 12).trim());
-        endDateTime = new Date(year, month, day, hour, min);
+            if (eDateTime.isEmpty()) {
+                continue;
+            }
+
+            year = Integer.parseInt(eDateTime.substring(0, 4).trim());
+            month = Integer.parseInt(eDateTime.substring(4, 6).trim());
+            day = Integer.parseInt(eDateTime.substring(6, 8).trim());
+            hour = Integer.parseInt(eDateTime.substring(8, 10).trim());
+            min = Integer.parseInt(eDateTime.substring(10, 12).trim());
+            endDateTime.clear();
+            endDateTime.set(year, month - 1, day, hour, min);
+
+        } while (now.compareTo(endDateTime) > 0 || Long.parseLong(eDateTime) < Long.parseLong(sDateTime));
 
         count = 0;
 
@@ -150,23 +169,11 @@ public class SalesStaffModule {
 
         count = 0;
 
-        do {
-            if (count > 0) {
-                System.out.println("Set a status for listing!\n");
-            }
-            System.out.print("Open listing(Enter Y or N)> ");
-            sc.nextLine(); //consume the next enter character
-            result = sc.nextLine().trim();
-            if (result.equals("Y")) {
-                open = true;
-            } else if (result.equals("N")) {
-                open = false;
-            } else {
-                open = null;
-            }
-            count++;
-        } while (result.isEmpty());
-
+        if (now.compareTo(startDateTime) >= 0 && now.compareTo(endDateTime) < 0) {
+            open = true;
+        } else {
+            open = false;
+        }
         newAuctionListingEntity = new AuctionListingEntity(itemName, startingBidAmount, startDateTime, endDateTime, reservePrice, open, true, deliveryAddress);
 
         newAuctionListingEntity = auctionListingEntityControllerRemote.createAuctionListing(newAuctionListingEntity);

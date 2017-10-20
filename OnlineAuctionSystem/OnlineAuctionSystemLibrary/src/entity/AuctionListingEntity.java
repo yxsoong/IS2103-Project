@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
@@ -18,7 +19,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
-
 
 @Entity
 public class AuctionListingEntity implements Serializable {
@@ -32,20 +32,20 @@ public class AuctionListingEntity implements Serializable {
     @Column(nullable = true)
     private BigDecimal startingBidAmount;
     @Column(nullable = false)
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date startDateTime;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Calendar startDateTime;
     @Column(nullable = false)
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date endDateTime;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Calendar endDateTime;
     @Column(nullable = false)
     private BigDecimal reservePrice;
     @Column(nullable = false)
     private Boolean openListing;
     @Column(nullable = false)
-    private Boolean enable;
+    private Boolean enabled;
     @ManyToOne
     private AddressEntity deliveryAddress;
-    @OneToOne (mappedBy = "winningAuctionListingEntity")
+    @OneToOne(mappedBy = "winningAuctionListingEntity")
     private BidEntity bidEntity;
     @OneToMany(mappedBy = "auctionListingEntity")
     private List<BidEntity> bidEntities;
@@ -55,14 +55,14 @@ public class AuctionListingEntity implements Serializable {
     public AuctionListingEntity() {
     }
 
-    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, Date startDateTime, Date endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enable, AddressEntity deliveryAddress) {
+    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, Calendar startDateTime, Calendar endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enabled, AddressEntity deliveryAddress) {
         this.itemName = itemName;
         this.startingBidAmount = startingBidAmount;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.reservePrice = reservePrice;
         this.openListing = openListing;
-        this.enable = enable;
+        this.enabled = enabled;
         this.deliveryAddress = deliveryAddress;
     }
 
@@ -117,19 +117,19 @@ public class AuctionListingEntity implements Serializable {
         this.startingBidAmount = startingBidAmount;
     }
 
-    public Date getStartDateTime() {
+    public Calendar getStartDateTime() {
         return startDateTime;
     }
 
-    public void setStartDateTime(Date startDateTime) {
+    public void setStartDateTime(Calendar startDateTime) {
         this.startDateTime = startDateTime;
     }
 
-    public Date getEndDateTime() {
+    public Calendar getEndDateTime() {
         return endDateTime;
     }
 
-    public void setEndDateTime(Date endDateTime) {
+    public void setEndDateTime(Calendar endDateTime) {
         this.endDateTime = endDateTime;
     }
 
@@ -149,12 +149,12 @@ public class AuctionListingEntity implements Serializable {
         this.openListing = openListing;
     }
 
-    public Boolean getEnable() {
-        return enable;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public void setEnable(Boolean enable) {
-        this.enable = enable;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public AddressEntity getDeliveryAddress() {
@@ -180,7 +180,7 @@ public class AuctionListingEntity implements Serializable {
     public void setEmployeeEntity(EmployeeEntity employeeEntity) {
         this.employeeEntity = employeeEntity;
     }
-    
+
     public BidEntity getBidEntity() {
         return bidEntity;
     }

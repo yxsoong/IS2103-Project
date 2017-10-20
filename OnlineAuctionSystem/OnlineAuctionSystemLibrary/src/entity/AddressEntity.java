@@ -28,7 +28,7 @@ public class AddressEntity implements Serializable {
     private String streetAddress;
     private String unitNumber;
     private String postalCode;
-    private Boolean enable;
+    private Boolean enabled;
     @ManyToOne
     private CustomerEntity customerEntity;
     @OneToMany(mappedBy = "deliveryAddress")
@@ -37,11 +37,11 @@ public class AddressEntity implements Serializable {
     public AddressEntity() {
     }
 
-    public AddressEntity(String streetAddress, String unitNumber, String postalCode, Boolean enable) {
+    public AddressEntity(String streetAddress, String unitNumber, String postalCode, Boolean enabled) {
         this.streetAddress = streetAddress;
         this.unitNumber = unitNumber;
         this.postalCode = postalCode;
-        this.enable = enable;
+        this.enabled = enabled;
     }    
 
     @Override
@@ -101,12 +101,12 @@ public class AddressEntity implements Serializable {
         this.postalCode = postalCode;
     }
 
-    public Boolean getEnable() {
-        return enable;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public void setEnable(Boolean enable) {
-        this.enable = enable;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public CustomerEntity getCustomerEntity() {

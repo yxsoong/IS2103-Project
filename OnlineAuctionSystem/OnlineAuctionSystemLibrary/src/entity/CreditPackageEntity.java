@@ -35,7 +35,7 @@ public class CreditPackageEntity implements Serializable {
     @Column (nullable = false)
     private BigDecimal numberOfCredits;
     @Column(nullable = false)
-    private Boolean enable;
+    private Boolean enabled;
     @ManyToOne
     @JoinColumn(nullable = false)
     private EmployeeEntity employeeEntity;
@@ -46,11 +46,11 @@ public class CreditPackageEntity implements Serializable {
     public CreditPackageEntity() {
     }
 
-    public CreditPackageEntity(String creditPackageName, BigDecimal price, BigDecimal numberOfCredits, Boolean enable) {
+    public CreditPackageEntity(String creditPackageName, BigDecimal price, BigDecimal numberOfCredits, Boolean enabled) {
         this.creditPackageName = creditPackageName;
         this.price = price;
         this.numberOfCredits = numberOfCredits;
-        this.enable = enable;
+        this.enabled = enabled;
     }
     
     @Override
@@ -110,12 +110,12 @@ public class CreditPackageEntity implements Serializable {
         this.numberOfCredits = numberOfCredits;
     }
 
-    public Boolean getEnable() {
-        return enable;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public void setEnable(Boolean enable) {
-        this.enable = enable;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public List<CreditTransactionEntity> getCreditTransactionEntities() {
