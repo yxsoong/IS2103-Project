@@ -5,6 +5,9 @@
  */
 package oasadministrationpanel;
 
+import ejb.session.stateless.AuctionListingEntityControllerRemote;
+import ejb.session.stateless.BidEntityControllerRemote;
+import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.EmployeeEntityControllerRemote;
 import javax.ejb.EJB;
 
@@ -15,6 +18,15 @@ import javax.ejb.EJB;
 public class Main {
 
     @EJB
+    private static AuctionListingEntityControllerRemote auctionListingEntityControllerRemote;
+    
+    @EJB
+    private static BidEntityControllerRemote bidEntityControllerRemote;
+    
+    @EJB
+    private static CreditPackageEntityControllerRemote creditPackageEntityControllerRemote;
+
+    @EJB
     private static EmployeeEntityControllerRemote employeeEntityControllerRemote;
     
     
@@ -23,7 +35,7 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        MainApp mainApp = new MainApp(employeeEntityControllerRemote);
+        MainApp mainApp = new MainApp(auctionListingEntityControllerRemote, bidEntityControllerRemote, creditPackageEntityControllerRemote, employeeEntityControllerRemote);
         mainApp.runApp();
     }
     

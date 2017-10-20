@@ -295,7 +295,7 @@ public class SystemAdministratorModule {
         System.out.println("*** OAS Administration Panel :: System Administration :: View All Employees ***\n");
 
         List<EmployeeEntity> employeeEntities = employeeEntityControllerRemote.retrieveAllEmployees();
-        System.out.printf("%8s%20s%20s%15s%20s%20s\n", "Staff ID", "First Name", "Last Name", "Access Right", "Username", "Password");
+        System.out.printf("%8s%20s%20s%15s%20s%20s\n", "Employee ID", "First Name", "Last Name", "Access Right", "Username", "Password");
 
         for (EmployeeEntity employeeEntity : employeeEntities) {
             System.out.printf("%8s%20s%20s%15s%20s%20s\n", employeeEntity.getEmployeeID().toString(), employeeEntity.getFirstName(), employeeEntity.getLastName(), employeeEntity.getAccessRight().toString(), employeeEntity.getUsername(), employeeEntity.getPassword());

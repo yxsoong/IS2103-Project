@@ -1,5 +1,8 @@
 package oasadministrationpanel;
 
+import ejb.session.stateless.AuctionListingEntityControllerRemote;
+import ejb.session.stateless.BidEntityControllerRemote;
+import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.EmployeeEntityControllerRemote;
 import entity.EmployeeEntity;
 import java.util.Scanner;
@@ -19,7 +22,7 @@ public class MainApp {
     public MainApp() {
     }
 
-    public MainApp(EmployeeEntityControllerRemote employeeEntityControllerRemote) {
+    public MainApp(AuctionListingEntityControllerRemote auctionListingEntityControllerRemote, BidEntityControllerRemote bidEntityControllerRemote, CreditPackageEntityControllerRemote creditPackageEntityControllerRemote, EmployeeEntityControllerRemote employeeEntityControllerRemote) {
         this.employeeEntityControllerRemote = employeeEntityControllerRemote;
     }
 
