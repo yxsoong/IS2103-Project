@@ -8,6 +8,7 @@ package entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,10 +26,17 @@ public class BidEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(length = 255, nullable = false)
     private Long auctionTransactionId;
+    @Column(nullable = false)
     private BigDecimal bidAmount;
+    @Column(nullable = false)
     private Date dateTime;
-    @OneToOne(mappedBy = "winningBid")
+    @Column(nullable = true)
+    private Boolean winningBid;
+    @OneToOne
+    private AuctionListingEntity winningAuctionListingEntity;
+    @ManyToOne
     private AuctionListingEntity auctionListingEntity;
     @ManyToOne
     private CustomerEntity customerEntity;
@@ -123,6 +131,22 @@ public class BidEntity implements Serializable {
 
     public void setCustomerEntity(CustomerEntity customerEntity) {
         this.customerEntity = customerEntity;
+    }
+    
+    public AuctionListingEntity getWinningAuctionListingEntity() {
+        return winningAuctionListingEntity;
+    }
+
+    public void setWinningAuctionListingEntity(AuctionListingEntity winningAuctionListingEntity) {
+        this.winningAuctionListingEntity = winningAuctionListingEntity;
+    }
+
+    public Boolean getWinningBid() {
+        return winningBid;
+    }
+
+    public void setWinningBid(Boolean winningBid) {
+        this.winningBid = winningBid;
     }
     
     

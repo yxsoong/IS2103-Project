@@ -33,7 +33,7 @@ public class AddressEntity implements Serializable {
     private CustomerEntity customerEntity;
     @OneToMany(mappedBy = "deliveryAddress")
     private List<AuctionListingEntity> auctionListingEntities;
-
+    
     public AddressEntity() {
     }
 

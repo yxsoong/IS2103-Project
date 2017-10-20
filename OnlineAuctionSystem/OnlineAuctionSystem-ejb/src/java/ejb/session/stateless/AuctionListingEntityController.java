@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.AuctionListingEntity;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -20,6 +21,12 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     private EntityManager em;
 
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @Override
+    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity){
+        em.persist(auctionListingEntity);
+        em.flush();
+        em.refresh(auctionListingEntity);
+        
+        return auctionListingEntity;
+    }
 }

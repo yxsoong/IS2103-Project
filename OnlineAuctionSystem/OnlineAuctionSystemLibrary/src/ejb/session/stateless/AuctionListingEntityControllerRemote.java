@@ -5,7 +5,10 @@
  */
 package ejb.session.stateless;
 
+import entity.AuctionListingEntity;
 
 public interface AuctionListingEntityControllerRemote {
-    
+
+    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity);
+
 }

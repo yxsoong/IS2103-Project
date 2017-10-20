@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,11 +17,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
 
-/**
- *
- * @author lowru
- */
+
 @Entity
 public class AuctionListingEntity implements Serializable {
 
@@ -28,17 +27,26 @@ public class AuctionListingEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long auctionListingId;
+    @Column(length = 255, nullable = false)
     private String itemName;
+    @Column(nullable = true)
     private BigDecimal startingBidAmount;
+    @Column(nullable = false)
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDateTime;
+    @Column(nullable = false)
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDateTime;
+    @Column(nullable = false)
     private BigDecimal reservePrice;
-    @OneToOne
-    private BidEntity winningBid;
-    private Boolean open;
+    @Column(nullable = false)
+    private Boolean openListing;
+    @Column(nullable = false)
     private Boolean enable;
     @ManyToOne
     private AddressEntity deliveryAddress;
+    @OneToOne (mappedBy = "winningAuctionListingEntity")
+    private BidEntity bidEntity;
     @OneToMany(mappedBy = "auctionListingEntity")
     private List<BidEntity> bidEntities;
     @ManyToOne
@@ -47,16 +55,18 @@ public class AuctionListingEntity implements Serializable {
     public AuctionListingEntity() {
     }
 
-    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, Date startDateTime, Date endDateTime, BigDecimal reservePrice, BidEntity winningBid, Boolean open, Boolean enable, AddressEntity deliveryAddress) {
+    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, Date startDateTime, Date endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enable, AddressEntity deliveryAddress) {
         this.itemName = itemName;
         this.startingBidAmount = startingBidAmount;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.reservePrice = reservePrice;
-        this.winningBid = winningBid;
-        this.open = open;
+        this.openListing = openListing;
         this.enable = enable;
+        this.deliveryAddress = deliveryAddress;
     }
+
+
 
     @Override
     public int hashCode() {
@@ -131,20 +141,12 @@ public class AuctionListingEntity implements Serializable {
         this.reservePrice = reservePrice;
     }
 
-    public BidEntity getWinningBid() {
-        return winningBid;
+    public Boolean getOpenListing() {
+        return openListing;
     }
 
-    public void setWinningBid(BidEntity winningBid) {
-        this.winningBid = winningBid;
-    }
-
-    public Boolean getOpen() {
-        return open;
-    }
-
-    public void setOpen(Boolean open) {
-        this.open = open;
+    public void setOpenListing(Boolean openListing) {
+        this.openListing = openListing;
     }
 
     public Boolean getEnable() {
@@ -179,5 +181,11 @@ public class AuctionListingEntity implements Serializable {
         this.employeeEntity = employeeEntity;
     }
     
-    
+    public BidEntity getBidEntity() {
+        return bidEntity;
+    }
+
+    public void setBidEntity(BidEntity bidEntity) {
+        this.bidEntity = bidEntity;
+    }
 }
