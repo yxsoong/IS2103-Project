@@ -5,10 +5,7 @@ import entity.AddressEntity;
 import entity.AuctionListingEntity;
 import entity.EmployeeEntity;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Scanner;
 import util.enumeration.EmployeeAccessRightEnum;
 import util.exception.InvalidAccessRightException;
@@ -91,7 +88,7 @@ public class SalesStaffModule {
             if (count > 0) {
                 System.out.println("Auction item name cannot be empty!\n");
             }
-            System.out.print("Enter auction item name name> ");
+            System.out.print("Enter auction item name> ");
             itemName = sc.nextLine().trim();
             count++;
         } while (itemName.isEmpty());
@@ -111,14 +108,18 @@ public class SalesStaffModule {
 
         do {
             if (count > 0) {
-                System.out.println("Start date time cannot be empty!\n");
+                System.out.println("Start date time cannot be before current date time!\n");
             }
 
             System.out.print("Enter starting date and time (yyyymmddhhmm)> ");
-            sc.nextLine();      //consume the enter character
+            if (count == 0) {
+                sc.nextLine();      //consume the enter character
+            }
             sDateTime = sc.nextLine().trim();
             count++;
             if (sDateTime.isEmpty()) {
+                System.out.println("Start date time cannot be empty!\n");
+                count = -1;
                 continue;
             }
 
@@ -135,7 +136,7 @@ public class SalesStaffModule {
 
         do {
             if (count > 0) {
-                System.out.println("End date time must be later than start date time and it cannot be empty!\n");
+                System.out.println("End date time must be later than start date time!\n");
             }
 
             System.out.print("Enter end date and time (yyyymmddhhmm)> ");
@@ -143,6 +144,8 @@ public class SalesStaffModule {
 
             count++;
             if (eDateTime.isEmpty()) {
+                System.out.println("End date time cannot be empty!");
+                count = 0;
                 continue;
             }
 
@@ -174,6 +177,7 @@ public class SalesStaffModule {
         } else {
             open = false;
         }
+
         newAuctionListingEntity = new AuctionListingEntity(itemName, startingBidAmount, startDateTime, endDateTime, reservePrice, open, true, deliveryAddress);
 
         newAuctionListingEntity = auctionListingEntityControllerRemote.createAuctionListing(newAuctionListingEntity);
