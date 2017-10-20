@@ -6,13 +6,15 @@ import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.EmployeeEntityControllerRemote;
 import entity.EmployeeEntity;
 import java.util.Scanner;
-import util.enumeration.EmployeeAccessRightEnum;
 import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;
 
 public class MainApp {
 
-    private EmployeeEntityControllerRemote employeeEntityControllerRemote;
+    private AuctionListingEntityControllerRemote auctionListingEntityControllerRemote;
+    private BidEntityControllerRemote bidEntityControllerRemote;
+    private CreditPackageEntityControllerRemote creditPackageEntityControllerRemote;
+    private EmployeeEntityControllerRemote employeeEntityControllerRemote;    
     private SystemAdministratorModule systemAdministratorModule;
     private FinanceStaffModule financeStaffModule;
     private SalesStaffModule salesStaffModule;
@@ -23,6 +25,9 @@ public class MainApp {
     }
 
     public MainApp(AuctionListingEntityControllerRemote auctionListingEntityControllerRemote, BidEntityControllerRemote bidEntityControllerRemote, CreditPackageEntityControllerRemote creditPackageEntityControllerRemote, EmployeeEntityControllerRemote employeeEntityControllerRemote) {
+        this.auctionListingEntityControllerRemote = auctionListingEntityControllerRemote;
+        this.bidEntityControllerRemote = bidEntityControllerRemote;
+        this.creditPackageEntityControllerRemote = creditPackageEntityControllerRemote;
         this.employeeEntityControllerRemote = employeeEntityControllerRemote;
     }
 
@@ -53,8 +58,8 @@ public class MainApp {
                     try {
                         if (doLogin()) {
                             systemAdministratorModule = new SystemAdministratorModule(employeeEntityControllerRemote, currentEmployeeEntity);
-                            financeStaffModule = new FinanceStaffModule(currentEmployeeEntity);
-                            salesStaffModule = new SalesStaffModule(currentEmployeeEntity);
+                            financeStaffModule = new FinanceStaffModule(creditPackageEntityControllerRemote, currentEmployeeEntity);
+                            salesStaffModule = new SalesStaffModule(auctionListingEntityControllerRemote,currentEmployeeEntity);
                             mainMenu();
                         }
                     } catch (InvalidLoginCredentialException ex) {

@@ -1,5 +1,7 @@
 package oasadministrationpanel;
 
+import ejb.session.stateless.AuctionListingEntityControllerRemote;
+import entity.AuctionListingEntity;
 import entity.EmployeeEntity;
 import java.util.Scanner;
 import util.enumeration.EmployeeAccessRightEnum;
@@ -7,16 +9,17 @@ import util.exception.InvalidAccessRightException;
 
 public class SalesStaffModule {
 
+    private AuctionListingEntityControllerRemote auctionListingEntityControllerRemote;
     private EmployeeEntity currentEmployeeEntity;
+    
 
     public SalesStaffModule() {
     }
 
-    public SalesStaffModule(EmployeeEntity currentEmployeeEntity) {
+    public SalesStaffModule(AuctionListingEntityControllerRemote auctionListingEntityControllerRemote, EmployeeEntity currentEmployeeEntity) {
+        this.auctionListingEntityControllerRemote = auctionListingEntityControllerRemote;
         this.currentEmployeeEntity = currentEmployeeEntity;
     }
-    
-    
 
     public void salesStaffMenu() throws InvalidAccessRightException {
         if (currentEmployeeEntity.getAccessRight() != EmployeeAccessRightEnum.SALES) {

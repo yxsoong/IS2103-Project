@@ -1,7 +1,6 @@
 package ejb.session.stateless;
 
 import entity.CreditPackageEntity;
-import entity.EmployeeEntity;
 import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -10,7 +9,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.CreditPackageNotFoundException;
-import util.exception.EmployeeNotFoundException;
 
 @Local(CreditPackageEntityControllerLocal.class)
 @Remote(CreditPackageEntityControllerRemote.class)
@@ -19,9 +17,6 @@ public class CreditPackageEntityController implements CreditPackageEntityControl
 
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
 
     @Override
     public CreditPackageEntity createNewCreditPackage(CreditPackageEntity creditPackageEntity) {
@@ -56,6 +51,7 @@ public class CreditPackageEntityController implements CreditPackageEntityControl
         em.merge(creditPackageEntity);
     }
     
+    @Override
     public void deleteCreditPackage(Long creditPackageId){
         try{
         CreditPackageEntity creditPackageEntity = retrieveCreditPackageById(creditPackageId);

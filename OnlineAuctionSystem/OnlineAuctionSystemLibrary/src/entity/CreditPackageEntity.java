@@ -8,10 +8,12 @@ package entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -26,13 +28,19 @@ public class CreditPackageEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long creditPackageId;
+    @Column(length = 255,nullable = false)
     private String creditPackageName;
+    @Column (nullable = false)
     private BigDecimal price;
+    @Column (nullable = false)
     private BigDecimal numberOfCredits;
+    @Column(nullable = false)
     private Boolean enable;
     @ManyToOne
+    @JoinColumn(nullable = false)
     private EmployeeEntity employeeEntity;
     @OneToMany(mappedBy = "creditPackageEntity")
+    @JoinColumn(nullable = false)
     private List<CreditTransactionEntity> creditTransactionEntities;
 
     public CreditPackageEntity() {

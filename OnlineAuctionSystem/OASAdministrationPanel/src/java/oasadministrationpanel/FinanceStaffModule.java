@@ -19,8 +19,9 @@ public class FinanceStaffModule {
     public FinanceStaffModule() {
     }
 
-    public FinanceStaffModule(EmployeeEntity currentEmployeeEntity) {
+    public FinanceStaffModule(CreditPackageEntityControllerRemote creditPackageEntityControllerRemote, EmployeeEntity currentEmployeeEntity) {
         this.currentEmployeeEntity = currentEmployeeEntity;
+        this.creditPackageEntityControllerRemote = creditPackageEntityControllerRemote;
     }
 
     public void financeStaffMenu() throws InvalidAccessRightException {
@@ -118,50 +119,54 @@ public class FinanceStaffModule {
 
         Long creditPackageId = new Long(-1);
 
-        do {
-            System.out.print("Enter Credit Package ID> ");
-            try {
-                creditPackageId = Long.parseLong(sc.next());
-            } catch (NumberFormatException ex) {
-                System.out.println("Please enter numeric values.");
-            }
-        } while (creditPackageId.equals(-1));
-
         try {
-            CreditPackageEntity creditPackageEntity = creditPackageEntityControllerRemote.retrieveCreditPackageById(creditPackageId);
-            System.out.println("Credit Package ID\tCredit Package Name\tPrice\tNumber of Credits\tEnable");
-            System.out.println(creditPackageEntity.getCreditPackageId().toString() + "\t\t" + creditPackageEntity.getCreditPackageName() + "\t\t" + creditPackageEntity.getPrice() + "\t\t" + creditPackageEntity.getNumberOfCredits() + "\t\t" + creditPackageEntity.getEnable());
-            System.out.println("------------------------");
-            System.out.println("1: Update Credit Package");
-            System.out.println("2: Delete Credit Package");
-            System.out.println("3: Back\n");
-            System.out.print("> ");
-            Integer response = 0;
-
-            while (true) {
+            do {
+                System.out.print("Enter Credit Package ID> ");
                 try {
-                    response = Integer.parseInt(sc.next());
+                    creditPackageId = Long.parseLong(sc.next());
                 } catch (NumberFormatException ex) {
-                    System.out.println("Please enter numeric values.\n");
-                    continue;
+                    System.out.println("Please enter numeric values.");
+                }
+            } while (creditPackageId.equals(-1));
+
+            try {
+                CreditPackageEntity creditPackageEntity = creditPackageEntityControllerRemote.retrieveCreditPackageById(creditPackageId);
+                System.out.println("Credit Package ID\tCredit Package Name\tPrice\tNumber of Credits\tEnable");
+                System.out.println("\t" + creditPackageEntity.getCreditPackageId().toString() + "\t\t\t" + creditPackageEntity.getCreditPackageName() + "\t" + creditPackageEntity.getPrice() + "\t\t" + creditPackageEntity.getNumberOfCredits() + "\t\t" + creditPackageEntity.getEnable());
+                System.out.println("------------------------");
+                System.out.println("1: Update Credit Package");
+                System.out.println("2: Delete Credit Package");
+                System.out.println("3: Back\n");
+                System.out.print("> ");
+                Integer response = 0;
+
+                while (true) {
+                    try {
+                        response = Integer.parseInt(sc.next());
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Please enter numeric values.\n");
+                        continue;
+                    }
+
+                    if (response >= 1 && response <= 3) {
+                        break;
+                    } else {
+                        System.out.println("Invalid option, please try again!\n");
+                    }
                 }
 
-                if (response >= 1 && response <= 3) {
-                    break;
-                } else {
-                    System.out.println("Invalid option, please try again!\n");
+                if (response == 1) {
+                    doUpdateCreditPackage(creditPackageEntity);
+                } else if (response == 2) {
+                    doDeleteCreditPackage(creditPackageEntity);
+                } else if (response == 3) {
+                    return;
                 }
-            }
 
-            if (response == 1) {
-                doUpdateCreditPackage(creditPackageEntity);
-            } else if (response == 2) {
-                doDeleteCreditPackage(creditPackageEntity);
-            } else if (response == 3) {
-                return;
+            } catch (CreditPackageNotFoundException ex) {
+                System.out.println(ex);
             }
-
-        } catch (CreditPackageNotFoundException ex) {
+        } catch (NullPointerException ex) {
             System.out.println(ex);
         }
 
@@ -172,11 +177,15 @@ public class FinanceStaffModule {
 
         Scanner sc = new Scanner(System.in);
 
-        List<CreditPackageEntity> creditPackageEntities = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
-        System.out.printf("%8s%20s%20s%15s%20s\n", "Credit Package ID", "Credit Package Name", "Price", "Number of Credits", "Enable");
+        try {
+            List<CreditPackageEntity> creditPackageEntities = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
+            System.out.printf("%20s%23s%8s%20s%8s\n", "Credit Package ID", "Credit Package Name", "Price", "Number of Credits", "Enable");
 
-        for (CreditPackageEntity creditPackageEntity : creditPackageEntities) {
-            System.out.printf("%8s%20s%20s%15s%20s\n", creditPackageEntity.getCreditPackageId().toString(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getPrice().toString(), creditPackageEntity.getNumberOfCredits().toString(), creditPackageEntity.getEnable());
+            for (CreditPackageEntity creditPackageEntity : creditPackageEntities) {
+                System.out.printf("%12s%25s%12s%20s%10s\n", creditPackageEntity.getCreditPackageId().toString(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getPrice().toString(), creditPackageEntity.getNumberOfCredits().toString(), creditPackageEntity.getEnable());
+            }
+        } catch (NullPointerException ex) {
+            System.out.println(ex);
         }
 
         System.out.print("Press any key to continue...> ");
@@ -209,7 +218,7 @@ public class FinanceStaffModule {
         }
 
         System.out.print("Enable Package (Enter Y, N, or blank if no change)> ");
-        sc.next();
+        sc.nextLine(); //Consume enter character
         input = sc.nextLine();
         if (input.equals("Y")) {
             creditPackageEntity.setEnable(true);
@@ -227,7 +236,7 @@ public class FinanceStaffModule {
         Scanner sc = new Scanner(System.in);
         String input;
 
-        System.out.printf("Confirm Delete Credit Package %s %s (Credit Package ID: %d) (Enter 'Y' to Delete)> ", creditPackageEntity.getCreditPackageName(),creditPackageEntity.getCreditPackageId());
+        System.out.printf("Confirm Delete Credit Package %s (Credit Package ID: %d) (Enter 'Y' to Delete)> ", creditPackageEntity.getCreditPackageName(), creditPackageEntity.getCreditPackageId());
         input = sc.nextLine().trim();
 
         if (input.equals("Y")) {
