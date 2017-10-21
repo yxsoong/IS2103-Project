@@ -11,6 +11,7 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import util.exception.AuctionListingNotFoundException;
 
 @Local(AuctionListingEntityControllerLocal.class)
 @Remote(AuctionListingEntityControllerRemote.class)
@@ -20,13 +21,23 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
 
-
     @Override
-    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity){
+    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity) {
         em.persist(auctionListingEntity);
         em.flush();
         em.refresh(auctionListingEntity);
-        
+
         return auctionListingEntity;
+    }
+
+    @Override
+    public AuctionListingEntity retrieveAuctionListingById(Long auctionListingId) throws AuctionListingNotFoundException {
+        AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
+
+        if (auctionListingEntity != null) {
+            return auctionListingEntity;
+        } else {
+            throw new AuctionListingNotFoundException("Auction Listing ID: " + auctionListingId + " does not exist");
+        }
     }
 }

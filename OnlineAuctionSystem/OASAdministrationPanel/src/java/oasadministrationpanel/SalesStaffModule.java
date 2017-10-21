@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Scanner;
 import util.enumeration.EmployeeAccessRightEnum;
+import util.exception.AuctionListingNotFoundException;
 import util.exception.InvalidAccessRightException;
 
 public class SalesStaffModule {
@@ -187,6 +188,61 @@ public class SalesStaffModule {
     }
 
     private void viewAuctionListingDetails() {
+        System.out.println("*** OAS Administration Panel :: Sales Staff :: View Auction Listing Details ***\n");
+        Scanner sc = new Scanner(System.in);
+
+        Long auctionListingId = new Long(-1);
+
+        try {
+            do {
+                System.out.print("Enter Auction Listing ID> ");
+                try {
+                    auctionListingId = Long.parseLong(sc.next());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.");
+                }
+            } while (auctionListingId.equals(-1));
+
+            try {
+                AuctionListingEntity auctionListingEntity = auctionListingEntityControllerRemote.retrieveAuctionListingById(auctionListingId);
+                System.out.println("Auction Listing ID\tItem Name\tStarting Bid Amount\tStart Date Time\tEnd Date Time\tReserve Price\tOpen\tEnabled\tDelivery Address");
+                System.out.println("\t" + auctionListingEntity.getAuctionListingId() + "\t\t" + auctionListingEntity.getItemName() + "\t\t" + auctionListingEntity.getStartingBidAmount() + "\t\t" + auctionListingEntity.getStartDateTime() + "\t\t" + auctionListingEntity.getEndDateTime() + "\t\t" + auctionListingEntity.getReservePrice() + "\t\t" + auctionListingEntity.getOpenListing() + "\t\t" + auctionListingEntity.getDeliveryAddress());
+                System.out.println("------------------------");
+                System.out.println("1: Update Auction Listing");
+                System.out.println("2: Delete Auction Listing");
+                System.out.println("3: Back\n");
+                System.out.print("> ");
+                Integer response = 0;
+
+                while (true) {
+                    try {
+                        response = Integer.parseInt(sc.next());
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Please enter numeric values.\n");
+                        continue;
+                    }
+
+                    if (response >= 1 && response <= 3) {
+                        break;
+                    } else {
+                        System.out.println("Invalid option, please try again!\n");
+                    }
+                }
+
+                if (response == 1) {
+                    doUpdateAuctionListing(auctionListingEntity);
+                } else if (response == 2) {
+                    doDeleteAuctionListing(auctionListingEntity);
+                } else if (response == 3) {
+                    return;
+                }
+
+            } catch (AuctionListingNotFoundException ex) {
+                System.out.println(ex);
+            }
+        } catch (NullPointerException ex) {
+            System.out.println(ex);
+        }
 
     }
 
@@ -196,5 +252,13 @@ public class SalesStaffModule {
 
     private void viewListingsBelowReservePrice() {
 
+    }
+    
+    private void doUpdateAuctionListing(AuctionListingEntity auctionListingEntity){
+        
+    }
+    
+    private void doDeleteAuctionListing(AuctionListingEntity auctionListingEntity){
+        
     }
 }

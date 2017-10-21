@@ -6,9 +6,12 @@
 package ejb.session.stateless;
 
 import entity.AuctionListingEntity;
+import util.exception.AuctionListingNotFoundException;
 
 public interface AuctionListingEntityControllerRemote {
 
     public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity);
+
+    public AuctionListingEntity retrieveAuctionListingById(Long auctionListingId) throws AuctionListingNotFoundException;
 
 }
