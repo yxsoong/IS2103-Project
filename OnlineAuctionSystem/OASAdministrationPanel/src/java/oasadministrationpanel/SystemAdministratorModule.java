@@ -301,7 +301,7 @@ public class SystemAdministratorModule {
             System.out.printf("%8s%20s%20s%15s%20s%20s\n", employeeEntity.getEmployeeID().toString(), employeeEntity.getFirstName(), employeeEntity.getLastName(), employeeEntity.getAccessRight().toString(), employeeEntity.getUsername(), employeeEntity.getPassword());
         }
 
-        System.out.print("Press any key to continue...> ");
+        System.out.print("Press enter to continue...> ");
         sc.nextLine();
     }
 }

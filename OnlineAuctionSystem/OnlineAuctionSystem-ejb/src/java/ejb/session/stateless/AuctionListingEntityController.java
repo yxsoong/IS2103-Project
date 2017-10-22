@@ -6,11 +6,13 @@
 package ejb.session.stateless;
 
 import entity.AuctionListingEntity;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import util.exception.AuctionListingNotFoundException;
 
 @Local(AuctionListingEntityControllerLocal.class)
@@ -39,5 +41,13 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         } else {
             throw new AuctionListingNotFoundException("Auction Listing ID: " + auctionListingId + " does not exist");
         }
+    }
+    
+    @Override
+    public List<AuctionListingEntity> retrieveAllAuctionListings(){
+        Query query = em.createQuery("SELECT a FROM AuctionListingEntity a");
+        List<AuctionListingEntity> auctionListingEntities = query.getResultList();
+        
+        return auctionListingEntities;
     }
 }

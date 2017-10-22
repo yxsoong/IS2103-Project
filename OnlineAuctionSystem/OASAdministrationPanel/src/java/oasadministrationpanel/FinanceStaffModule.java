@@ -188,7 +188,7 @@ public class FinanceStaffModule {
             System.out.println(ex);
         }
 
-        System.out.print("Press any key to continue...> ");
+        System.out.print("Press enter to continue...> ");
         sc.nextLine();
     }
 

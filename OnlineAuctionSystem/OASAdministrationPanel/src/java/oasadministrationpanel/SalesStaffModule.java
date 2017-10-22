@@ -6,6 +6,7 @@ import entity.AuctionListingEntity;
 import entity.EmployeeEntity;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Scanner;
 import util.enumeration.EmployeeAccessRightEnum;
 import util.exception.AuctionListingNotFoundException;
@@ -247,7 +248,19 @@ public class SalesStaffModule {
     }
 
     private void viewAllAuctionListings() {
-
+        Scanner sc = new Scanner(System.in);
+        
+        List<AuctionListingEntity> auctionListingEntities = auctionListingEntityControllerRemote.retrieveAllAuctionListings();
+        
+        System.out.printf("%20s%20s%14s%20s%20s%16s%14s8s\n", "Auction Listing ID", "Item Name", "Starting Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable");
+        for(AuctionListingEntity auctionListingEntity: auctionListingEntities){
+            System.out.printf("\"%20s%20s%14s%20s%20s%12.4f%14s8s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), 
+                    auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getStartDateTime().toString(), 
+                    auctionListingEntity.getEndDateTime().toString(), auctionListingEntity.getReservePrice().toString(), auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled());
+        }
+        
+        System.out.print("Press enter to continue...> ");
+        sc.nextLine();
     }
 
     private void viewListingsBelowReservePrice() {
