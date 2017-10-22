@@ -5,6 +5,7 @@ import entity.AddressEntity;
 import entity.AuctionListingEntity;
 import entity.EmployeeEntity;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
@@ -129,7 +130,7 @@ public class SalesStaffModule {
             month = Integer.parseInt(sDateTime.substring(4, 6).trim());
             day = Integer.parseInt(sDateTime.substring(6, 8).trim());
             hour = Integer.parseInt(sDateTime.substring(8, 10).trim());
-            min = Integer.parseInt(sDateTime.substring(10, 12).trim());
+            min = Integer.parseInt(sDateTime.substring(10).trim());
             startDateTime.clear();
             startDateTime.set(year, month - 1, day, hour, min);
         } while (now.compareTo(startDateTime) > 0);
@@ -207,7 +208,7 @@ public class SalesStaffModule {
             try {
                 AuctionListingEntity auctionListingEntity = auctionListingEntityControllerRemote.retrieveAuctionListingById(auctionListingId);
                 System.out.println("Auction Listing ID\tItem Name\tStarting Bid Amount\tStart Date Time\tEnd Date Time\tReserve Price\tOpen\tEnabled\tDelivery Address");
-                System.out.println("\t" + auctionListingEntity.getAuctionListingId() + "\t\t" + auctionListingEntity.getItemName() + "\t\t" + auctionListingEntity.getStartingBidAmount() + "\t\t" + auctionListingEntity.getStartDateTime() + "\t\t" + auctionListingEntity.getEndDateTime() + "\t\t" + auctionListingEntity.getReservePrice() + "\t\t" + auctionListingEntity.getOpenListing() + "\t\t" + auctionListingEntity.getDeliveryAddress());
+                System.out.println("\t" + auctionListingEntity.getAuctionListingId() + "\t\t" + auctionListingEntity.getItemName() + "\t\t" + auctionListingEntity.getStartingBidAmount() + "\t\t" + auctionListingEntity.getStartDateTime().toString() + "\t\t" + auctionListingEntity.getEndDateTime().toString() + "\t\t" + auctionListingEntity.getReservePrice() + "\t\t" + auctionListingEntity.getOpenListing() + "\t\t" + auctionListingEntity.getDeliveryAddress());
                 System.out.println("------------------------");
                 System.out.println("1: Update Auction Listing");
                 System.out.println("2: Delete Auction Listing");
@@ -252,11 +253,21 @@ public class SalesStaffModule {
         
         List<AuctionListingEntity> auctionListingEntities = auctionListingEntityControllerRemote.retrieveAllAuctionListings();
         
-        System.out.printf("%20s%20s%14s%20s%20s%16s%14s8s\n", "Auction Listing ID", "Item Name", "Starting Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable");
+        System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s%20s\n", "Auction Listing ID", "Item Name", "Starting Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable", "Delivery Address");
         for(AuctionListingEntity auctionListingEntity: auctionListingEntities){
-            System.out.printf("\"%20s%20s%14s%20s%20s%12.4f%14s8s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), 
-                    auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getStartDateTime().toString(), 
-                    auctionListingEntity.getEndDateTime().toString(), auctionListingEntity.getReservePrice(), auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled());
+            String startDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getStartDateTime().getTime());
+            String endDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getEndDateTime().getTime());
+            
+            String deliveryAddress;
+            
+            if(auctionListingEntity.getDeliveryAddress() == null)
+                deliveryAddress = "nil";
+            else
+                deliveryAddress = auctionListingEntity.getDeliveryAddress().getAddressID().toString();
+            
+            System.out.printf("%20s%20s%14s%26s%26s%12.4f%14s%10s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), 
+                    auctionListingEntity.getStartingBidAmount(), startDate, endDate, auctionListingEntity.getReservePrice(), 
+                    auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled(), deliveryAddress);
         }
         
         System.out.print("Press enter to continue...> ");
