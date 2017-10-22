@@ -256,7 +256,7 @@ public class SalesStaffModule {
         for(AuctionListingEntity auctionListingEntity: auctionListingEntities){
             System.out.printf("\"%20s%20s%14s%20s%20s%12.4f%14s8s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), 
                     auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getStartDateTime().toString(), 
-                    auctionListingEntity.getEndDateTime().toString(), auctionListingEntity.getReservePrice().toString(), auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled());
+                    auctionListingEntity.getEndDateTime().toString(), auctionListingEntity.getReservePrice(), auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled());
         }
         
         System.out.print("Press enter to continue...> ");
