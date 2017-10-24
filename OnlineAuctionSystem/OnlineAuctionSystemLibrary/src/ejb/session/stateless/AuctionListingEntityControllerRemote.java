@@ -17,4 +17,6 @@ public interface AuctionListingEntityControllerRemote {
 
     public List<AuctionListingEntity> retrieveAllAuctionListings();
 
+    public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice();
+
 }
