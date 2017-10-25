@@ -127,7 +127,7 @@ public class SystemAdministratorModule {
             isUnique = !employeeEntityControllerRemote.checkUsername(username);
 
             count++;
-        } while (lastName.isEmpty() || !isUnique);
+        } while (username.isEmpty() || !isUnique);
 
         count = 0;
         Boolean samePassword = true;

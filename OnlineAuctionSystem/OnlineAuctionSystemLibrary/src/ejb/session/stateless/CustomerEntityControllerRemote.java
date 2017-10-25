@@ -5,7 +5,14 @@
  */
 package ejb.session.stateless;
 
+import entity.CustomerEntity;
+import util.exception.InvalidLoginCredentialException;
+
 
 public interface CustomerEntityControllerRemote {
-    
+    public CustomerEntity createCustomer(CustomerEntity customerEntity);
+
+    public Boolean checkUsername(String username);
+
+    public CustomerEntity customerLogin(String username, String password) throws InvalidLoginCredentialException;
 }
