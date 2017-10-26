@@ -55,4 +55,9 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
             throw new InvalidLoginCredentialException("Invalid login credential!");
         }
     }
+    
+    @Override
+    public void updateCustomer(CustomerEntity customerEntity){
+        em.merge(customerEntity);
+    }
 }

@@ -77,7 +77,7 @@ public class MainApp {
                 } else if (response == 2) {
                     try {
                         if (doLogin()) {
-                            //mainMenu();
+                            mainMenu();
                         }
                     } catch (InvalidLoginCredentialException ex) {
                         System.out.println("Invalid login credential!\n");
@@ -113,7 +113,7 @@ public class MainApp {
             firstName = sc.nextLine().trim();
             count++;
         } while (firstName.isEmpty());
-        
+
         count = 0;
 
         do {
@@ -124,7 +124,7 @@ public class MainApp {
             lastName = sc.nextLine().trim();
             count++;
         } while (lastName.isEmpty());
-        
+
         count = 0;
 
         do {
@@ -135,7 +135,7 @@ public class MainApp {
             identificationNo = sc.nextLine().trim();
             count++;
         } while (identificationNo.isEmpty());
-        
+
         count = 0;
 
         do {
@@ -146,7 +146,7 @@ public class MainApp {
             phoneNumber = sc.nextLine().trim();
             count++;
         } while (phoneNumber.isEmpty());
-        
+
         count = 0;
         Boolean isUnique = true;
         do {
@@ -166,7 +166,7 @@ public class MainApp {
 
             count++;
         } while (username.isEmpty() || !isUnique);
-        
+
         count = 0;
         Boolean samePassword = true;
         do {
@@ -189,11 +189,11 @@ public class MainApp {
             }
 
         } while (password.isEmpty() || !samePassword);
-        
+
         CustomerEntity newCustomerEntity = new CustomerEntity(firstName, lastName, identificationNo, phoneNumber, credit, isPremium, username, password);
-        
+
         newCustomerEntity = customerEntityControllerRemote.createCustomer(newCustomerEntity);
-        
+
         System.out.println("Account created! " + newCustomerEntity.getCustomerId());
     }
 
@@ -221,7 +221,7 @@ public class MainApp {
             }
         }
     }
-    
+
     private void mainMenu() {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -231,18 +231,19 @@ public class MainApp {
             System.out.println("Welcome " + currentCustomerEntity.getFirstName() + " " + currentCustomerEntity.getLastName() + "\n");
             System.out.println("1: View Profile");
             System.out.println("2: Update Profile");
-            System.out.println("3: View Address Details");
-            System.out.println("4: View All Addresses");
-            System.out.println("5: View Credit Balance");
-            System.out.println("6: View Credit Transaction History");
-            System.out.println("7: Purchase Credit Package");
-            System.out.println("8: Browse All Auction Listing");
-            System.out.println("9. View Auction Listing Details");
-            System.out.println("10: Browse Won Auction Listing");
-            System.out.println("11: Logout\n");
+            System.out.println("3: Create Address");
+            System.out.println("4: View Address Details");
+            System.out.println("5: View All Addresses");
+            System.out.println("6: View Credit Balance");
+            System.out.println("7: View Credit Transaction History");
+            System.out.println("8: Purchase Credit Package");
+            System.out.println("9: Browse All Auction Listing");
+            System.out.println("10. View Auction Listing Details");
+            System.out.println("11: Browse Won Auction Listing");
+            System.out.println("12: Logout\n");
             response = 0;
 
-            while (response < 1 || response > 11) {
+            while (response < 1 || response > 12) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
@@ -250,7 +251,9 @@ public class MainApp {
                 if (response == 1) {
                     viewProfile();
                 } else if (response == 2) {
+                    doUpdateProfile();
                 } else if (response == 3) {
+                    createAddress();
                 } else if (response == 4) {
                 } else if (response == 5) {
                 } else if (response == 6) {
@@ -259,20 +262,81 @@ public class MainApp {
                 } else if (response == 9) {
                 } else if (response == 10) {
                 } else if (response == 11) {
+                } else if (response == 12) {
                     break;
                 } else {
                     System.out.println("Invalid option, please try again!\n");
                 }
             }
 
-            if (response == 11) {
+            if (response == 12) {
                 break;
             }
         }
     }
-    
-    private void viewProfile(){
-        
+
+    private void viewProfile() {
+        Scanner sc = new Scanner(System.in);
+        System.out.printf("%11s%20s%20s%25s%14s%15s%8s%20s%20s\n", "Customer ID", "First Name", "Last Name", "Identification Number", "Phone Number", "Credit Balance", "Premium", "Username", "Password");
+        System.out.printf("%11s%20s%20s%25s%14s%15s%8s%20s%20s\n", currentCustomerEntity.getCustomerId().toString(), currentCustomerEntity.getFirstName(),
+                currentCustomerEntity.getLastName(), currentCustomerEntity.getIdentificationNo(), currentCustomerEntity.getPhoneNumber(),
+                currentCustomerEntity.getCreditBalance().toString(), currentCustomerEntity.getPremium().toString(),
+                currentCustomerEntity.getUsername(), currentCustomerEntity.getPassword());
+        System.out.print("Press enter to continue...");
+        sc.nextLine();
     }
 
+    private void doUpdateProfile() {
+        Scanner sc = new Scanner(System.in);
+        String input;
+
+        System.out.println("*** OAS Administration Panel :: System Administration :: Update Employee ***\n");
+        System.out.print("Enter First Name (blank if no change)> ");
+        input = sc.nextLine().trim();
+        if (input.length() > 0) {
+            currentCustomerEntity.setFirstName(input);
+        }
+
+        System.out.print("Enter Last Name (blank if no change)> ");
+        input = sc.nextLine().trim();
+        if (input.length() > 0) {
+            currentCustomerEntity.setLastName(input);
+        }
+        
+        System.out.print("Enter Phone Number (blank if no change)> ");
+        input = sc.nextLine().trim();
+        if (input.length() > 0) {
+            currentCustomerEntity.setPhoneNumber(input);
+        }
+        
+        // I'm not sure if we should let customer change username
+        /*System.out.print("Enter Username (blank if no change)> ");
+        input = sc.nextLine().trim();
+        if (input.length() > 0) {
+            currentCustomerEntity.setUsername(input);
+        }*/
+
+        while (true) {
+            System.out.print("Enter Password (blank if no change)> ");
+            input = sc.nextLine().trim();
+            if (input.length() > 0) {
+
+                System.out.print("Confirm Password> ");
+                String confirmPassword = sc.nextLine().trim();
+
+                if (input.equals(confirmPassword)) {
+                    currentCustomerEntity.setPassword(input);
+                }
+            } else {
+                break;
+            }
+        }
+
+        customerEntityControllerRemote.updateCustomer(currentCustomerEntity);
+        System.out.println("Profile updated!");
+    }
+
+    private void createAddress() {
+
+    }
 }

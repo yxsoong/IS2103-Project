@@ -15,4 +15,6 @@ public interface CustomerEntityControllerLocal {
     public Boolean checkUsername(String username);
     
     public CustomerEntity customerLogin(String username, String password) throws InvalidLoginCredentialException;
+    
+    public void updateCustomer(CustomerEntity customerEntity);
 }

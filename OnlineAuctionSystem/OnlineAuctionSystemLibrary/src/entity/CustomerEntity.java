@@ -27,16 +27,21 @@ public class CustomerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
+    @Column(nullable = false, length = 255)
     private String firstName;
+    @Column(nullable = false, length = 255)
     private String lastName;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 20)
     private String identificationNo;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 15)
     private String phoneNumber;
+    @Column(precision = 18, scale = 4)
     private BigDecimal creditBalance;
+    @Column(nullable = false)
     private Boolean premium;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 255)
     private String username;
+    @Column(nullable = false, length = 255)
     private String password;
     @OneToMany(mappedBy = "customerEntity")
     private List<AddressEntity> addressEntities;
