@@ -14,6 +14,7 @@ import ejb.session.stateless.CustomerEntityControllerRemote;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
 import java.util.Scanner;
+import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;
 
 /**
@@ -221,6 +222,57 @@ public class MainApp {
         }
     }
     
+    private void mainMenu() {
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+
+        while (true) {
+            System.out.println("*** OAS Administration Panel ***\n");
+            System.out.println("Welcome " + currentCustomerEntity.getFirstName() + " " + currentCustomerEntity.getLastName() + "\n");
+            System.out.println("1: View Profile");
+            System.out.println("2: Update Profile");
+            System.out.println("3: View Address Details");
+            System.out.println("4: View All Addresses");
+            System.out.println("5: View Credit Balance");
+            System.out.println("6: View Credit Transaction History");
+            System.out.println("7: Purchase Credit Package");
+            System.out.println("8: Browse All Auction Listing");
+            System.out.println("9. View Auction Listing Details");
+            System.out.println("10: Browse Won Auction Listing");
+            System.out.println("11: Logout\n");
+            response = 0;
+
+            while (response < 1 || response > 11) {
+                System.out.print("> ");
+
+                response = scanner.nextInt();
+
+                if (response == 1) {
+                    viewProfile();
+                } else if (response == 2) {
+                } else if (response == 3) {
+                } else if (response == 4) {
+                } else if (response == 5) {
+                } else if (response == 6) {
+                } else if (response == 7) {
+                } else if (response == 8) {
+                } else if (response == 9) {
+                } else if (response == 10) {
+                } else if (response == 11) {
+                    break;
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
+                }
+            }
+
+            if (response == 11) {
+                break;
+            }
+        }
+    }
     
+    private void viewProfile(){
+        
+    }
 
 }
