@@ -14,6 +14,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolationException;
 import util.exception.AddressNotFoundException;
 
 /**
@@ -50,6 +51,21 @@ public class AddressEntityController implements AddressEntityControllerRemote, A
             throw new AddressNotFoundException("Address ID: " + addressId + " does not exist");
         }
             
+    }
+    
+    @Override
+    public void updateAddress(AddressEntity addressEntity){
+        em.merge(addressEntity);
+    }
+    
+    @Override
+    public void deleteAddress(Long addressId){
+        AddressEntity addressEntity = em.find(AddressEntity.class, addressId);
+        try{
+            em.remove(addressEntity);
+        } catch(ConstraintViolationException ex){
+            addressEntity.setEnabled(Boolean.FALSE);
+        }
     }
     
 }

@@ -280,7 +280,7 @@ public class SystemAdministratorModule {
         System.out.printf("Confirm Delete Employee %s %s (Employee ID: %d) (Enter 'Y' to Delete)> ", employeeEntity.getFirstName(), employeeEntity.getLastName(), employeeEntity.getEmployeeID());
         input = sc.nextLine().trim();
 
-        if (input.equals("Y")) {
+        if (input.equalsIgnoreCase("Y")) {
             employeeEntityControllerRemote.deleteEmployee(employeeEntity.getEmployeeID());
             System.out.println("Employee deleted successfully!\n");
 

@@ -14,5 +14,9 @@ public interface AddressEntityControllerRemote {
     public AddressEntity createAddress(AddressEntity addressEntity);
 
     public AddressEntity retrieveAddressById(Long addressId, Long customerId) throws AddressNotFoundException;
+
+    public void updateAddress(AddressEntity addressEntity);
+
+    public void deleteAddress(Long addressId);
     
 }

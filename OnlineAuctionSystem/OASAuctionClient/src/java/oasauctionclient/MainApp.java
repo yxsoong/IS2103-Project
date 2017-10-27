@@ -404,12 +404,80 @@ public class MainApp {
             System.out.printf("%11s%40s%20s%20s%20s\n", "Address ID", "Street Address", "Unit Number", "Postal Code", "Enabled");
             System.out.printf("%11s%40s%20s%20s%20s\n", addressEntity.getAddressID().toString(), addressEntity.getStreetAddress(), addressEntity.getUnitNumber(), 
                     addressEntity.getPostalCode(), addressEntity.getEnabled());
+            System.out.println("------------------------");
+            System.out.println("1: Update Address");
+            System.out.println("2: Delete Address");
+            System.out.println("3: Back\n");
+            
+            Integer response = 0;
+            while (true) {
+                try {
+                    response = Integer.parseInt(sc.next());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.\n");
+                    continue;
+                }
+
+                if (response >= 1 && response <= 3) {
+                    break;
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
+                }
+            }
+
+            if (response == 1) {
+                doUpdateAddress(addressEntity);
+            } else if (response == 2) {
+                doDeleteAddress(addressEntity);
+            }
+            
         } catch(AddressNotFoundException ex){
             System.out.println(ex);
         }
         
-        System.out.print("Press enter to continue...");
-        sc.nextLine();
-        System.out.println();
+        
+    }
+    
+    private void doUpdateAddress(AddressEntity addressEntity){
+        Scanner sc = new Scanner(System.in);
+        String input;
+
+        System.out.println("*** OAS Client :: Update Address ***\n");
+        System.out.print("Enter Street Address (blank if no change)> ");
+        input = sc.nextLine().trim();
+        if (input.length() > 0) {
+            addressEntity.setStreetAddress(input);
+        }
+
+        System.out.print("Enter Unit Number (blank if no change)> ");
+        input = sc.nextLine().trim();
+        if (input.length() > 0) {
+            addressEntity.setUnitNumber(input);
+        }
+
+        System.out.print("Enter Postal Code (blank if no change)> ");
+        input = sc.nextLine().trim();
+        if (input.length() > 0) {
+            addressEntity.setPostalCode(input);
+        }
+        
+        addressEntityControllerRemote.updateAddress(addressEntity);
+        System.out.println("Address updated successfully!\n");
+    }
+    
+    private void doDeleteAddress(AddressEntity addressEntity){
+        Scanner sc = new Scanner(System.in);
+        String input;
+
+        System.out.println("*** OAS Client Panel :: Delete Address ***\n");
+        System.out.printf("Confirm Delete Address %s %s %s(Address ID: %d) (Enter 'Y' to Delete)> ", addressEntity.getStreetAddress(), addressEntity.getUnitNumber(), addressEntity.getPostalCode(), addressEntity.getAddressID());
+        input = sc.nextLine().trim();
+        
+        if(input.equalsIgnoreCase("Y")){
+            addressEntityControllerRemote.deleteAddress(addressEntity.getAddressID());
+            System.out.println("Address deleted successfully!\n");
+        } else {
+            System.out.println("Address NOT deleted!\n");
+        }
     }
 }
