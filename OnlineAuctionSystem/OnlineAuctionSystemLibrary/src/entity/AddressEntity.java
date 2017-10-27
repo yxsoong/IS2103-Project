@@ -49,7 +49,15 @@ public class AddressEntity implements Serializable {
         this.unitNumber = unitNumber;
         this.postalCode = postalCode;
         this.enabled = enabled;
-    }    
+    }
+
+    public AddressEntity(String streetAddress, String unitNumber, String postalCode, Boolean enabled, CustomerEntity customerEntity) {
+        this.streetAddress = streetAddress;
+        this.unitNumber = unitNumber;
+        this.postalCode = postalCode;
+        this.enabled = enabled;
+        this.customerEntity = customerEntity;
+    }
 
     @Override
     public int hashCode() {
