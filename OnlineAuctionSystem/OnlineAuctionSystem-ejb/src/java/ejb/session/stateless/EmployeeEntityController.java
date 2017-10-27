@@ -106,8 +106,8 @@ public class EmployeeEntityController implements EmployeeEntityControllerRemote,
     @Override
     public void deleteEmployee(Long employeeId){
         try{
-        EmployeeEntity employeeEntity = retrieveEmployeeById(employeeId);
-        em.remove(employeeEntity);
+            EmployeeEntity employeeEntity = retrieveEmployeeById(employeeId);
+            em.remove(employeeEntity);
         } catch (EmployeeNotFoundException ex){
             
         }

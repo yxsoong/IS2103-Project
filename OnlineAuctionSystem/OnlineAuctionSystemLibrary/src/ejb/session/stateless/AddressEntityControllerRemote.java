@@ -5,7 +5,14 @@
  */
 package ejb.session.stateless;
 
+import entity.AddressEntity;
+import util.exception.AddressNotFoundException;
+
 
 public interface AddressEntityControllerRemote {
+
+    public AddressEntity createAddress(AddressEntity addressEntity);
+
+    public AddressEntity retrieveAddressById(Long addressId, Long customerId) throws AddressNotFoundException;
     
 }

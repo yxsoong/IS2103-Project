@@ -5,8 +5,13 @@
  */
 package ejb.session.singleton;
 
+import ejb.session.stateless.AddressEntityControllerLocal;
+import ejb.session.stateless.CustomerEntityControllerLocal;
 import ejb.session.stateless.EmployeeEntityControllerLocal;
+import entity.AddressEntity;
+import entity.CustomerEntity;
 import entity.EmployeeEntity;
+import java.math.BigDecimal;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -25,9 +30,17 @@ import util.exception.EmployeeNotFoundException;
 @LocalBean
 @Startup
 public class DataInitializationSessionBean {
+
+    @EJB
+    private AddressEntityControllerLocal addressEntityControllerLocal;
+
+    @EJB
+    private CustomerEntityControllerLocal customerEntityControllerLocal;
     
     @EJB
     private EmployeeEntityControllerLocal employeeEntityControllerLocal;
+    
+    
 
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
@@ -52,5 +65,9 @@ public class DataInitializationSessionBean {
         employeeEntityControllerLocal.createEmployee(new EmployeeEntity("A", "A", EmployeeAccessRightEnum.SYSADMIN, "admin", "password"));
         employeeEntityControllerLocal.createEmployee(new EmployeeEntity("B", "B", EmployeeAccessRightEnum.FINANCE, "finance", "password"));
         employeeEntityControllerLocal.createEmployee(new EmployeeEntity("C", "C", EmployeeAccessRightEnum.SALES, "sales", "password"));
+        
+        customerEntityControllerLocal.createCustomer(new CustomerEntity("A", "A", "123", "123", BigDecimal.ZERO, Boolean.FALSE, "customer", "password"));
+        
+        addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-10", "111111", Boolean.TRUE));
     }
 }

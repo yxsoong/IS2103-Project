@@ -11,9 +11,11 @@ import ejb.session.stateless.BidEntityControllerRemote;
 import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.CreditTransactionEntityControllerRemote;
 import ejb.session.stateless.CustomerEntityControllerRemote;
+import entity.AddressEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
 import java.util.Scanner;
+import util.exception.AddressNotFoundException;
 import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;
 
@@ -255,6 +257,7 @@ public class MainApp {
                 } else if (response == 3) {
                     createAddress();
                 } else if (response == 4) {
+                    viewAddressDetails();
                 } else if (response == 5) {
                 } else if (response == 6) {
                 } else if (response == 7) {
@@ -290,7 +293,7 @@ public class MainApp {
         Scanner sc = new Scanner(System.in);
         String input;
 
-        System.out.println("*** OAS Administration Panel :: System Administration :: Update Employee ***\n");
+        System.out.println("*** OAS Client :: Update Profile ***\n");
         System.out.print("Enter First Name (blank if no change)> ");
         input = sc.nextLine().trim();
         if (input.length() > 0) {
@@ -337,6 +340,76 @@ public class MainApp {
     }
 
     private void createAddress() {
+        System.out.println("*** OAS Client :: Create Address ***\n");
+        Scanner sc = new Scanner(System.in);
+        
+        String streetAddress, unitNumber, postalCode;
+        Boolean enabled = true;
 
+        int count = 0;
+
+        do {
+            if (count > 0) {
+                System.out.println("Street address cannot be empty!\n");
+            }
+            System.out.print("Enter street address> ");
+            streetAddress = sc.nextLine().trim();
+            count++;
+        } while (streetAddress.isEmpty());
+
+        count = 0;
+
+        do {
+            if (count > 0) {
+                System.out.println("Unit number cannot be empty!\n");
+            }
+            System.out.print("Enter Unit number> ");
+            unitNumber = sc.nextLine().trim();
+            count++;
+        } while (unitNumber.isEmpty());
+
+        count = 0;
+
+        do {
+            if (count > 0) {
+                System.out.println("Postal code cannot be empty!\n");
+            }
+            System.out.print("Enter postal code> ");
+            postalCode = sc.nextLine().trim();
+            count++;
+        } while (postalCode.isEmpty());
+        
+        System.out.println();
+
+        AddressEntity addressEntity = new AddressEntity(streetAddress, unitNumber, postalCode, enabled);
+        addressEntity.setCustomerEntity(currentCustomerEntity);
+        
+        addressEntity = addressEntityControllerRemote.createAddress(addressEntity);
+        
+        System.out.println("Address created! Address ID: " + addressEntity.getAddressID());
+        
+    }
+    
+    private void viewAddressDetails() {
+        System.out.println("*** OAS Client :: View Address Details ***\n");
+        Scanner sc = new Scanner(System.in);
+        
+        System.out.print("Enter Address ID> ");
+        Long addressId = sc.nextLong();
+        sc.nextLine(); //consume the enter character
+        
+        try{
+            AddressEntity addressEntity = addressEntityControllerRemote.retrieveAddressById(addressId, currentCustomerEntity.getCustomerId());
+            
+            System.out.printf("%11s%40s%20s%20s%20s\n", "Address ID", "Street Address", "Unit Number", "Postal Code", "Enabled");
+            System.out.printf("%11s%40s%20s%20s%20s\n", addressEntity.getAddressID().toString(), addressEntity.getStreetAddress(), addressEntity.getUnitNumber(), 
+                    addressEntity.getPostalCode(), addressEntity.getEnabled());
+        } catch(AddressNotFoundException ex){
+            System.out.println(ex);
+        }
+        
+        System.out.print("Press enter to continue...");
+        sc.nextLine();
+        System.out.println();
     }
 }

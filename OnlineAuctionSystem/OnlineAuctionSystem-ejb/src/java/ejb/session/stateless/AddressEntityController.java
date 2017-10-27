@@ -5,11 +5,16 @@
  */
 package ejb.session.stateless;
 
+import entity.AddressEntity;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import util.exception.AddressNotFoundException;
 
 /**
  *
@@ -22,9 +27,29 @@ public class AddressEntityController implements AddressEntityControllerRemote, A
 
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
-
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    
+    @Override
+    public AddressEntity createAddress(AddressEntity addressEntity){
+        em.persist(addressEntity);
+        em.flush();
+        em.refresh(addressEntity);
+        
+        return addressEntity;
+    }
+    
+    @Override
+    public AddressEntity retrieveAddressById(Long addressId, Long customerId) throws AddressNotFoundException{
+        Query query = em.createQuery("SELECT a FROM AddressEntity a WHERE a.addressID = :inAddressId AND a.customerEntity.customerId = :inCustomerId");
+        query.setParameter("inAddressId", addressId);
+        query.setParameter("inCustomerId", customerId);
+        
+        try{
+            AddressEntity addressEntity = (AddressEntity) query.getSingleResult();
+            return addressEntity;
+        } catch(NonUniqueResultException | NoResultException ex){
+            throw new AddressNotFoundException("Address ID: " + addressId + " does not exist");
+        }
+            
+    }
     
 }
