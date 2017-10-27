@@ -382,9 +382,12 @@ public class MainApp {
         System.out.println();
 
         AddressEntity addressEntity = new AddressEntity(streetAddress, unitNumber, postalCode, enabled);
-        addressEntity.setCustomerEntity(currentCustomerEntity);
-        
+
         addressEntity = addressEntityControllerRemote.createAddress(addressEntity);
+        
+        currentCustomerEntity.getAddressEntities().add(addressEntity);
+        
+        customerEntityControllerRemote.updateCustomer(currentCustomerEntity);
         
         System.out.println("Address created! Address ID: " + addressEntity.getAddressID());
         

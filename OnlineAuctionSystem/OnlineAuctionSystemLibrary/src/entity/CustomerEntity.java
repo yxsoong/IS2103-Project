@@ -43,7 +43,7 @@ public class CustomerEntity implements Serializable {
     private String username;
     @Column(nullable = false, length = 255)
     private String password;
-    @OneToMany(mappedBy = "customerEntity")
+    @OneToMany
     private List<AddressEntity> addressEntities;
     @OneToMany(mappedBy = "customerEntity")
     private List<CreditTransactionEntity> creditTransactions;
@@ -52,6 +52,8 @@ public class CustomerEntity implements Serializable {
 
     public CustomerEntity() {
         addressEntities = new ArrayList<>();
+        creditTransactions = new ArrayList<>();
+        bidEntities = new ArrayList<>();
     }
 
     public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, Boolean premium, String username, String password) {

@@ -42,6 +42,13 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
 
         return count > 0;
     }
+    
+    @Override
+    public CustomerEntity retrieveCustomerById(Long id){
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, id);
+        
+        return customerEntity;
+    }
 
     @Override
     public CustomerEntity customerLogin(String username, String password) throws InvalidLoginCredentialException {
@@ -50,7 +57,9 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
         query.setParameter("inPassword", password);
        
         try{
-            return (CustomerEntity)query.getSingleResult();
+            CustomerEntity customerEntity = (CustomerEntity)query.getSingleResult();
+            customerEntity.getAddressEntities().size();
+            return customerEntity;
         } catch(NoResultException | NonUniqueResultException ex){
             throw new InvalidLoginCredentialException("Invalid login credential!");
         }

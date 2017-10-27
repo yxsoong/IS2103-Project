@@ -68,6 +68,10 @@ public class DataInitializationSessionBean {
         
         CustomerEntity customerEntity = customerEntityControllerLocal.createCustomer(new CustomerEntity("A", "A", "123", "123", BigDecimal.ZERO, Boolean.FALSE, "customer", "password"));
         
-        addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-10", "111111", Boolean.TRUE, customerEntity));
+        AddressEntity addressEntity1 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-10", "111111", Boolean.TRUE));
+        AddressEntity addressEntity2 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-11", "222222", Boolean.TRUE));
+        
+        customerEntity.getAddressEntities().add(addressEntity1);
+        customerEntity.getAddressEntities().add(addressEntity2);
     }
 }

@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,14 +35,15 @@ public class AddressEntity implements Serializable {
     @Column(nullable = false, length = 10)
     private String postalCode;
     private Boolean enabled;
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private CustomerEntity customerEntity;
+//    @ManyToOne
+//    @JoinColumn(nullable = false)
+//    private CustomerEntity customerEntity;
     @OneToMany(mappedBy = "deliveryAddress")
     @JoinColumn(nullable = true)
     private List<AuctionListingEntity> auctionListingEntities;
     
     public AddressEntity() {
+        auctionListingEntities = new ArrayList<>();
     }
 
     public AddressEntity(String streetAddress, String unitNumber, String postalCode, Boolean enabled) {
@@ -49,14 +51,6 @@ public class AddressEntity implements Serializable {
         this.unitNumber = unitNumber;
         this.postalCode = postalCode;
         this.enabled = enabled;
-    }
-
-    public AddressEntity(String streetAddress, String unitNumber, String postalCode, Boolean enabled, CustomerEntity customerEntity) {
-        this.streetAddress = streetAddress;
-        this.unitNumber = unitNumber;
-        this.postalCode = postalCode;
-        this.enabled = enabled;
-        this.customerEntity = customerEntity;
     }
 
     @Override
@@ -124,13 +118,13 @@ public class AddressEntity implements Serializable {
         this.enabled = enabled;
     }
 
-    public CustomerEntity getCustomerEntity() {
-        return customerEntity;
-    }
-
-    public void setCustomerEntity(CustomerEntity customerEntity) {
-        this.customerEntity = customerEntity;
-    }
+//    public CustomerEntity getCustomerEntity() {
+//        return customerEntity;
+//    }
+//
+//    public void setCustomerEntity(CustomerEntity customerEntity) {
+//        this.customerEntity = customerEntity;
+//    }
 
     public List<AuctionListingEntity> getAuctionListingEntities() {
         return auctionListingEntities;

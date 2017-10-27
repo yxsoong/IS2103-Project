@@ -17,4 +17,6 @@ public interface CustomerEntityControllerLocal {
     public CustomerEntity customerLogin(String username, String password) throws InvalidLoginCredentialException;
     
     public void updateCustomer(CustomerEntity customerEntity);
+
+    public CustomerEntity retrieveCustomerById(Long id);
 }

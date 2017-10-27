@@ -4,11 +4,11 @@
     <jta-data-source>jdbc/onlineAuctionSystem</jta-data-source>
     <class>entity.AddressEntity</class>
     <class>entity.AuctionListingEntity</class>
-    <class>entity.BidEntity</class>
     <class>entity.CreditPackageEntity</class>
     <class>entity.CreditTransactionEntity</class>
     <class>entity.CustomerEntity</class>
     <class>entity.EmployeeEntity</class>
+    <class>entity.BidEntity</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
