@@ -31,6 +31,8 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
         em.refresh(customerEntity);
         
         return customerEntity;
+        
+        // note: need to do catch constaintViolationException
     }
 
     @Override

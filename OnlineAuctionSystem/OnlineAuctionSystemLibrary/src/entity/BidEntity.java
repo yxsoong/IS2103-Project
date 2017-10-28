@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -31,6 +32,7 @@ public class BidEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal bidAmount;
     @Column(nullable = false)
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateTime;
     @Column(nullable = true)
     private Boolean winningBid;

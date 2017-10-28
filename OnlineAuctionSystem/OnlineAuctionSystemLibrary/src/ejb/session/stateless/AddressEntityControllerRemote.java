@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.AddressEntity;
+import java.util.List;
 import util.exception.AddressNotFoundException;
 
 
@@ -18,5 +19,7 @@ public interface AddressEntityControllerRemote {
     public void updateAddress(AddressEntity addressEntity);
 
     public void deleteAddress(Long addressId);
+
+    public List<AddressEntity> retrieveAllAddress(Long customerId) throws AddressNotFoundException;
     
 }

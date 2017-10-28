@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.AddressEntity;
 import entity.CustomerEntity;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -47,23 +48,13 @@ public class AddressEntityController implements AddressEntityControllerRemote, A
     
     @Override
     public AddressEntity retrieveAddressById(Long addressId, Long customerId) throws AddressNotFoundException{
-        //Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.customerId = :inCustomerId");
-//        Query query = em.createQuery("SELECT c FROM CustomerEntity c JOIN c.addressEntities a WHERE a.addressID = :inAddressId AND c.customerId = :inCustomerId");
-//        query.setParameter("inAddressId", addressId);
-//        query.setParameter("inCustomerId", customerId);
+        Query query = em.createQuery("SELECT a FROM CustomerEntity c JOIN c.addressEntities a WHERE c.customerId = :inCustomerId AND a.addressID = :inAddressId");
+        query.setParameter("inCustomerId", customerId);
+        query.setParameter("inAddressId", addressId);
 
         try{
-            CustomerEntity customerEntity = customerEntityControllerLocal.retrieveCustomerById(addressId);
-            for(AddressEntity addressEntity: customerEntity.getAddressEntities()){
-                return addressEntity;
-            }
-
-            
-            throw new AddressNotFoundException("Address ID: " + addressId + " does not exist");
-            //AddressEntity addressEntity = (AddressEntity) query.getSingleResult();
-            
+            return (AddressEntity) query.getSingleResult();
         } catch(NonUniqueResultException | NoResultException ex){
-            System.out.println("Customer ID: " + customerId + " does not exist");
             throw new AddressNotFoundException("Address ID: " + addressId + " does not exist");
         }
             
@@ -82,6 +73,19 @@ public class AddressEntityController implements AddressEntityControllerRemote, A
         } catch(ConstraintViolationException ex){
             addressEntity.setEnabled(Boolean.FALSE);
         }
+    }
+    
+    @Override
+    public List<AddressEntity> retrieveAllAddress(Long customerId) throws AddressNotFoundException{
+        Query query = em.createQuery("SELECT a FROM CustomerEntity c JOIN c.addressEntities a WHERE c.customerId = :inCustomerId");
+        query.setParameter("inCustomerId", customerId);
+        
+        if(query.getResultList().isEmpty()){
+            throw new AddressNotFoundException("No addresses");
+        }
+        
+        return query.getResultList();
+        
     }
     
 }

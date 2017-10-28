@@ -14,6 +14,7 @@ import ejb.session.stateless.CustomerEntityControllerRemote;
 import entity.AddressEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Scanner;
 import util.exception.AddressNotFoundException;
 import util.exception.InvalidAccessRightException;
@@ -259,6 +260,7 @@ public class MainApp {
                 } else if (response == 4) {
                     viewAddressDetails();
                 } else if (response == 5) {
+                    viewAllAddresses();
                 } else if (response == 6) {
                 } else if (response == 7) {
                 } else if (response == 8) {
@@ -280,11 +282,10 @@ public class MainApp {
 
     private void viewProfile() {
         Scanner sc = new Scanner(System.in);
-        System.out.printf("%11s%20s%20s%25s%14s%15s%8s%20s%20s\n", "Customer ID", "First Name", "Last Name", "Identification Number", "Phone Number", "Credit Balance", "Premium", "Username", "Password");
-        System.out.printf("%11s%20s%20s%25s%14s%15s%8s%20s%20s\n", currentCustomerEntity.getCustomerId().toString(), currentCustomerEntity.getFirstName(),
+        System.out.printf("%11s%20s%20s%25s%14s%8s%20s%20s\n", "Customer ID", "First Name", "Last Name", "Identification Number", "Phone Number", "Premium", "Username", "Password");
+        System.out.printf("%11s%20s%20s%25s%14s%8s%20s%20s\n", currentCustomerEntity.getCustomerId().toString(), currentCustomerEntity.getFirstName(),
                 currentCustomerEntity.getLastName(), currentCustomerEntity.getIdentificationNo(), currentCustomerEntity.getPhoneNumber(),
-                currentCustomerEntity.getCreditBalance().toString(), currentCustomerEntity.getPremium().toString(),
-                currentCustomerEntity.getUsername(), currentCustomerEntity.getPassword());
+                currentCustomerEntity.getPremium().toString(), currentCustomerEntity.getUsername(), currentCustomerEntity.getPassword());
         System.out.print("Press enter to continue...");
         sc.nextLine();
     }
@@ -305,20 +306,19 @@ public class MainApp {
         if (input.length() > 0) {
             currentCustomerEntity.setLastName(input);
         }
-        
+
         System.out.print("Enter Phone Number (blank if no change)> ");
         input = sc.nextLine().trim();
         if (input.length() > 0) {
             currentCustomerEntity.setPhoneNumber(input);
         }
-        
+
         // I'm not sure if we should let customer change username
         /*System.out.print("Enter Username (blank if no change)> ");
         input = sc.nextLine().trim();
         if (input.length() > 0) {
             currentCustomerEntity.setUsername(input);
         }*/
-
         while (true) {
             System.out.print("Enter Password (blank if no change)> ");
             input = sc.nextLine().trim();
@@ -342,7 +342,7 @@ public class MainApp {
     private void createAddress() {
         System.out.println("*** OAS Client :: Create Address ***\n");
         Scanner sc = new Scanner(System.in);
-        
+
         String streetAddress, unitNumber, postalCode;
         Boolean enabled = true;
 
@@ -378,40 +378,40 @@ public class MainApp {
             postalCode = sc.nextLine().trim();
             count++;
         } while (postalCode.isEmpty());
-        
+
         System.out.println();
 
         AddressEntity addressEntity = new AddressEntity(streetAddress, unitNumber, postalCode, enabled);
 
         addressEntity = addressEntityControllerRemote.createAddress(addressEntity);
-        
+
         currentCustomerEntity.getAddressEntities().add(addressEntity);
-        
+
         customerEntityControllerRemote.updateCustomer(currentCustomerEntity);
-        
+
         System.out.println("Address created! Address ID: " + addressEntity.getAddressID());
-        
+
     }
-    
+
     private void viewAddressDetails() {
         System.out.println("*** OAS Client :: View Address Details ***\n");
         Scanner sc = new Scanner(System.in);
-        
+
         System.out.print("Enter Address ID> ");
         Long addressId = sc.nextLong();
         sc.nextLine(); //consume the enter character
-        
-        try{
+
+        try {
             AddressEntity addressEntity = addressEntityControllerRemote.retrieveAddressById(addressId, currentCustomerEntity.getCustomerId());
-            
+
             System.out.printf("%11s%40s%20s%20s%20s\n", "Address ID", "Street Address", "Unit Number", "Postal Code", "Enabled");
-            System.out.printf("%11s%40s%20s%20s%20s\n", addressEntity.getAddressID().toString(), addressEntity.getStreetAddress(), addressEntity.getUnitNumber(), 
+            System.out.printf("%11s%40s%20s%20s%20s\n", addressEntity.getAddressID().toString(), addressEntity.getStreetAddress(), addressEntity.getUnitNumber(),
                     addressEntity.getPostalCode(), addressEntity.getEnabled());
             System.out.println("------------------------");
             System.out.println("1: Update Address");
             System.out.println("2: Delete Address");
             System.out.println("3: Back\n");
-            
+
             Integer response = 0;
             while (true) {
                 try {
@@ -433,15 +433,16 @@ public class MainApp {
             } else if (response == 2) {
                 doDeleteAddress(addressEntity);
             }
-            
-        } catch(AddressNotFoundException ex){
-            System.out.println(ex);
+
+        } catch (AddressNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            System.out.print("Press enter to continue...");
+            sc.nextLine();
         }
-        
-        
+
     }
-    
-    private void doUpdateAddress(AddressEntity addressEntity){
+
+    private void doUpdateAddress(AddressEntity addressEntity) {
         Scanner sc = new Scanner(System.in);
         String input;
 
@@ -463,24 +464,42 @@ public class MainApp {
         if (input.length() > 0) {
             addressEntity.setPostalCode(input);
         }
-        
+
         addressEntityControllerRemote.updateAddress(addressEntity);
         System.out.println("Address updated successfully!\n");
     }
-    
-    private void doDeleteAddress(AddressEntity addressEntity){
+
+    private void doDeleteAddress(AddressEntity addressEntity) {
         Scanner sc = new Scanner(System.in);
         String input;
 
         System.out.println("*** OAS Client Panel :: Delete Address ***\n");
         System.out.printf("Confirm Delete Address %s %s %s(Address ID: %d) (Enter 'Y' to Delete)> ", addressEntity.getStreetAddress(), addressEntity.getUnitNumber(), addressEntity.getPostalCode(), addressEntity.getAddressID());
         input = sc.nextLine().trim();
-        
-        if(input.equalsIgnoreCase("Y")){
+
+        if (input.equalsIgnoreCase("Y")) {
             addressEntityControllerRemote.deleteAddress(addressEntity.getAddressID());
             System.out.println("Address deleted successfully!\n");
         } else {
             System.out.println("Address NOT deleted!\n");
         }
+    }
+
+    private void viewAllAddresses() {
+        Scanner sc = new Scanner(System.in);
+        try {
+            List<AddressEntity> addressEntities = addressEntityControllerRemote.retrieveAllAddress(currentCustomerEntity.getCustomerId());
+
+            System.out.printf("%11s%40s%20s%20s%20s\n", "Address ID", "Street Address", "Unit Number", "Postal Code", "Enabled");
+            for (AddressEntity addressEntity : addressEntities) {
+                System.out.printf("%11s%40s%20s%20s%20s\n", addressEntity.getAddressID().toString(), addressEntity.getStreetAddress(), addressEntity.getUnitNumber(),
+                        addressEntity.getPostalCode(), addressEntity.getEnabled());
+            }
+        } catch (AddressNotFoundException ex) {
+            System.out.println("No addresses found.");
+        }
+
+        System.out.print("Press enter to continue...");
+        sc.nextLine();
     }
 }
