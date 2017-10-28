@@ -37,6 +37,8 @@ public class CustomerEntity implements Serializable {
     private String phoneNumber;
     @Column(precision = 18, scale = 4)
     private BigDecimal creditBalance;
+    @Column(precision = 18, scale = 4)
+    private BigDecimal holdingBalance;
     @Column(nullable = false)
     private Boolean premium;
     @Column(unique = true, nullable = false, length = 255)
@@ -56,16 +58,19 @@ public class CustomerEntity implements Serializable {
         bidEntities = new ArrayList<>();
     }
 
-    public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, Boolean premium, String username, String password) {
+    public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, BigDecimal holdingBalance, Boolean premium, String username, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.identificationNo = identificationNo;
         this.phoneNumber = phoneNumber;
         this.creditBalance = creditBalance;
+        this.holdingBalance = holdingBalance;
         this.premium = premium;
         this.username = username;
         this.password = password;
     }
+
+    
 
 
     @Override
@@ -139,6 +144,14 @@ public class CustomerEntity implements Serializable {
 
     public void setCreditBalance(BigDecimal creditBalance) {
         this.creditBalance = creditBalance;
+    }
+
+    public BigDecimal getHoldingBalance() {
+        return holdingBalance;
+    }
+
+    public void setHoldingBalance(BigDecimal holdingBalance) {
+        this.holdingBalance = holdingBalance;
     }
 
     public Boolean getPremium() {

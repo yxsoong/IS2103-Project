@@ -66,7 +66,7 @@ public class DataInitializationSessionBean {
         employeeEntityControllerLocal.createEmployee(new EmployeeEntity("B", "B", EmployeeAccessRightEnum.FINANCE, "finance", "password"));
         employeeEntityControllerLocal.createEmployee(new EmployeeEntity("C", "C", EmployeeAccessRightEnum.SALES, "sales", "password"));
         
-        CustomerEntity customerEntity = customerEntityControllerLocal.createCustomer(new CustomerEntity("A", "A", "123", "123", BigDecimal.ZERO, Boolean.FALSE, "customer", "password"));
+        CustomerEntity customerEntity = customerEntityControllerLocal.createCustomer(new CustomerEntity("A", "A", "123", "123", BigDecimal.ZERO, BigDecimal.ZERO, Boolean.FALSE, "customer", "password"));
         
         AddressEntity addressEntity1 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-10", "111111", Boolean.TRUE));
         AddressEntity addressEntity2 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-11", "222222", Boolean.TRUE));

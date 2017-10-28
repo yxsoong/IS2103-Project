@@ -105,7 +105,7 @@ public class MainApp {
 
         String firstName, lastName, identificationNo, phoneNumber, username, password;
         Boolean isPremium = false;
-        BigDecimal credit = BigDecimal.ZERO;
+        BigDecimal creditBalance = BigDecimal.ZERO, holdingBalance = BigDecimal.ZERO;
         int count = 0;
 
         do {
@@ -193,7 +193,7 @@ public class MainApp {
 
         } while (password.isEmpty() || !samePassword);
 
-        CustomerEntity newCustomerEntity = new CustomerEntity(firstName, lastName, identificationNo, phoneNumber, credit, isPremium, username, password);
+        CustomerEntity newCustomerEntity = new CustomerEntity(firstName, lastName, identificationNo, phoneNumber, creditBalance, holdingBalance, isPremium, username, password);
 
         newCustomerEntity = customerEntityControllerRemote.createCustomer(newCustomerEntity);
 
@@ -262,6 +262,7 @@ public class MainApp {
                 } else if (response == 5) {
                     viewAllAddresses();
                 } else if (response == 6) {
+                    viewCreditBalance();
                 } else if (response == 7) {
                 } else if (response == 8) {
                 } else if (response == 9) {
@@ -498,6 +499,20 @@ public class MainApp {
         } catch (AddressNotFoundException ex) {
             System.out.println("No addresses found.");
         }
+
+        System.out.print("Press enter to continue...");
+        sc.nextLine();
+    }
+    
+    private void viewCreditBalance() {
+        Scanner sc = new Scanner(System.in);
+        
+        BigDecimal creditBalance = currentCustomerEntity.getCreditBalance();
+        BigDecimal holdingBalance = currentCustomerEntity.getHoldingBalance();
+        
+        System.out.println("Credit balance: " + creditBalance);
+        System.out.println("Holding balance: " + holdingBalance);
+        System.out.println("Available balance: " + creditBalance.subtract(holdingBalance) + "\n");
 
         System.out.print("Press enter to continue...");
         sc.nextLine();
