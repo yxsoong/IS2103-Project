@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,8 +33,8 @@ public class BidEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal bidAmount;
     @Column(nullable = false)
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateTime;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Calendar dateTime;
     @Column(nullable = true)
     private Boolean winningBid;
     @OneToOne
@@ -47,7 +48,7 @@ public class BidEntity implements Serializable {
     public BidEntity() {
     }
 
-    public BidEntity(BigDecimal bidAmount, Date dateTime) {
+    public BidEntity(BigDecimal bidAmount, Calendar dateTime) {
         this.bidAmount = bidAmount;
         this.dateTime = dateTime;
     }
@@ -108,14 +109,14 @@ public class BidEntity implements Serializable {
     /**
      * @return the dateTime
      */
-    public Date getDateTime() {
+    public Calendar getDateTime() {
         return dateTime;
     }
 
     /**
      * @param dateTime the dateTime to set
      */
-    public void setDateTime(Date dateTime) {
+    public void setDateTime(Calendar dateTime) {
         this.dateTime = dateTime;
     }
 
