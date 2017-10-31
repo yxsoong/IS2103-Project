@@ -5,11 +5,14 @@
  */
 package ejb.session.stateless;
 
+import entity.CreditTransactionEntity;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 @Local(CreditTransactionEntityControllerLocal.class)
 @Remote(CreditTransactionEntityControllerRemote.class)
@@ -19,6 +22,11 @@ public class CreditTransactionEntityController implements CreditTransactionEntit
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @Override
+    public List<CreditTransactionEntity> retrieveCreditTransactions(Long customerId){
+        Query query = em.createQuery("SELECT t FROM CreditTransactionEntity t WHERE t.customerEntity.customerId = :inCustomerId");
+        query.setParameter("inCustomerId", customerId);
+        
+        return query.getResultList();
+    } 
 }

@@ -5,7 +5,10 @@
  */
 package ejb.session.stateless;
 
+import entity.CreditTransactionEntity;
+import java.util.List;
+
 
 public interface CreditTransactionEntityControllerLocal {
-    
+    public List<CreditTransactionEntity> retrieveCreditTransactions(Long customerId);
 }

@@ -12,6 +12,7 @@ import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.CreditTransactionEntityControllerRemote;
 import ejb.session.stateless.CustomerEntityControllerRemote;
 import entity.AddressEntity;
+import entity.CreditTransactionEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
 import java.util.List;
@@ -264,7 +265,9 @@ public class MainApp {
                 } else if (response == 6) {
                     viewCreditBalance();
                 } else if (response == 7) {
+                    viewCreditTransactionHistory();
                 } else if (response == 8) {
+                    purchaseCreditPacakge();
                 } else if (response == 9) {
                 } else if (response == 10) {
                 } else if (response == 11) {
@@ -517,4 +520,18 @@ public class MainApp {
         System.out.print("Press enter to continue...");
         sc.nextLine();
     }
+    
+    private void viewCreditTransactionHistory(){
+        Scanner sc = new Scanner(System.in);
+        List<CreditTransactionEntity> creditTransactionEntities = creditTransactionEntityControllerRemote.retrieveCreditTransactions(currentCustomerEntity.getCustomerId());
+        
+        for(CreditTransactionEntity creditTransactionEntity: creditTransactionEntities){
+            //fill in the printf here
+        }
+    }
+    
+    private void purchaseCreditPacakge(){
+        Scanner sc = new Scanner(System.in);
+    }
+    
 }
