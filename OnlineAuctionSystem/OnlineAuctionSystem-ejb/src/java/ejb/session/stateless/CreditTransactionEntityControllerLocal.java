@@ -10,5 +10,7 @@ import java.util.List;
 
 
 public interface CreditTransactionEntityControllerLocal {
+    public CreditTransactionEntity createCreditTransactionEntity(CreditTransactionEntity creditTransactionEntity);
+    
     public List<CreditTransactionEntity> retrieveCreditTransactions(Long customerId);
 }

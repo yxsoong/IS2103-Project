@@ -21,6 +21,15 @@ public class CreditTransactionEntityController implements CreditTransactionEntit
 
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
+    
+    @Override
+    public CreditTransactionEntity createCreditTransactionEntity(CreditTransactionEntity creditTransactionEntity){
+        em.persist(creditTransactionEntity);
+        em.flush();
+        em.refresh(creditTransactionEntity);
+        
+        return creditTransactionEntity;
+    }
 
     @Override
     public List<CreditTransactionEntity> retrieveCreditTransactions(Long customerId){

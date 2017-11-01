@@ -7,12 +7,14 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import util.enumeration.CreditTransactionTypeEnum;
 
@@ -27,12 +29,16 @@ public class CreditTransactionEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long creditPackageTransactionId;
+    @Column(precision = 18, scale = 4, nullable = false)
     private BigDecimal numberOfCredits;
     @Enumerated(EnumType.STRING)
+    @Column (nullable = false)
     private CreditTransactionTypeEnum transactionType;
     @ManyToOne
+    @JoinColumn(nullable = false)
     private CustomerEntity customerEntity;
     @ManyToOne
+    @JoinColumn(nullable = true)
     private CreditPackageEntity creditPackageEntity;
 
     public CreditTransactionEntity() {

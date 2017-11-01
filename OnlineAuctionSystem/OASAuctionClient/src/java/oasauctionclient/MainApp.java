@@ -525,9 +525,13 @@ public class MainApp {
         Scanner sc = new Scanner(System.in);
         List<CreditTransactionEntity> creditTransactionEntities = creditTransactionEntityControllerRemote.retrieveCreditTransactions(currentCustomerEntity.getCustomerId());
         
+        System.out.printf("%20s%10s%20s\n", "Transaction Id", "Credits", "Transaction Type");
         for(CreditTransactionEntity creditTransactionEntity: creditTransactionEntities){
-            //fill in the printf here
+            System.out.printf("%20s%10s%20s\n", creditTransactionEntity.getCreditPackageTransactionId(), creditTransactionEntity.getNumberOfCredits(), creditTransactionEntity.getTransactionType());
         }
+        
+        System.out.println("Press enter to continue...");
+        sc.nextLine();
     }
     
     private void purchaseCreditPacakge(){

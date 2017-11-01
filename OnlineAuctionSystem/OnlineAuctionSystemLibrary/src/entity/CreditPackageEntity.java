@@ -30,9 +30,9 @@ public class CreditPackageEntity implements Serializable {
     private Long creditPackageId;
     @Column(length = 255,nullable = false)
     private String creditPackageName;
-    @Column (nullable = false)
+    @Column (nullable = false, precision = 18, scale = 2)
     private BigDecimal price;
-    @Column (nullable = false)
+    @Column (nullable = false, precision = 18, scale = 4)
     private BigDecimal numberOfCredits;
     @Column(nullable = false)
     private Boolean enabled;
@@ -40,7 +40,7 @@ public class CreditPackageEntity implements Serializable {
     @JoinColumn(nullable = false)
     private EmployeeEntity employeeEntity;
     @OneToMany(mappedBy = "creditPackageEntity")
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = true)
     private List<CreditTransactionEntity> creditTransactionEntities;
 
     public CreditPackageEntity() {
@@ -51,6 +51,14 @@ public class CreditPackageEntity implements Serializable {
         this.price = price;
         this.numberOfCredits = numberOfCredits;
         this.enabled = enabled;
+    }
+    
+    public CreditPackageEntity(String creditPackageName, BigDecimal price, BigDecimal numberOfCredits, Boolean enabled, EmployeeEntity employeeEntity) {
+        this.creditPackageName = creditPackageName;
+        this.price = price;
+        this.numberOfCredits = numberOfCredits;
+        this.enabled = enabled;
+        this.employeeEntity = employeeEntity;
     }
     
     @Override

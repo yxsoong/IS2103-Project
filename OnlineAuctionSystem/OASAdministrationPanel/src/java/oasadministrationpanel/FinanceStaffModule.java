@@ -107,6 +107,8 @@ public class FinanceStaffModule {
         } while (numberOfCredits.compareTo(BigDecimal.ZERO) <= 0);
 
         newCreditPackage = new CreditPackageEntity(creditPackageName, price, numberOfCredits, true);
+        
+        newCreditPackage.setEmployeeEntity(currentEmployeeEntity);
 
         newCreditPackage = creditPackageEntityControllerRemote.createNewCreditPackage(newCreditPackage);
 
