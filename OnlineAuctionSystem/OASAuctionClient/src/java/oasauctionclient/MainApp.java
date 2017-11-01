@@ -12,6 +12,7 @@ import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.CreditTransactionEntityControllerRemote;
 import ejb.session.stateless.CustomerEntityControllerRemote;
 import entity.AddressEntity;
+import entity.CreditPackageEntity;
 import entity.CreditTransactionEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
@@ -536,6 +537,9 @@ public class MainApp {
     
     private void purchaseCreditPacakge(){
         Scanner sc = new Scanner(System.in);
+        
+        //need to edit. should only retrieve the enabled ones
+        List<CreditPackageEntity> creditPackageEntities = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
     }
     
 }
