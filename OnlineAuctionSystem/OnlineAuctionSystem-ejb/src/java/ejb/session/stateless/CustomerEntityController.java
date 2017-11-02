@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.CustomerEntity;
+import java.math.BigDecimal;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -70,5 +71,11 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
     @Override
     public void updateCustomer(CustomerEntity customerEntity){
         em.merge(customerEntity);
+    }
+    
+    @Override
+    public void topUpCredits(Long customerId, BigDecimal amount){
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
+        customerEntity.setCreditBalance(customerEntity.getCreditBalance().add(amount));
     }
 }

@@ -1,13 +1,21 @@
 package ejb.session.stateless;
 
 import entity.CreditPackageEntity;
+import entity.CreditTransactionEntity;
+import entity.CustomerEntity;
+import java.math.BigDecimal;
 import java.util.List;
+import javax.ejb.EJB;
+import javax.ejb.EJBContext;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.CreditTransactionTypeEnum;
 import util.exception.CreditPackageNotFoundException;
 
 @Local(CreditPackageEntityControllerLocal.class)
@@ -15,6 +23,16 @@ import util.exception.CreditPackageNotFoundException;
 @Stateless
 public class CreditPackageEntityController implements CreditPackageEntityControllerRemote, CreditPackageEntityControllerLocal {
 
+    @EJB
+    private CreditTransactionEntityControllerLocal creditTransactionEntityControllerLocal;
+    
+    @EJB
+    private CustomerEntityControllerLocal customerEntityControllerLocal;
+
+    private EJBContext eJBContext;
+    
+    
+    
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
 
@@ -58,6 +76,28 @@ public class CreditPackageEntityController implements CreditPackageEntityControl
         em.remove(creditPackageEntity);
         } catch (CreditPackageNotFoundException ex){
             
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @Override
+    public void purchaseCreditPackage(CreditPackageEntity creditPackageEntity, int quantity, Long customerId){
+        creditPackageEntity = em.merge(creditPackageEntity);
+        CustomerEntity customerEntity = customerEntityControllerLocal.retrieveCustomerById(customerId);
+        
+        try{
+           customerEntityControllerLocal.topUpCredits(customerId, creditPackageEntity.getNumberOfCredits().multiply(BigDecimal.valueOf(quantity)));
+           
+           CreditTransactionEntity creditTransactionEntity = new CreditTransactionEntity(creditPackageEntity.getNumberOfCredits().abs().multiply(BigDecimal.valueOf(quantity)), CreditTransactionTypeEnum.TOPUP);
+           creditTransactionEntity.setCustomerEntity(customerEntity);
+           creditTransactionEntity.setCreditPackageEntity(creditPackageEntity);
+           creditTransactionEntity = creditTransactionEntityControllerLocal.createCreditTransactionEntity(creditTransactionEntity);
+           
+           customerEntity.getCreditTransactions().add(creditTransactionEntity);
+           customerEntityControllerLocal.updateCustomer(customerEntity);
+           
+        } catch(Exception ex){
+            eJBContext.setRollbackOnly();
         }
     }
 }

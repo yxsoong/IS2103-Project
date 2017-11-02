@@ -542,23 +542,24 @@ public class MainApp {
 
         //need to edit. should only retrieve the enabled ones
         List<CreditPackageEntity> creditPackageEntities = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
-        CreditPackageEntity creditPackageEntity;
+        
         int quantityToPurchase;
 
         long[] enabledId = new long[1000];
         int pointer = 0;
         //Print out all enabled credit packages for customer to choose
         System.out.printf("%20s%10s%20s%20s\n", "Credit Package Id", "Credit Package Name", "Number of Credits", "Price");
-        for (CreditPackageEntity creditPackageEntity2 : creditPackageEntities) {
-            if (creditPackageEntity2.getEnabled() == true) {
-                System.out.printf("%20s%10s%20s%20s\n", creditPackageEntity2.getCreditPackageId(), creditPackageEntity2.getCreditPackageName(), creditPackageEntity2.getNumberOfCredits(), creditPackageEntity2.getPrice());
-                enabledId[pointer] = creditPackageEntity2.getCreditPackageId();
+        for (CreditPackageEntity creditPackageEntity : creditPackageEntities) {
+            if (creditPackageEntity.getEnabled() == true) {
+                System.out.printf("%20s%10s%20s%20s\n", creditPackageEntity.getCreditPackageId(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getNumberOfCredits(), creditPackageEntity.getPrice());
+                enabledId[pointer] = creditPackageEntity.getCreditPackageId();
                 pointer++;
             }
         }
 
         Long response = 0L;
-
+        
+        CreditPackageEntity creditPackageEntity;
         //NEED TO ROLLBACK. HOWHOW?
         while (true) {
             System.out.print("Enter Credit Package ID for Purchase> ");
@@ -585,8 +586,13 @@ public class MainApp {
                 quantityToPurchase = sc.nextInt();
 
                 if (quantityToPurchase > 0) {
+                    sc.nextLine(); // consume enter character
                     //call the purchase thing here
+                    creditPackageEntityControllerRemote.purchaseCreditPackage(creditPackageEntity, quantityToPurchase, currentCustomerEntity.getCustomerId());
                     System.out.println(creditPackageEntity.getCreditPackageName() + " purchased successfully!: " + quantityToPurchase + " unit @ " + "\n");
+                    System.out.print("Press enter to continue...");
+                    sc.nextLine();
+                    return;
                 } else {
                     System.out.println("Invalid quantity!\n");
                 }

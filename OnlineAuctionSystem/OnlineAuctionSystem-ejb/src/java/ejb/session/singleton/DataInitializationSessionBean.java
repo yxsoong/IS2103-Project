@@ -91,8 +91,8 @@ public class DataInitializationSessionBean {
         creditPackageEntity.setEmployeeEntity(financeEmployee);
         CreditPackageEntity creditPackageEntity2 = new CreditPackageEntity("Premium Package", BigDecimal.valueOf(300), BigDecimal.valueOf(320), Boolean.TRUE);
         creditPackageEntity2.setEmployeeEntity(financeEmployee);
-        creditPackageEntityControllerLocal.createNewCreditPackage(creditPackageEntity);
-        creditPackageEntityControllerLocal.createNewCreditPackage(creditPackageEntity2);
+        creditPackageEntity = creditPackageEntityControllerLocal.createNewCreditPackage(creditPackageEntity);
+        creditPackageEntity2 = creditPackageEntityControllerLocal.createNewCreditPackage(creditPackageEntity2);
         
         CreditTransactionEntity creditTransactionEntity1 = new CreditTransactionEntity(BigDecimal.valueOf(100), CreditTransactionTypeEnum.TOPUP);
         creditTransactionEntity1.setCreditPackageEntity(creditPackageEntity);
@@ -100,7 +100,7 @@ public class DataInitializationSessionBean {
         creditTransactionEntityControllerLocal.createCreditTransactionEntity(creditTransactionEntity1);
         
         customerEntity.setCreditBalance(customerEntity.getCreditBalance().add(creditTransactionEntity1.getNumberOfCredits()));
-        customerEntityControllerLocal.updateCustomer(customerEntity);
+        //customerEntityControllerLocal.updateCustomer(customerEntity);
         
         CreditTransactionEntity creditTransactionEntity2 = new CreditTransactionEntity(BigDecimal.valueOf(320), CreditTransactionTypeEnum.TOPUP);
         creditTransactionEntity2.setCreditPackageEntity(creditPackageEntity2);
@@ -108,6 +108,8 @@ public class DataInitializationSessionBean {
         creditTransactionEntityControllerLocal.createCreditTransactionEntity(creditTransactionEntity2);
         
         customerEntity.setCreditBalance(customerEntity.getCreditBalance().add(creditTransactionEntity2.getNumberOfCredits()));
-        customerEntityControllerLocal.updateCustomer(customerEntity);
+        //customerEntityControllerLocal.updateCustomer(customerEntity);
+        
+        creditPackageEntity2.getCreditTransactionEntities().add(creditTransactionEntity2);
     }
 }

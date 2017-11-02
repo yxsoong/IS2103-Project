@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.CustomerEntity;
+import java.math.BigDecimal;
 import util.exception.InvalidLoginCredentialException;
 
 
@@ -19,4 +20,6 @@ public interface CustomerEntityControllerLocal {
     public void updateCustomer(CustomerEntity customerEntity);
 
     public CustomerEntity retrieveCustomerById(Long id);
+    
+    public void topUpCredits(Long customerId, BigDecimal amount);
 }

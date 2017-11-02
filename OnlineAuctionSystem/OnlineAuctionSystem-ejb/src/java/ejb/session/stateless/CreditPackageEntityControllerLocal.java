@@ -16,4 +16,5 @@ public interface CreditPackageEntityControllerLocal {
 
     public void deleteCreditPackage(Long creditPackageId);
 
+     public void purchaseCreditPackage(CreditPackageEntity creditPackageEntity, int quantity, Long customerId);
 }
