@@ -18,8 +18,10 @@ import entity.CustomerEntity;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.exception.AddressNotFoundException;
-import util.exception.InvalidAccessRightException;
+import util.exception.CreditPackageNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 
 /**
@@ -507,13 +509,13 @@ public class MainApp {
         System.out.print("Press enter to continue...");
         sc.nextLine();
     }
-    
+
     private void viewCreditBalance() {
         Scanner sc = new Scanner(System.in);
-        
+
         BigDecimal creditBalance = currentCustomerEntity.getCreditBalance();
         BigDecimal holdingBalance = currentCustomerEntity.getHoldingBalance();
-        
+
         System.out.println("Credit balance: " + creditBalance);
         System.out.println("Holding balance: " + holdingBalance);
         System.out.println("Available balance: " + creditBalance.subtract(holdingBalance) + "\n");
@@ -521,25 +523,78 @@ public class MainApp {
         System.out.print("Press enter to continue...");
         sc.nextLine();
     }
-    
-    private void viewCreditTransactionHistory(){
+
+    private void viewCreditTransactionHistory() {
         Scanner sc = new Scanner(System.in);
         List<CreditTransactionEntity> creditTransactionEntities = creditTransactionEntityControllerRemote.retrieveCreditTransactions(currentCustomerEntity.getCustomerId());
-        
+
         System.out.printf("%20s%10s%20s\n", "Transaction Id", "Credits", "Transaction Type");
-        for(CreditTransactionEntity creditTransactionEntity: creditTransactionEntities){
+        for (CreditTransactionEntity creditTransactionEntity : creditTransactionEntities) {
             System.out.printf("%20s%10s%20s\n", creditTransactionEntity.getCreditPackageTransactionId(), creditTransactionEntity.getNumberOfCredits(), creditTransactionEntity.getTransactionType());
         }
-        
+
         System.out.println("Press enter to continue...");
         sc.nextLine();
     }
-    
-    private void purchaseCreditPacakge(){
+
+    private void purchaseCreditPacakge() {
         Scanner sc = new Scanner(System.in);
-        
+
         //need to edit. should only retrieve the enabled ones
         List<CreditPackageEntity> creditPackageEntities = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
+        CreditPackageEntity creditPackageEntity;
+        int quantityToPurchase;
+
+        long[] enabledId = new long[1000];
+        int pointer = 0;
+        //Print out all enabled credit packages for customer to choose
+        System.out.printf("%20s%10s%20s%20s\n", "Credit Package Id", "Credit Package Name", "Number of Credits", "Price");
+        for (CreditPackageEntity creditPackageEntity2 : creditPackageEntities) {
+            if (creditPackageEntity2.getEnabled() == true) {
+                System.out.printf("%20s%10s%20s%20s\n", creditPackageEntity2.getCreditPackageId(), creditPackageEntity2.getCreditPackageName(), creditPackageEntity2.getNumberOfCredits(), creditPackageEntity2.getPrice());
+                enabledId[pointer] = creditPackageEntity2.getCreditPackageId();
+                pointer++;
+            }
+        }
+
+        Long response = 0L;
+
+        //NEED TO ROLLBACK. HOWHOW?
+        while (true) {
+            System.out.print("Enter Credit Package ID for Purchase> ");
+            try {
+                response = Long.parseLong(sc.next());
+            } catch (NumberFormatException ex) {
+                System.out.println("Please enter numeric values.\n");
+                continue;
+            }
+
+            //Check if exist in enabled
+            for (int i = 0; i < enabledId.length; i++) {
+                if (response == enabledId[i]) {
+                    break;
+                }
+                if (i == enabledId.length - 1) {
+                    System.out.println("Invalid option, please try again!\n");
+                }
+            }
+            try {
+                //Time to purchase
+                creditPackageEntity = creditPackageEntityControllerRemote.retrieveCreditPackageById(response);
+                System.out.print("Enter required quantity for " + creditPackageEntity.getCreditPackageName() + "> ");
+                quantityToPurchase = sc.nextInt();
+
+                if (quantityToPurchase > 0) {
+
+                    System.out.println(creditPackageEntity.getCreditPackageName() + " purchased successfully!: " + quantityToPurchase + " unit @ " + "\n");
+                } else {
+                    System.out.println("Invalid quantity!\n");
+                }
+            } catch (CreditPackageNotFoundException ex) {
+                Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }
-    
+
 }
