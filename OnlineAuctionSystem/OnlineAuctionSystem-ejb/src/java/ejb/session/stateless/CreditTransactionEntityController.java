@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.CreditPackageEntity;
 import entity.CreditTransactionEntity;
 import java.util.List;
 import javax.ejb.Local;
@@ -38,4 +39,9 @@ public class CreditTransactionEntityController implements CreditTransactionEntit
         
         return query.getResultList();
     } 
+    
+    public void purchaseCreditPackage(CreditTransactionEntity creditTransactionEntity){
+        //add into transaction before updating customer
+        em.persist(creditTransactionEntity);
+    }
 }

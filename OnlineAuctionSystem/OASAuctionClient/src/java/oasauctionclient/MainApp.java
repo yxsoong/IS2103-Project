@@ -585,7 +585,7 @@ public class MainApp {
                 quantityToPurchase = sc.nextInt();
 
                 if (quantityToPurchase > 0) {
-
+                    //call the purchase thing here
                     System.out.println(creditPackageEntity.getCreditPackageName() + " purchased successfully!: " + quantityToPurchase + " unit @ " + "\n");
                 } else {
                     System.out.println("Invalid quantity!\n");
