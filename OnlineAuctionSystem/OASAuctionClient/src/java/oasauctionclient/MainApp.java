@@ -622,44 +622,63 @@ public class MainApp {
     private void viewAuctionListingDetails() {
         System.out.println("*** OAS Client :: View Auction Listing Details ***\n");
         Scanner sc = new Scanner(System.in);
-        System.out.print("Enter Auction Listing ID> ");
-        int auctionListingId = (int) (sc.nextLong() - 1L);
-        sc.nextLine(); //consume the enter character
+
+        Long auctionListingId = new Long(-1);
+        AuctionListingEntity auctionListingEntity;
 
         try {
-            AuctionListingEntity auctionListingEntity = auctionListingEntityControllerRemote.retrieveAllActiveAuctionListings().get(auctionListingId);
-
-            System.out.printf("%20s%15s%20s%20s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "End Date Time");
-            System.out.printf("%20s%15s%20s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getEndDateTime());
-            System.out.println("------------------------");
-            System.out.println("1: Place New Bid");
-            System.out.println("2: Refresh Auction Listing Bids");
-            System.out.println("3: Back\n");
-
-            Integer response = 0;
-            while (true) {
+            do {
+                System.out.print("Enter Auction Listing ID> ");
                 try {
-                    response = Integer.parseInt(sc.next());
+                    auctionListingId = Long.parseLong(sc.next());
                 } catch (NumberFormatException ex) {
-                    System.out.println("Please enter numeric values.\n");
-                    continue;
+                    System.out.println("Please enter numeric values.");
                 }
+            } while (auctionListingId.equals(-1));
 
-                if (response >= 1 && response <= 3) {
-                    break;
+            try {
+                if (!auctionListingEntityControllerRemote.retrieveAllActiveAuctionListings().isEmpty()) {
+                    auctionListingEntity = auctionListingEntityControllerRemote.retrieveAllActiveAuctionListings().get((int) (auctionListingId - 1L));
                 } else {
-                    System.out.println("Invalid option, please try again!\n");
+                    System.out.println("No Auction Listings Available");
+                    return;
                 }
-            }
+                System.out.printf("%20s%15s%20s%20s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "End Date Time");
+                System.out.printf("%20s%15s%20s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getEndDateTime());
+                System.out.println("------------------------");
+                System.out.println("1: Place New Bid");
+                System.out.println("2: Refresh Auction Listing Bids");
+                System.out.println("3: Back\n");
+                System.out.print("> ");
 
-            if (response == 1) {
-            } else if (response == 2) {
-            }
+                Integer response = 0;
+                while (true) {
+                    try {
+                        response = Integer.parseInt(sc.next());
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Please enter numeric values.\n");
+                        continue;
+                    }
 
-        } catch (AuctionListingNotFoundException ex) {
-            System.out.println(ex.getMessage());
-            System.out.print("Press enter to continue...");
-            sc.nextLine();
+                    if (response >= 1 && response <= 3) {
+                        break;
+                    } else {
+                        System.out.println("Invalid option, please try again!\n");
+                    }
+                }
+
+                if (response == 1) {
+                } else if (response == 2) {
+                } else if (response == 3) {
+                    return;
+                }
+            } catch (AuctionListingNotFoundException ex) {
+                System.out.println(ex.getMessage());
+                System.out.print("Press enter to continue...");
+                sc.nextLine();
+            }
+        } catch (NullPointerException ex) {
+            System.out.println(ex);
         }
     }
 
