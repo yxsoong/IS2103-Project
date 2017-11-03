@@ -19,4 +19,6 @@ public interface AuctionListingEntityControllerRemote {
 
     public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice();
 
+    public List<AuctionListingEntity> retrieveAllActiveAuctionListings() throws AuctionListingNotFoundException;
+
 }

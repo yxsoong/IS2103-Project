@@ -42,20 +42,28 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
             throw new AuctionListingNotFoundException("Auction Listing ID: " + auctionListingId + " does not exist");
         }
     }
-    
+
     @Override
-    public List<AuctionListingEntity> retrieveAllAuctionListings(){
+    public List<AuctionListingEntity> retrieveAllAuctionListings() {
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a");
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
-        
+
         return auctionListingEntities;
     }
-    
+
     @Override
-    public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice(){
+    public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice() {
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.bidEntities.bidAmount < a.reservePrice");
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
-        
+
+        return auctionListingEntities;
+    }
+
+    @Override
+    public List<AuctionListingEntity> retrieveAllActiveAuctionListings() throws AuctionListingNotFoundException {
+        Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.openListing = true");
+        List<AuctionListingEntity> auctionListingEntities = query.getResultList();
+
         return auctionListingEntities;
     }
 }

@@ -12,6 +12,7 @@ import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.CreditTransactionEntityControllerRemote;
 import ejb.session.stateless.CustomerEntityControllerRemote;
 import entity.AddressEntity;
+import entity.AuctionListingEntity;
 import entity.CreditPackageEntity;
 import entity.CreditTransactionEntity;
 import entity.CustomerEntity;
@@ -22,6 +23,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.exception.AddressNotFoundException;
+import util.exception.AuctionListingNotFoundException;
 import util.exception.CreditPackageNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 
@@ -273,7 +275,9 @@ public class MainApp {
                 } else if (response == 8) {
                     purchaseCreditPacakge();
                 } else if (response == 9) {
+                    viewAllAuctionListings();
                 } else if (response == 10) {
+                    viewAuctionListingDetails();
                 } else if (response == 11) {
                 } else if (response == 12) {
                     break;
@@ -543,21 +547,21 @@ public class MainApp {
 
         //need to edit. should only retrieve the enabled ones
         List<CreditPackageEntity> creditPackageEntities = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
-        
+
         int quantityToPurchase;
 
-        HashMap<Long,CreditPackageEntity> enabledPackages = new HashMap();
+        HashMap<Long, CreditPackageEntity> enabledPackages = new HashMap();
         //Print out all enabled credit packages for customer to choose
         System.out.printf("%20s%25s%20s%20s\n", "Credit Package Id", "Credit Package Name", "Number of Credits", "Price");
         for (CreditPackageEntity creditPackageEntity : creditPackageEntities) {
             if (creditPackageEntity.getEnabled() == true) {
                 System.out.printf("%20s%25s%20s%20s\n", creditPackageEntity.getCreditPackageId(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getNumberOfCredits(), creditPackageEntity.getPrice());
-                enabledPackages.put(creditPackageEntity.getCreditPackageId(),creditPackageEntity);
+                enabledPackages.put(creditPackageEntity.getCreditPackageId(), creditPackageEntity);
             }
         }
 
         Long response = 0L;
-        
+
         CreditPackageEntity creditPackageEntity;
         //NEED TO ROLLBACK. HOWHOW?
         while (true) {
@@ -578,16 +582,16 @@ public class MainApp {
                     System.out.println("Invalid option, please try again!\n");
                 }
             }
-            
+
             creditPackageEntity = enabledPackages.get(response);
             System.out.print("Enter required quantity for " + creditPackageEntity.getCreditPackageName() + "> ");
             quantityToPurchase = sc.nextInt();
-            
+
             if (quantityToPurchase > 0) {
                 sc.nextLine(); // consume enter character
                 //call the purchase thing here
                 creditTransactionEntityControllerRemote.purchaseCreditPackage(creditPackageEntity, quantityToPurchase, currentCustomerEntity.getCustomerId());
-                System.out.println(creditPackageEntity.getCreditPackageName() + " purchased successfully!: " + quantityToPurchase + " unit of " + creditPackageEntity.getCreditPackageName() +"\n");
+                System.out.println(creditPackageEntity.getCreditPackageName() + " purchased successfully!: " + quantityToPurchase + " unit of " + creditPackageEntity.getCreditPackageName() + "\n");
                 System.out.print("Press enter to continue...");
                 sc.nextLine();
                 return;
@@ -596,6 +600,67 @@ public class MainApp {
             }
         }
 
+    }
+
+    private void viewAllAuctionListings() {
+        Scanner sc = new Scanner(System.in);
+        try {
+            List<AuctionListingEntity> auctionListingEntities = auctionListingEntityControllerRemote.retrieveAllActiveAuctionListings();
+            System.out.printf("%20s%15s%20s%20s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "End Date Time");
+            for (AuctionListingEntity auctionListingEntity : auctionListingEntities) {
+                if (auctionListingEntity.getEnabled() == true) {
+                    System.out.printf("%20s%15s%20s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getEndDateTime());
+                }
+            }
+        } catch (AuctionListingNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            System.out.print("Press enter to continue...");
+            sc.nextLine();
+        }
+    }
+
+    private void viewAuctionListingDetails() {
+        System.out.println("*** OAS Client :: View Auction Listing Details ***\n");
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter Auction Listing ID> ");
+        int auctionListingId = (int) (sc.nextLong() - 1L);
+        sc.nextLine(); //consume the enter character
+
+        try {
+            AuctionListingEntity auctionListingEntity = auctionListingEntityControllerRemote.retrieveAllActiveAuctionListings().get(auctionListingId);
+
+            System.out.printf("%20s%15s%20s%20s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "End Date Time");
+            System.out.printf("%20s%15s%20s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getEndDateTime());
+            System.out.println("------------------------");
+            System.out.println("1: Place New Bid");
+            System.out.println("2: Refresh Auction Listing Bids");
+            System.out.println("3: Back\n");
+
+            Integer response = 0;
+            while (true) {
+                try {
+                    response = Integer.parseInt(sc.next());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.\n");
+                    continue;
+                }
+
+                if (response >= 1 && response <= 3) {
+                    break;
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
+                }
+            }
+
+            if (response == 1) {
+            } else if (response == 2) {
+            }
+
+        } catch (AuctionListingNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            System.out.print("Press enter to continue...");
+            sc.nextLine();
+        }
     }
 
 }
