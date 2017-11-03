@@ -16,6 +16,7 @@ import entity.CreditPackageEntity;
 import entity.CreditTransactionEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -545,15 +546,13 @@ public class MainApp {
         
         int quantityToPurchase;
 
-        long[] enabledId = new long[1000];
-        int pointer = 0;
+        HashMap<Long,CreditPackageEntity> enabledPackages = new HashMap();
         //Print out all enabled credit packages for customer to choose
-        System.out.printf("%20s%10s%20s%20s\n", "Credit Package Id", "Credit Package Name", "Number of Credits", "Price");
+        System.out.printf("%20s%25s%20s%20s\n", "Credit Package Id", "Credit Package Name", "Number of Credits", "Price");
         for (CreditPackageEntity creditPackageEntity : creditPackageEntities) {
             if (creditPackageEntity.getEnabled() == true) {
-                System.out.printf("%20s%10s%20s%20s\n", creditPackageEntity.getCreditPackageId(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getNumberOfCredits(), creditPackageEntity.getPrice());
-                enabledId[pointer] = creditPackageEntity.getCreditPackageId();
-                pointer++;
+                System.out.printf("%20s%25s%20s%20s\n", creditPackageEntity.getCreditPackageId(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getNumberOfCredits(), creditPackageEntity.getPrice());
+                enabledPackages.put(creditPackageEntity.getCreditPackageId(),creditPackageEntity);
             }
         }
 
@@ -571,33 +570,29 @@ public class MainApp {
             }
 
             //Check if exist in enabled
-            for (int i = 0; i < enabledId.length; i++) {
-                if (response == enabledId[i]) {
+            for (int i = 0; i < enabledPackages.size(); i++) {
+                if (enabledPackages.containsKey(response)) {
                     break;
                 }
-                if (i == enabledId.length - 1) {
+                if (i == enabledPackages.size() - 1) {
                     System.out.println("Invalid option, please try again!\n");
                 }
             }
-            try {
-                //Time to purchase
-                creditPackageEntity = creditPackageEntityControllerRemote.retrieveCreditPackageById(response);
-                System.out.print("Enter required quantity for " + creditPackageEntity.getCreditPackageName() + "> ");
-                quantityToPurchase = sc.nextInt();
-
-                if (quantityToPurchase > 0) {
-                    sc.nextLine(); // consume enter character
-                    //call the purchase thing here
-                    creditTransactionEntityControllerRemote.purchaseCreditPackage(creditPackageEntity, quantityToPurchase, currentCustomerEntity.getCustomerId());
-                    System.out.println(creditPackageEntity.getCreditPackageName() + " purchased successfully!: " + quantityToPurchase + " unit @ " + "\n");
-                    System.out.print("Press enter to continue...");
-                    sc.nextLine();
-                    return;
-                } else {
-                    System.out.println("Invalid quantity!\n");
-                }
-            } catch (CreditPackageNotFoundException ex) {
-                Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+            
+            creditPackageEntity = enabledPackages.get(response);
+            System.out.print("Enter required quantity for " + creditPackageEntity.getCreditPackageName() + "> ");
+            quantityToPurchase = sc.nextInt();
+            
+            if (quantityToPurchase > 0) {
+                sc.nextLine(); // consume enter character
+                //call the purchase thing here
+                creditTransactionEntityControllerRemote.purchaseCreditPackage(creditPackageEntity, quantityToPurchase, currentCustomerEntity.getCustomerId());
+                System.out.println(creditPackageEntity.getCreditPackageName() + " purchased successfully!: " + quantityToPurchase + " unit of " + creditPackageEntity.getCreditPackageName() +"\n");
+                System.out.print("Press enter to continue...");
+                sc.nextLine();
+                return;
+            } else {
+                System.out.println("Invalid quantity!\n");
             }
         }
 

@@ -27,50 +27,48 @@ import util.enumeration.CreditTransactionTypeEnum;
 @Stateless
 public class CreditTransactionEntityController implements CreditTransactionEntityControllerRemote, CreditTransactionEntityControllerLocal {
 
-    
     @EJB
     private CustomerEntityControllerLocal customerEntityControllerLocal;
 
     private EJBContext eJBContext;
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
-    
+
     @Override
-    public CreditTransactionEntity createCreditTransactionEntity(CreditTransactionEntity creditTransactionEntity){
+    public CreditTransactionEntity createCreditTransactionEntity(CreditTransactionEntity creditTransactionEntity) {
         em.persist(creditTransactionEntity);
         em.flush();
         em.refresh(creditTransactionEntity);
-        
+
         return creditTransactionEntity;
     }
 
     @Override
-    public List<CreditTransactionEntity> retrieveCreditTransactions(Long customerId){
+    public List<CreditTransactionEntity> retrieveCreditTransactions(Long customerId) {
         Query query = em.createQuery("SELECT t FROM CreditTransactionEntity t WHERE t.customerEntity.customerId = :inCustomerId");
         query.setParameter("inCustomerId", customerId);
-        
+
         return query.getResultList();
-    } 
-    
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Override
-    public void purchaseCreditPackage(CreditPackageEntity creditPackageEntity, int quantity, Long customerId){
+    public void purchaseCreditPackage(CreditPackageEntity creditPackageEntity, int quantity, Long customerId) {
         creditPackageEntity = em.merge(creditPackageEntity);
         CustomerEntity customerEntity = customerEntityControllerLocal.retrieveCustomerById(customerId);
-        
-        try{
-           CreditTransactionEntity creditTransactionEntity = new CreditTransactionEntity(creditPackageEntity.getNumberOfCredits().abs().multiply(BigDecimal.valueOf(quantity)), CreditTransactionTypeEnum.TOPUP);
-           creditTransactionEntity.setCustomerEntity(customerEntity);
-           creditTransactionEntity.setCreditPackageEntity(creditPackageEntity);
-           creditTransactionEntity = createCreditTransactionEntity(creditTransactionEntity);
-           
-           customerEntityControllerLocal.topUpCredits(customerId, creditPackageEntity.getNumberOfCredits().multiply(BigDecimal.valueOf(quantity)), creditTransactionEntity);
-           
-           creditPackageEntity.getCreditTransactionEntities().add(creditTransactionEntity);
-           //customerEntity.getCreditTransactions().add(creditTransactionEntity);
-           //customerEntityControllerLocal.updateCustomer(customerEntity);
-           
-        } catch(Exception ex){
+        CreditTransactionEntity creditTransactionEntity = new CreditTransactionEntity(creditPackageEntity.getNumberOfCredits().abs().multiply(BigDecimal.valueOf(quantity)), CreditTransactionTypeEnum.TOPUP);
+        creditTransactionEntity.setCustomerEntity(customerEntity);
+        creditTransactionEntity.setCreditPackageEntity(creditPackageEntity);
+        try {
+            creditTransactionEntity = createCreditTransactionEntity(creditTransactionEntity);
+
+            customerEntityControllerLocal.topUpCredits(customerId, creditPackageEntity.getNumberOfCredits().multiply(BigDecimal.valueOf(quantity)), creditTransactionEntity);
+
+            creditPackageEntity.getCreditTransactionEntities().add(creditTransactionEntity);
+            //customerEntity.getCreditTransactions().add(creditTransactionEntity);
+            //customerEntityControllerLocal.updateCustomer(customerEntity);
+
+        } catch (Exception ex) {
             eJBContext.setRollbackOnly();
         }
     }
