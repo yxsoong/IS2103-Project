@@ -588,7 +588,7 @@ public class MainApp {
                 if (quantityToPurchase > 0) {
                     sc.nextLine(); // consume enter character
                     //call the purchase thing here
-                    creditPackageEntityControllerRemote.purchaseCreditPackage(creditPackageEntity, quantityToPurchase, currentCustomerEntity.getCustomerId());
+                    creditTransactionEntityControllerRemote.purchaseCreditPackage(creditPackageEntity, quantityToPurchase, currentCustomerEntity.getCustomerId());
                     System.out.println(creditPackageEntity.getCreditPackageName() + " purchased successfully!: " + quantityToPurchase + " unit @ " + "\n");
                     System.out.print("Press enter to continue...");
                     sc.nextLine();

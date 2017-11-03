@@ -21,6 +21,4 @@ public interface CreditPackageEntityControllerRemote {
 
     public void deleteCreditPackage(Long creditPackageId);
 
-    public void purchaseCreditPackage(CreditPackageEntity creditPackageEntity, int quantity, Long customerId);
-
 }

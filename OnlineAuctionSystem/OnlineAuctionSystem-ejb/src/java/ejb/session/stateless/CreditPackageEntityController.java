@@ -21,17 +21,7 @@ import util.exception.CreditPackageNotFoundException;
 @Local(CreditPackageEntityControllerLocal.class)
 @Remote(CreditPackageEntityControllerRemote.class)
 @Stateless
-public class CreditPackageEntityController implements CreditPackageEntityControllerRemote, CreditPackageEntityControllerLocal {
-
-    @EJB
-    private CreditTransactionEntityControllerLocal creditTransactionEntityControllerLocal;
-    
-    @EJB
-    private CustomerEntityControllerLocal customerEntityControllerLocal;
-
-    private EJBContext eJBContext;
-    
-    
+public class CreditPackageEntityController implements CreditPackageEntityControllerRemote, CreditPackageEntityControllerLocal {  
     
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
@@ -76,28 +66,6 @@ public class CreditPackageEntityController implements CreditPackageEntityControl
         em.remove(creditPackageEntity);
         } catch (CreditPackageNotFoundException ex){
             
-        }
-    }
-    
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    @Override
-    public void purchaseCreditPackage(CreditPackageEntity creditPackageEntity, int quantity, Long customerId){
-        creditPackageEntity = em.merge(creditPackageEntity);
-        CustomerEntity customerEntity = customerEntityControllerLocal.retrieveCustomerById(customerId);
-        
-        try{
-           customerEntityControllerLocal.topUpCredits(customerId, creditPackageEntity.getNumberOfCredits().multiply(BigDecimal.valueOf(quantity)));
-           
-           CreditTransactionEntity creditTransactionEntity = new CreditTransactionEntity(creditPackageEntity.getNumberOfCredits().abs().multiply(BigDecimal.valueOf(quantity)), CreditTransactionTypeEnum.TOPUP);
-           creditTransactionEntity.setCustomerEntity(customerEntity);
-           creditTransactionEntity.setCreditPackageEntity(creditPackageEntity);
-           creditTransactionEntity = creditTransactionEntityControllerLocal.createCreditTransactionEntity(creditTransactionEntity);
-           
-           customerEntity.getCreditTransactions().add(creditTransactionEntity);
-           customerEntityControllerLocal.updateCustomer(customerEntity);
-           
-        } catch(Exception ex){
-            eJBContext.setRollbackOnly();
         }
     }
 }

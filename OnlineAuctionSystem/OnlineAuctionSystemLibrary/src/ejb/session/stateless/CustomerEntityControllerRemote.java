@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.CreditTransactionEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
 import util.exception.InvalidLoginCredentialException;
@@ -19,5 +20,5 @@ public interface CustomerEntityControllerRemote {
 
     public void updateCustomer(CustomerEntity customerEntity);
 
-    public void topUpCredits(Long customerId, BigDecimal amount);
+    public void topUpCredits(Long customerId, BigDecimal amount, CreditTransactionEntity creditTransactionEntity);
 }
