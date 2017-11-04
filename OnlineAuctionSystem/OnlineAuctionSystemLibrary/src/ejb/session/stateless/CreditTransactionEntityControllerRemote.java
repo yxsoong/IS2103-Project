@@ -9,13 +9,12 @@ import entity.CreditPackageEntity;
 import entity.CreditTransactionEntity;
 import java.util.List;
 
-
 public interface CreditTransactionEntityControllerRemote {
-    
+
     public CreditTransactionEntity createCreditTransactionEntity(CreditTransactionEntity creditTransactionEntity);
 
     public List<CreditTransactionEntity> retrieveCreditTransactions(Long customerId);
 
     public void purchaseCreditPackage(CreditPackageEntity creditPackageEntity, int quantity, Long customerId);
-    
+
 }

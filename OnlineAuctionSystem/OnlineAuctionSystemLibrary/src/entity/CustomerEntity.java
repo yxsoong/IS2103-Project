@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,7 +50,7 @@ public class CustomerEntity implements Serializable {
     private List<AddressEntity> addressEntities;
     @OneToMany(mappedBy = "customerEntity")
     private List<CreditTransactionEntity> creditTransactions;
-    @OneToMany(mappedBy = "customerEntity")
+    @OneToMany(mappedBy = "customerEntity", fetch = EAGER)
     private List<BidEntity> bidEntities;
 
     public CustomerEntity() {

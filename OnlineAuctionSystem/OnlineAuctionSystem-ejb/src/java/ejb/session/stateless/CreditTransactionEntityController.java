@@ -39,7 +39,6 @@ public class CreditTransactionEntityController implements CreditTransactionEntit
         em.persist(creditTransactionEntity);
         em.flush();
         em.refresh(creditTransactionEntity);
-
         return creditTransactionEntity;
     }
 

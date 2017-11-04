@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.AddressEntity;
 import entity.AuctionListingEntity;
 import java.util.List;
 import javax.ejb.Local;
@@ -44,7 +45,7 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     }
 
     @Override
-    public List<AuctionListingEntity> retrieveAllAuctionListings() {
+    public List<AuctionListingEntity> retrieveAllAuctionListings() throws AuctionListingNotFoundException {
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a");
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
 
@@ -65,5 +66,20 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
 
         return auctionListingEntities;
+    }
+
+    @Override
+    public void removeDeliveryAddress(AddressEntity addressEntity) {
+//        Query query = em.createQuery("DELETE a.deliveryAddress FROM AuctionListingEntity a WHERE a.deliveryAddress LIKE addressEntity");
+//        em.merge(addressEntity);
+//        em.remove(addressEntity);
+//        em.flush();
+//        em.refresh(addressEntity);
+        Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.deliveryAddress = ?1");
+        query.setParameter(1, addressEntity);
+        List<AuctionListingEntity> addressesToRemove = query.getResultList();
+        for (AuctionListingEntity auctionListingEntity : addressesToRemove) {
+            auctionListingEntity.setDeliveryAddress(null);
+        }
     }
 }

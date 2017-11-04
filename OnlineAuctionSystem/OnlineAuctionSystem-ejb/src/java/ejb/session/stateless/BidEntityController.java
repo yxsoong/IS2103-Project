@@ -7,7 +7,6 @@ package ejb.session.stateless;
 
 import entity.BidEntity;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
