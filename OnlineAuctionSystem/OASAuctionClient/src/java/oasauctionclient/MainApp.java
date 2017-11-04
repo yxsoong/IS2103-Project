@@ -13,18 +13,19 @@ import ejb.session.stateless.CreditTransactionEntityControllerRemote;
 import ejb.session.stateless.CustomerEntityControllerRemote;
 import entity.AddressEntity;
 import entity.AuctionListingEntity;
+import entity.BidEntity;
 import entity.CreditPackageEntity;
 import entity.CreditTransactionEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionListingNotFoundException;
-import util.exception.CreditPackageNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 
 /**
@@ -625,6 +626,8 @@ public class MainApp {
 
         Long auctionListingId = new Long(-1);
         AuctionListingEntity auctionListingEntity;
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Calendar cal;
 
         try {
             do {
@@ -641,10 +644,16 @@ public class MainApp {
                     auctionListingEntity = auctionListingEntityControllerRemote.retrieveAllActiveAuctionListings().get((int) (auctionListingId - 1L));
                 } else {
                     System.out.println("No Auction Listings Available");
+//                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//                    Calendar cal = Calendar.getInstance();
+//                    System.out.println(dateFormat.format(cal.getTime()));
                     return;
                 }
-                System.out.printf("%20s%15s%20s%20s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "End Date Time");
-                System.out.printf("%20s%15s%20s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getEndDateTime());
+                
+                cal = auctionListingEntity.getEndDateTime();
+                
+                System.out.printf("%20s%15s%25s%25s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "End Date Time");
+                System.out.printf("%20s%15s%25s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), dateFormat.format(cal.getTime()));
                 System.out.println("------------------------");
                 System.out.println("1: Place New Bid");
                 System.out.println("2: Refresh Auction Listing Bids");
@@ -668,6 +677,7 @@ public class MainApp {
                 }
 
                 if (response == 1) {
+                    placeNewBid();
                 } else if (response == 2) {
                 } else if (response == 3) {
                     return;
@@ -680,6 +690,47 @@ public class MainApp {
         } catch (NullPointerException ex) {
             System.out.println(ex);
         }
+    }
+
+    private void placeNewBid() {
+        System.out.println("*** OAS Auction Client :: Place Bid ***\n");
+        Scanner sc = new Scanner(System.in);
+
+        BigDecimal userBid, currentBidAmount, nextIncrement, nextExpectedBid;
+        AuctionListingEntity auctionListingEntity;
+        BidEntity bidEntity;
+        Calendar currentTimestamp = Calendar.getInstance();
+        int count = 0;
+
+        System.out.print("Enter Auction Listing Id to Bid> ");
+        Long listingId = sc.nextLong();
+        try {
+            auctionListingEntity = auctionListingEntityControllerRemote.retrieveAuctionListingById(listingId);
+            try {
+                currentBidAmount = auctionListingEntity.getBidEntity().getBidAmount();
+                nextIncrement = bidEntityControllerRemote.getBidIncrement(currentBidAmount);
+                nextExpectedBid = currentBidAmount.add(nextIncrement);
+            } catch (NullPointerException ex) {
+                currentBidAmount = BigDecimal.valueOf(0);
+                nextIncrement = BigDecimal.valueOf(0.05); //Is minimum bid 0.05 based on project manual?
+                nextExpectedBid = currentBidAmount.add(nextIncrement);
+            }
+        } catch (AuctionListingNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return;
+        }
+
+        do {
+            if (count > 0) {
+                System.out.println("Minimum bid price is " + Math.max(0.05, nextExpectedBid.doubleValue()) + "!\n");
+            }
+            System.out.print("Enter Bid Amount> ");
+            userBid = sc.nextBigDecimal();
+            count++;
+        } while (userBid.compareTo(BigDecimal.ZERO) <= 0 || userBid.compareTo(nextExpectedBid) < 0);
+
+        bidEntity = bidEntityControllerRemote.createNewBid(new BidEntity(userBid, currentTimestamp));
+        System.out.println(currentTimestamp);
     }
 
 }
