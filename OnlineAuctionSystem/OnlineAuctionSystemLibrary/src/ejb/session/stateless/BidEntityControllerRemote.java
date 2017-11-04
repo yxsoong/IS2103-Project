@@ -5,7 +5,14 @@
  */
 package ejb.session.stateless;
 
+import entity.BidEntity;
+import java.math.BigDecimal;
+
 
 public interface BidEntityControllerRemote {
+
+    public BidEntity createNewBid(BidEntity bidEntity);
+
+    public BigDecimal getBidIncrement(BigDecimal currentPrice);
     
 }
