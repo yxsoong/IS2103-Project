@@ -26,6 +26,7 @@ public class BidEntityController implements BidEntityControllerRemote, BidEntity
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
 
+    @Override
     public BidEntity createNewBid(BidEntity bidEntity) {
         em.persist(bidEntity);
         em.flush();
@@ -33,6 +34,7 @@ public class BidEntityController implements BidEntityControllerRemote, BidEntity
         return bidEntity;
     }
 
+    @Override
     public BigDecimal getBidIncrement(BigDecimal currentPrice) {
         if (currentPrice.compareTo(BigDecimal.valueOf(5000)) == 1) {
             return BigDecimal.valueOf(100);
