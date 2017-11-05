@@ -66,12 +66,25 @@ public class AddressEntityController implements AddressEntityControllerRemote, A
     }
     
     @Override
-    public void deleteAddress(Long addressId){
+    public void deleteAddress(Long addressId, Long customerId){
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
         AddressEntity addressEntity = em.find(AddressEntity.class, addressId);
+        
+        
+        Query query = em.createQuery("SELECT COUNT(a) FROM AuctionListingEntity a WHERE a.deliveryAddress.addressID = :inAddressId");
+        query.setParameter("inAddressId", addressId);
+        
         try{
-            em.remove(addressEntity);
-        } catch(ConstraintViolationException ex){
-            addressEntity.setEnabled(Boolean.FALSE);
+            Long count = (Long) query.getSingleResult();
+            customerEntity.getAddressEntities().remove(addressEntity);
+            
+            if(count.compareTo(0L) > 0 ){
+                addressEntity.setEnabled(Boolean.FALSE);
+            } else {
+                em.remove(addressEntity);
+            }
+        } catch(Exception ex){
+            System.out.println("Error occured while trying to delete address");
         }
     }
     

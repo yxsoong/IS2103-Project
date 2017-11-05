@@ -15,6 +15,7 @@ import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 /**
@@ -47,10 +48,13 @@ public class CustomerEntity implements Serializable {
     @Column(nullable = false, length = 255)
     private String password;
     @OneToMany
+    @JoinColumn(nullable = true)
     private List<AddressEntity> addressEntities;
     @OneToMany(mappedBy = "customerEntity")
+    @JoinColumn(nullable = true)
     private List<CreditTransactionEntity> creditTransactions;
-    @OneToMany(mappedBy = "customerEntity", fetch = EAGER)
+    @OneToMany(mappedBy = "customerEntity")
+    @JoinColumn(nullable = true)
     private List<BidEntity> bidEntities;
 
     public CustomerEntity() {

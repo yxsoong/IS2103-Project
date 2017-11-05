@@ -213,7 +213,7 @@ public class MainApp {
         String username = "";
         String password = "";
 
-        System.out.println("*** OAS Administration System :: Login ***\n");
+        System.out.println("*** OAS Auction Client :: Login ***\n");
         System.out.print("Enter username> ");
         username = sc.nextLine().trim();
         System.out.print("Enter password> ");
@@ -491,7 +491,7 @@ public class MainApp {
         input = sc.nextLine().trim();
 
         if (input.equalsIgnoreCase("Y")) {
-            addressEntityControllerRemote.deleteAddress(addressEntity.getAddressID());
+            addressEntityControllerRemote.deleteAddress(addressEntity.getAddressID(), currentCustomerEntity.getCustomerId());
             System.out.println("Address deleted successfully!\n");
         } else {
             System.out.println("Address NOT deleted!\n");
@@ -683,7 +683,7 @@ public class MainApp {
                 }
 
                 if (response == 1) {
-                    placeNewBid();
+                    placeNewBid(auctionListingEntity);
                 } else if (response == 2) {
                 } else if (response == 3) {
                     return;
@@ -698,45 +698,40 @@ public class MainApp {
         }
     }
 
-    private void placeNewBid() {
+    private void placeNewBid(AuctionListingEntity auctionListingEntity) {
         System.out.println("*** OAS Auction Client :: Place Bid ***\n");
         Scanner sc = new Scanner(System.in);
 
         BigDecimal userBid, currentBidAmount, nextIncrement, nextExpectedBid;
-        AuctionListingEntity auctionListingEntity;
         BidEntity bidEntity;
         Calendar currentTimestamp = Calendar.getInstance();
         int count = 0;
 
-        System.out.print("Enter Auction Listing Id to Bid> ");
-        Long listingId = sc.nextLong();
         try {
-            auctionListingEntity = auctionListingEntityControllerRemote.retrieveAuctionListingById(listingId);
-            try {
-                currentBidAmount = auctionListingEntity.getStartingBidAmount();
-                nextIncrement = bidEntityControllerRemote.getBidIncrement(currentBidAmount);
-                nextExpectedBid = currentBidAmount.add(nextIncrement);
-            } catch (NullPointerException ex) {
-                currentBidAmount = BigDecimal.valueOf(0);
-                nextIncrement = BigDecimal.valueOf(0.05); //Is minimum bid 0.05 based on project manual?
-                nextExpectedBid = currentBidAmount.add(nextIncrement);
-            }
-        } catch (AuctionListingNotFoundException ex) {
-            System.out.println(ex.getMessage());
-            return;
+            currentBidAmount = auctionListingEntity.getStartingBidAmount(); // starting bid may not be the latest bid
+            nextIncrement = bidEntityControllerRemote.getBidIncrement(currentBidAmount);
+            nextExpectedBid = currentBidAmount.add(nextIncrement);
+        } catch (NullPointerException ex) {
+            currentBidAmount = BigDecimal.valueOf(0);
+            nextIncrement = BigDecimal.valueOf(0.05); //Is minimum bid 0.05 based on project manual?
+            nextExpectedBid = currentBidAmount.add(nextIncrement);
         }
 
         do {
-            if (count > 0) {
-                System.out.println("Minimum bid price is " + Math.max(0.05, nextExpectedBid.doubleValue()) + "!\n");
-            }
+            System.out.println("Minimum bid price is " + Math.max(0.05, nextExpectedBid.doubleValue()) + "!\n");
+
             System.out.print("Enter Bid Amount> ");
             userBid = sc.nextBigDecimal();
             count++;
         } while (userBid.compareTo(BigDecimal.ZERO) <= 0 || userBid.compareTo(nextExpectedBid) < 0);
 
-        bidEntity = bidEntityControllerRemote.createNewBid(new BidEntity(userBid, currentTimestamp));
-        System.out.println("Bid placed! Auction Transaction ID: " + bidEntity.getAuctionTransactionId() + "\n\n");
+        bidEntity = new BidEntity(userBid, currentTimestamp);
+        bidEntity.setCustomerEntity(currentCustomerEntity);
+        bidEntity.setAuctionListingEntity(auctionListingEntity);
+        bidEntity = bidEntityControllerRemote.createNewBid(bidEntity);
+
+        System.out.println(
+                "Bid placed! Auction Transaction ID: " + bidEntity.getAuctionTransactionId() + "\n\n");
 
     }
 

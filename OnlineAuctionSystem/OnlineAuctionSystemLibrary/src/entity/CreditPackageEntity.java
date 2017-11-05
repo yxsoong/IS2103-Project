@@ -36,7 +36,7 @@ public class CreditPackageEntity implements Serializable {
     private BigDecimal numberOfCredits;
     @Column(nullable = false)
     private Boolean enabled;
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private EmployeeEntity employeeEntity;
     @OneToMany(mappedBy = "creditPackageEntity")

@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -36,11 +37,14 @@ public class BidEntity implements Serializable {
     private Calendar dateTime;
     @Column(nullable = true)
     private Boolean winningBid;
-    @OneToOne
+    @OneToOne(optional = true)
+    @JoinColumn(nullable = true)
     private AuctionListingEntity winningAuctionListingEntity;
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private AuctionListingEntity auctionListingEntity;
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private CustomerEntity customerEntity;
 
 

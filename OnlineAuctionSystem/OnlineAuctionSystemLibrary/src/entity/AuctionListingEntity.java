@@ -15,6 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -49,12 +50,23 @@ public class AuctionListingEntity implements Serializable {
     private BidEntity bidEntity;
     @OneToMany(mappedBy = "auctionListingEntity")
     private List<BidEntity> bidEntities;
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private EmployeeEntity employeeEntity;
 
     public AuctionListingEntity() {
     }
 
+    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, Calendar startDateTime, Calendar endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enabled) {
+        this.itemName = itemName;
+        this.startingBidAmount = startingBidAmount;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.reservePrice = reservePrice;
+        this.openListing = openListing;
+        this.enabled = enabled;
+    }
+    
     public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, Calendar startDateTime, Calendar endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enabled, AddressEntity deliveryAddress) {
         this.itemName = itemName;
         this.startingBidAmount = startingBidAmount;

@@ -75,7 +75,7 @@ public class DataInitializationSessionBean {
     private void initializeData() {
         employeeEntityControllerLocal.createEmployee(new EmployeeEntity("A", "A", EmployeeAccessRightEnum.SYSADMIN, "admin", "password"));
         EmployeeEntity financeEmployee = employeeEntityControllerLocal.createEmployee(new EmployeeEntity("B", "B", EmployeeAccessRightEnum.FINANCE, "finance", "password"));
-        employeeEntityControllerLocal.createEmployee(new EmployeeEntity("C", "C", EmployeeAccessRightEnum.SALES, "sales", "password"));
+        EmployeeEntity salesEmployee = employeeEntityControllerLocal.createEmployee(new EmployeeEntity("C", "C", EmployeeAccessRightEnum.SALES, "sales", "password"));
 
         CustomerEntity customerEntity = customerEntityControllerLocal.createCustomer(new CustomerEntity("A", "A", "123", "123", BigDecimal.ZERO, BigDecimal.ZERO, Boolean.FALSE, "customer", "password"));
 
@@ -117,6 +117,7 @@ public class DataInitializationSessionBean {
         endDT.set(2018, 01, 01, 00, 00);
         
         AuctionListingEntity auctionListingEntity = new AuctionListingEntity("itemA", BigDecimal.valueOf(20), startDT , endDT, BigDecimal.ZERO, Boolean.TRUE, Boolean.TRUE, addressEntity2);
+        auctionListingEntity.setEmployeeEntity(salesEmployee);
         auctionListingEntityControllerLocal.createAuctionListing(auctionListingEntity);
     }
 }

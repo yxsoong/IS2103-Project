@@ -62,7 +62,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
        
         try{
             CustomerEntity customerEntity = (CustomerEntity)query.getSingleResult();
-            customerEntity.getAddressEntities().size();
+            //customerEntity.getAddressEntities().size();
             return customerEntity;
         } catch(NoResultException | NonUniqueResultException ex){
             throw new InvalidLoginCredentialException("Invalid login credential!");

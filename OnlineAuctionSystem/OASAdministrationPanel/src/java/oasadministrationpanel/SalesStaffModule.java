@@ -267,6 +267,7 @@ public class SalesStaffModule {
     private void viewAllAuctionListings() {
         Scanner sc = new Scanner(System.in);
 
+        try{
         List<AuctionListingEntity> auctionListingEntities = auctionListingEntityControllerRemote.retrieveAllAuctionListings();
 
         System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s%20s\n", "Auction Listing ID", "Item Name", "Starting Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable", "Delivery Address");
@@ -289,6 +290,9 @@ public class SalesStaffModule {
 
         System.out.print("Press enter to continue...> ");
         sc.nextLine();
+        } catch(AuctionListingNotFoundException ex){
+            System.out.println(ex.getMessage());
+        }
     }
 
     private void viewListingsBelowReservePrice() {

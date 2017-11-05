@@ -30,14 +30,16 @@ public class EmployeeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeID;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String firstName;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String lastName;
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EmployeeAccessRightEnum accessRight;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
+    @Column(nullable = false)
     private String password;
     @OneToMany(mappedBy = "employeeEntity")
     @JoinColumn(nullable = true)

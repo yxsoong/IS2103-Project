@@ -39,7 +39,7 @@ public class AddressEntity implements Serializable {
 //    @ManyToOne
 //    @JoinColumn(nullable = false)
 //    private CustomerEntity customerEntity;
-    @OneToMany(mappedBy = "deliveryAddress", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "deliveryAddress")
     @JoinColumn(nullable = true)
     private List<AuctionListingEntity> auctionListingEntities;
     
