@@ -35,12 +35,12 @@ public class AddressEntity implements Serializable {
     private String unitNumber;
     @Column(nullable = false, length = 10)
     private String postalCode;
+    @Column(nullable = false)
     private Boolean enabled;
 //    @ManyToOne
 //    @JoinColumn(nullable = false)
 //    private CustomerEntity customerEntity;
     @OneToMany(mappedBy = "deliveryAddress")
-    @JoinColumn(nullable = true)
     private List<AuctionListingEntity> auctionListingEntities;
     
     public AddressEntity() {

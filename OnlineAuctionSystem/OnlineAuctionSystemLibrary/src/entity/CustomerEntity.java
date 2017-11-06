@@ -51,10 +51,8 @@ public class CustomerEntity implements Serializable {
     @JoinColumn(nullable = true)
     private List<AddressEntity> addressEntities;
     @OneToMany(mappedBy = "customerEntity")
-    @JoinColumn(nullable = true)
     private List<CreditTransactionEntity> creditTransactions;
     @OneToMany(mappedBy = "customerEntity")
-    @JoinColumn(nullable = true)
     private List<BidEntity> bidEntities;
 
     public CustomerEntity() {

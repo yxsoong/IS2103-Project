@@ -40,7 +40,6 @@ public class CreditPackageEntity implements Serializable {
     @JoinColumn(nullable = false)
     private EmployeeEntity employeeEntity;
     @OneToMany(mappedBy = "creditPackageEntity")
-    @JoinColumn(nullable = true)
     private List<CreditTransactionEntity> creditTransactionEntities;
 
     public CreditPackageEntity() {

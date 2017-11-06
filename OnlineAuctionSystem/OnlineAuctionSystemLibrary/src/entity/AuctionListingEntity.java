@@ -49,11 +49,10 @@ public class AuctionListingEntity implements Serializable {
     @ManyToOne
     @JoinColumn(nullable = true)
     private AddressEntity deliveryAddress;
-    @OneToOne(mappedBy = "winningAuctionListingEntity")
+    @OneToOne(optional = true)
     @JoinColumn(nullable = true)
-    private BidEntity bidEntity;
+    private BidEntity winningBidEntity;
     @OneToMany(mappedBy = "auctionListingEntity")
-    @JoinColumn(nullable = true)
     private List<BidEntity> bidEntities;
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -206,11 +205,11 @@ public class AuctionListingEntity implements Serializable {
         this.employeeEntity = employeeEntity;
     }
 
-    public BidEntity getBidEntity() {
-        return bidEntity;
+    public BidEntity getWinningBidEntity() {
+        return winningBidEntity;
     }
 
-    public void setBidEntity(BidEntity bidEntity) {
-        this.bidEntity = bidEntity;
+    public void setWinningBidEntity(BidEntity winningBidEntity) {
+        this.winningBidEntity = winningBidEntity;
     }
 }

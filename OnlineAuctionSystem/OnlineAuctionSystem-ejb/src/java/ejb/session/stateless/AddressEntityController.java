@@ -90,7 +90,7 @@ public class AddressEntityController implements AddressEntityControllerRemote, A
     
     @Override
     public List<AddressEntity> retrieveAllAddress(Long customerId) throws AddressNotFoundException{
-        Query query = em.createQuery("SELECT a FROM CustomerEntity c JOIN c.addressEntities a WHERE c.customerId = :inCustomerId");
+        Query query = em.createQuery("SELECT a FROM CustomerEntity c JOIN c.addressEntities a WHERE c.customerId = :inCustomerId AND a.enabled = true");
         query.setParameter("inCustomerId", customerId);
         
         if(query.getResultList().isEmpty()){

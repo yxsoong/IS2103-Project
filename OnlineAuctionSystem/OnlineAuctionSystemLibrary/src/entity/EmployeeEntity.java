@@ -42,10 +42,8 @@ public class EmployeeEntity implements Serializable {
     @Column(nullable = false)
     private String password;
     @OneToMany(mappedBy = "employeeEntity")
-    @JoinColumn(nullable = true)
     private List<CreditPackageEntity> creditPackagesEntities;
     @OneToMany(mappedBy = "employeeEntity")
-    @JoinColumn(nullable = true)
     private List<AuctionListingEntity> auctionListingEntities;
     
     public EmployeeEntity() {

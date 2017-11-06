@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.AuctionListingEntity;
 import entity.BidEntity;
 import entity.CreditPackageEntity;
 import entity.CreditTransactionEntity;
@@ -37,11 +38,10 @@ public class CreditTransactionEntityController implements CreditTransactionEntit
 
     @EJB
     private CustomerEntityControllerLocal customerEntityControllerLocal;
-    
-    
+
     @Resource
     private EJBContext eJBContext;
-    
+
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
 
@@ -49,6 +49,9 @@ public class CreditTransactionEntityController implements CreditTransactionEntit
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public CreditTransactionEntity createCreditTransactionEntity(CreditTransactionEntity creditTransactionEntity) {
         em.persist(creditTransactionEntity);
+
+        CustomerEntity customerEntity = creditTransactionEntity.getCustomerEntity();
+        customerEntity.getCreditTransactions().add(creditTransactionEntity);
         em.flush();
         em.refresh(creditTransactionEntity);
         return creditTransactionEntity;
@@ -83,19 +86,30 @@ public class CreditTransactionEntityController implements CreditTransactionEntit
             eJBContext.setRollbackOnly();
         }
     }
-    
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void placeBid(BidEntity bidEntity) throws PlaceBidException{
+    public void placeBid(BidEntity bidEntity) throws PlaceBidException {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, bidEntity.getCustomerEntity().getCustomerId());
         CreditTransactionEntity creditTransactionEntity = new CreditTransactionEntity(bidEntity.getBidAmount(), CreditTransactionTypeEnum.USAGE);
         creditTransactionEntity.setCustomerEntity(customerEntity);
-        
-        try{
+
+        try {
             customerEntityControllerLocal.useCredits(bidEntity.getCustomerEntity().getCustomerId(), bidEntity.getBidAmount());
             createCreditTransactionEntity(creditTransactionEntity);
             bidEntityController.createNewBid(bidEntity);
-        } catch (InsufficientCreditsException | InvalidBidException ex){
+
+            //refund last bid
+            AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, bidEntity.getAuctionListingEntity().getAuctionListingId());
+            List<BidEntity> bidEntities = auctionListingEntity.getBidEntities();
+            if (bidEntities.size() > 1) {
+                BidEntity refundBid = bidEntities.get(bidEntities.size() - 2);
+                customerEntityControllerLocal.refundCredits(refundBid.getCustomerEntity().getCustomerId(), refundBid.getBidAmount());
+                CreditTransactionEntity refundCreditTransactionEntity = new CreditTransactionEntity(bidEntity.getBidAmount(), CreditTransactionTypeEnum.REFUND);
+                refundCreditTransactionEntity.setCustomerEntity(refundBid.getCustomerEntity());
+            }
+
+        } catch (InsufficientCreditsException | InvalidBidException ex) {
             eJBContext.setRollbackOnly();
             throw new PlaceBidException(ex.getMessage());
         }

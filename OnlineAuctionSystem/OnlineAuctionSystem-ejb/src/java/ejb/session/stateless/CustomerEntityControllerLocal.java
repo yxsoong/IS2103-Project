@@ -26,4 +26,8 @@ public interface CustomerEntityControllerLocal {
     public void topUpCredits(Long customerId, BigDecimal amount, CreditTransactionEntity creditTransactionEntity);
     
     public void useCredits(Long customerId, BigDecimal amount) throws InsufficientCreditsException;
+    
+    public void refundCredits(Long customerId, BigDecimal amount);
+    
+    public void deductCreditBalance(Long customerId, BigDecimal amount);
 }

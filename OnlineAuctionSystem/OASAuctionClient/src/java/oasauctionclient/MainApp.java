@@ -214,8 +214,6 @@ public class MainApp {
         String username = "";
         String password = "";
 
-        
-
         while (true) {
             System.out.println("*** OAS Auction Client :: Login ***\n");
             System.out.print("Enter username> ");
@@ -283,6 +281,7 @@ public class MainApp {
                 } else if (response == 10) {
                     viewAuctionListingDetails();
                 } else if (response == 11) {
+                    browseWonAuctionListing();
                 } else if (response == 12) {
                     break;
                 } else {
@@ -735,7 +734,7 @@ public class MainApp {
             count++;
         } while (userBid.compareTo(BigDecimal.ZERO) <= 0 || userBid.compareTo(nextExpectedBid) < 0);
         sc.nextLine(); //consume enter character
-        
+
         bidEntity = new BidEntity(userBid, currentTimestamp);
         bidEntity.setCustomerEntity(currentCustomerEntity);
         bidEntity.setAuctionListingEntity(auctionListingEntity);
@@ -753,4 +752,95 @@ public class MainApp {
         //System.out.println("Bid placed! Auction Transaction ID: " + bidEntity.getAuctionTransactionId() + "\n\n");
     }
 
+    private void browseWonAuctionListing() {
+        Scanner sc = new Scanner(System.in);
+
+        List<AuctionListingEntity> auctionListingEntities = auctionListingEntityControllerRemote.retrieveWonAuctionListings(currentCustomerEntity.getCustomerId());
+
+        System.out.printf("%5s%25s%20s\n", "Row", "Auction Listing ID", "Item name");
+        int i = 1;
+        for (AuctionListingEntity auctionListingEntity : auctionListingEntities) {
+            System.out.printf("%5s%25s%20s\n", i, auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName());
+            i++;
+        }
+        System.out.println("------------------------");
+        int response = 0;
+        while (true) {
+            System.out.println("1: Select Delivery Address for Won Auction Listing");
+            System.out.println("2: Back\n");
+            System.out.print("> ");
+
+            response = sc.nextInt();
+
+            if (response == 1) {
+                selectDeliveryAddress(auctionListingEntities);
+                break;
+            } else if (response == 2) {
+                return;
+            } else {
+                System.out.println("Invalid option, please try again!\n");
+            }
+
+        }
+
+    }
+
+    private void selectDeliveryAddress(List<AuctionListingEntity> auctionListingEntities) {
+        Scanner sc = new Scanner(System.in);
+
+        int row, count = 0;
+        do {
+            if (count > 0) {
+                System.out.println("Please enter valid rows.");
+            }
+
+            System.out.print("Select item row> ");
+            row = sc.nextInt();
+
+        } while (row > auctionListingEntities.size() || row <= 0);
+
+        sc.nextLine(); //consume enter character
+
+        AuctionListingEntity auctionListingEntity = auctionListingEntities.get(row - 1);
+
+        if (auctionListingEntity.getDeliveryAddress() != null) {
+            System.out.println("This auction listing has a delivery address");
+            System.out.print("Press enter to continue...");
+            sc.nextLine();
+        } else {
+            try {
+                List<AddressEntity> addressEntities = addressEntityControllerRemote.retrieveAllAddress(currentCustomerEntity.getCustomerId());
+                System.out.printf("%5s%11s%40s%20s%20s\n", "Row", "Address ID", "Street Address", "Unit Number", "Postal Code");
+                int i = 1;
+                for (AddressEntity addressEntity : addressEntities) {
+                    System.out.printf("%5s%11s%40s%20s%20s\n", i, addressEntity.getAddressID().toString(),
+                            addressEntity.getStreetAddress(), addressEntity.getUnitNumber(), addressEntity.getPostalCode());
+                    i++;
+                }
+
+                int addressRow;
+                do {
+                    if (count > 0) {
+                        System.out.println("Please enter valid rows.");
+                    }
+
+                    System.out.print("Select row> ");
+                    addressRow = sc.nextInt();
+
+                } while (addressRow >= addressEntities.size() || addressRow <= 0);
+                
+                sc.nextLine(); //consume enter character
+                
+                auctionListingEntity.setDeliveryAddress(addressEntities.get(addressRow - 1));
+                auctionListingEntityControllerRemote.updateAuctionListing(auctionListingEntity);
+
+                System.out.println("Delivery address added!");
+                System.out.print("Press enter to continue...");
+                sc.nextLine();
+            } catch (AddressNotFoundException ex) {
+                System.out.println("Please create addresses first.");
+            }
+        }
+
+    }
 }

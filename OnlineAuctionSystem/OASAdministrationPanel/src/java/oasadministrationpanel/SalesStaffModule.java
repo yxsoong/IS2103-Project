@@ -183,6 +183,8 @@ public class SalesStaffModule {
 
         newAuctionListingEntity = new AuctionListingEntity(itemName, startingBidAmount, currentBidAmount, startDateTime, endDateTime, reservePrice, open, true, deliveryAddress);
 
+        newAuctionListingEntity.setEmployeeEntity(currentEmployeeEntity);
+        
         newAuctionListingEntity = auctionListingEntityControllerRemote.createAuctionListing(newAuctionListingEntity);
 
         System.out.println("Auction Listing created! Auction Listing ID: " + newAuctionListingEntity.getAuctionListingId() + "\n\n");

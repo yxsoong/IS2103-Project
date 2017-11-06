@@ -97,4 +97,20 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
         }
 
     }
+    
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void refundCredits(Long customerId, BigDecimal amount){
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
+        
+        customerEntity.setHoldingBalance(customerEntity.getHoldingBalance().subtract(amount));
+    }
+    
+    @Override
+    public void deductCreditBalance(Long customerId, BigDecimal amount){
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
+        
+        customerEntity.setHoldingBalance(customerEntity.getHoldingBalance().subtract(amount));
+        customerEntity.setCreditBalance(customerEntity.getCreditBalance().subtract(amount));
+    }
 }

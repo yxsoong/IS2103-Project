@@ -37,9 +37,9 @@ public class BidEntity implements Serializable {
     private Calendar dateTime;
     @Column(nullable = true)
     private Boolean winningBid;
-    @OneToOne(optional = true)
-    @JoinColumn(nullable = true)
-    private AuctionListingEntity winningAuctionListingEntity;
+//    @OneToOne(optional = true)
+//    @JoinColumn(nullable = true)
+//    private AuctionListingEntity winningAuctionListingEntity;
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private AuctionListingEntity auctionListingEntity;
@@ -139,13 +139,13 @@ public class BidEntity implements Serializable {
         this.customerEntity = customerEntity;
     }
     
-    public AuctionListingEntity getWinningAuctionListingEntity() {
-        return winningAuctionListingEntity;
-    }
-
-    public void setWinningAuctionListingEntity(AuctionListingEntity winningAuctionListingEntity) {
-        this.winningAuctionListingEntity = winningAuctionListingEntity;
-    }
+//    public AuctionListingEntity getWinningAuctionListingEntity() {
+//        return winningAuctionListingEntity;
+//    }
+//
+//    public void setWinningAuctionListingEntity(AuctionListingEntity winningAuctionListingEntity) {
+//        this.winningAuctionListingEntity = winningAuctionListingEntity;
+//    }
 
     public Boolean getWinningBid() {
         return winningBid;
