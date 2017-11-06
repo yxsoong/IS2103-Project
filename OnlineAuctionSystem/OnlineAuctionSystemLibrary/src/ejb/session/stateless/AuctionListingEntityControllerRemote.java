@@ -24,4 +24,6 @@ public interface AuctionListingEntityControllerRemote {
 
     public void removeDeliveryAddress(AddressEntity addressEntity);
 
+    public AuctionListingEntity retrieveActiveAuctionListing(Long auctionListingId) throws AuctionListingNotFoundException;
+
 }

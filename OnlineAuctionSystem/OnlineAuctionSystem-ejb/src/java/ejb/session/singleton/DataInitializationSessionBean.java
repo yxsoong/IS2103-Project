@@ -116,7 +116,7 @@ public class DataInitializationSessionBean {
         Calendar endDT = Calendar.getInstance();
         endDT.set(2018, 01, 01, 00, 00);
         
-        AuctionListingEntity auctionListingEntity = new AuctionListingEntity("itemA", BigDecimal.valueOf(20), startDT , endDT, BigDecimal.ZERO, Boolean.TRUE, Boolean.TRUE, addressEntity2);
+        AuctionListingEntity auctionListingEntity = new AuctionListingEntity("itemA", BigDecimal.valueOf(20), null, startDT , endDT, BigDecimal.ZERO, Boolean.TRUE, Boolean.TRUE, addressEntity2);
         auctionListingEntity.setEmployeeEntity(salesEmployee);
         auctionListingEntityControllerLocal.createAuctionListing(auctionListingEntity);
     }

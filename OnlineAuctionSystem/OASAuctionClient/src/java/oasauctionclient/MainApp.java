@@ -27,6 +27,7 @@ import java.util.Scanner;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionListingNotFoundException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.PlaceBidException;
 
 /**
  *
@@ -213,12 +214,14 @@ public class MainApp {
         String username = "";
         String password = "";
 
-        System.out.println("*** OAS Auction Client :: Login ***\n");
-        System.out.print("Enter username> ");
-        username = sc.nextLine().trim();
-        System.out.print("Enter password> ");
-        password = sc.nextLine().trim();
+        
+
         while (true) {
+            System.out.println("*** OAS Auction Client :: Login ***\n");
+            System.out.print("Enter username> ");
+            username = sc.nextLine().trim();
+            System.out.print("Enter password> ");
+            password = sc.nextLine().trim();
             if (username.length() > 0 && password.length() > 0) {
                 try {
                     currentCustomerEntity = customerEntityControllerRemote.customerLogin(username, password);
@@ -645,8 +648,9 @@ public class MainApp {
                 }
             } while (auctionListingId.equals(-1));
 
+            sc.nextLine(); // consume enter character 
             try {
-                if (!auctionListingEntityControllerRemote.retrieveAllActiveAuctionListings().isEmpty()) {
+                /*if (!auctionListingEntityControllerRemote.retrieveAllActiveAuctionListings().isEmpty()) {
                     auctionListingEntity = auctionListingEntityControllerRemote.retrieveAllActiveAuctionListings().get((int) (auctionListingId - 1L));
                 } else {
                     System.out.println("No Auction Listings Available");
@@ -654,20 +658,23 @@ public class MainApp {
 //                    Calendar cal = Calendar.getInstance();
 //                    System.out.println(dateFormat.format(cal.getTime()));
                     return;
-                }
+                }*/
+                auctionListingEntity = auctionListingEntityControllerRemote.retrieveActiveAuctionListing(auctionListingId);
 
                 cal = auctionListingEntity.getEndDateTime();
 
-                System.out.printf("%20s%15s%25s%25s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "End Date Time");
-                System.out.printf("%20s%15s%25s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), dateFormat.format(cal.getTime()));
-                System.out.println("------------------------");
-                System.out.println("1: Place New Bid");
-                System.out.println("2: Refresh Auction Listing Bids");
-                System.out.println("3: Back\n");
-                System.out.print("> ");
-
                 Integer response = 0;
                 while (true) {
+                    BigDecimal curentBidAmount = ((auctionListingEntity.getCurrentBidAmount() == null) ? auctionListingEntity.getStartingBidAmount() : auctionListingEntity.getCurrentBidAmount());
+
+                    System.out.printf("%20s%15s%25s%25s%25s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "Current Bid Amount", "End Date Time");
+                    System.out.printf("%20s%15s%25s%25s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), curentBidAmount, dateFormat.format(cal.getTime()));
+                    System.out.println("------------------------");
+                    System.out.println("1: Place New Bid");
+                    System.out.println("2: Refresh Auction Listing Bids");
+                    System.out.println("3: Back\n");
+                    System.out.print("> ");
+
                     try {
                         response = Integer.parseInt(sc.next());
                     } catch (NumberFormatException ex) {
@@ -675,19 +682,19 @@ public class MainApp {
                         continue;
                     }
 
-                    if (response >= 1 && response <= 3) {
+                    if (response == 1) {
+                        placeNewBid(auctionListingEntity);
                         break;
+                    } else if (response == 2) {
+                        auctionListingEntity = auctionListingEntityControllerRemote.retrieveActiveAuctionListing(auctionListingId);
+                    } else if (response == 3) {
+                        return;
                     } else {
                         System.out.println("Invalid option, please try again!\n");
                     }
                 }
 
-                if (response == 1) {
-                    placeNewBid(auctionListingEntity);
-                } else if (response == 2) {
-                } else if (response == 3) {
-                    return;
-                }
+                sc.nextLine(); // consume enter character 
             } catch (AuctionListingNotFoundException ex) {
                 System.out.println(ex.getMessage());
                 System.out.print("Press enter to continue...");
@@ -707,32 +714,43 @@ public class MainApp {
         Calendar currentTimestamp = Calendar.getInstance();
         int count = 0;
 
-        try {
-            currentBidAmount = auctionListingEntity.getStartingBidAmount(); // starting bid may not be the latest bid
+        currentBidAmount = ((auctionListingEntity.getCurrentBidAmount() == null) ? auctionListingEntity.getStartingBidAmount() : auctionListingEntity.getCurrentBidAmount());
+        nextIncrement = bidEntityControllerRemote.getBidIncrement(currentBidAmount);
+        nextExpectedBid = currentBidAmount.add(nextIncrement);
+        /*try {
+
+            currentBidAmount = ((auctionListingEntity.getCurrentBidAmount() == null) ? auctionListingEntity.getStartingBidAmount() : auctionListingEntity.getStartingBidAmount());
             nextIncrement = bidEntityControllerRemote.getBidIncrement(currentBidAmount);
             nextExpectedBid = currentBidAmount.add(nextIncrement);
         } catch (NullPointerException ex) {
-            currentBidAmount = BigDecimal.valueOf(0);
-            nextIncrement = BigDecimal.valueOf(0.05); //Is minimum bid 0.05 based on project manual?
+            currentBidAmount = auctionListingEntity.nextIncrement = BigDecimal.valueOf(0.05); //Is minimum bid 0.05 based on project manual?
             nextExpectedBid = currentBidAmount.add(nextIncrement);
-        }
+        }*/
 
         do {
-            System.out.println("Minimum bid price is " + Math.max(0.05, nextExpectedBid.doubleValue()) + "!\n");
+            System.out.println("Minimum bid price is " + nextExpectedBid.doubleValue() + "\n");
 
             System.out.print("Enter Bid Amount> ");
             userBid = sc.nextBigDecimal();
             count++;
         } while (userBid.compareTo(BigDecimal.ZERO) <= 0 || userBid.compareTo(nextExpectedBid) < 0);
-
+        sc.nextLine(); //consume enter character
+        
         bidEntity = new BidEntity(userBid, currentTimestamp);
         bidEntity.setCustomerEntity(currentCustomerEntity);
         bidEntity.setAuctionListingEntity(auctionListingEntity);
-        bidEntity = bidEntityControllerRemote.createNewBid(bidEntity);
+        try {
+            creditTransactionEntityControllerRemote.placeBid(bidEntity);
+            System.out.println("Bid placed.");
+        } catch (PlaceBidException ex) {
+            System.out.println(ex.getMessage());
+        }
 
-        System.out.println(
-                "Bid placed! Auction Transaction ID: " + bidEntity.getAuctionTransactionId() + "\n\n");
+        System.out.print("Press enter to continue...");
+        sc.nextLine();
+        //bidEntity = bidEntityControllerRemote.createNewBid(bidEntity);
 
+        //System.out.println("Bid placed! Auction Transaction ID: " + bidEntity.getAuctionTransactionId() + "\n\n");
     }
 
 }

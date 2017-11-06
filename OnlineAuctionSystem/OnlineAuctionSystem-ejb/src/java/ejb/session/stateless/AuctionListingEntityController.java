@@ -67,6 +67,19 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
 
         return auctionListingEntities;
     }
+    
+    @Override
+    public AuctionListingEntity retrieveActiveAuctionListing(Long auctionListingId) throws AuctionListingNotFoundException {
+        AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
+        
+        if(auctionListingEntity != null){
+            //auctionListingEntity.getBidEntities().size();
+            em.refresh(auctionListingEntity);
+            return auctionListingEntity;
+        } else {
+            throw new AuctionListingNotFoundException("No auction listing with id: " + auctionListingId);
+        }
+    }
 
     @Override
     public void removeDeliveryAddress(AddressEntity addressEntity) {

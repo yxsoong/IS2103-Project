@@ -7,11 +7,12 @@ package ejb.session.stateless;
 
 import entity.BidEntity;
 import java.math.BigDecimal;
+import util.exception.InvalidBidException;
 
 
 public interface BidEntityControllerRemote {
 
-    public BidEntity createNewBid(BidEntity bidEntity);
+    public BidEntity createNewBid(BidEntity bidEntity)  throws InvalidBidException;
 
     public BigDecimal getBidIncrement(BigDecimal currentPrice);
     

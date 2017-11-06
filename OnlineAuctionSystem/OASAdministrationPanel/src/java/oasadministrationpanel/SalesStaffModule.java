@@ -74,7 +74,7 @@ public class SalesStaffModule {
         Scanner sc = new Scanner(System.in);
 
         String itemName, sDateTime, eDateTime, result;
-        BigDecimal startingBidAmount, reservePrice;
+        BigDecimal startingBidAmount, reservePrice, currentBidAmount = null;
         Calendar startDateTime = Calendar.getInstance();
         Calendar endDateTime = Calendar.getInstance();
         Boolean open = false;
@@ -181,7 +181,7 @@ public class SalesStaffModule {
             open = false;
         }
 
-        newAuctionListingEntity = new AuctionListingEntity(itemName, startingBidAmount, startDateTime, endDateTime, reservePrice, open, true, deliveryAddress);
+        newAuctionListingEntity = new AuctionListingEntity(itemName, startingBidAmount, currentBidAmount, startDateTime, endDateTime, reservePrice, open, true, deliveryAddress);
 
         newAuctionListingEntity = auctionListingEntityControllerRemote.createAuctionListing(newAuctionListingEntity);
 

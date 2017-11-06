@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.CreditTransactionEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
+import util.exception.InsufficientCreditsException;
 import util.exception.InvalidLoginCredentialException;
 
 
@@ -23,4 +24,6 @@ public interface CustomerEntityControllerLocal {
     public CustomerEntity retrieveCustomerById(Long id);
     
     public void topUpCredits(Long customerId, BigDecimal amount, CreditTransactionEntity creditTransactionEntity);
+    
+    public void useCredits(Long customerId, BigDecimal amount) throws InsufficientCreditsException;
 }

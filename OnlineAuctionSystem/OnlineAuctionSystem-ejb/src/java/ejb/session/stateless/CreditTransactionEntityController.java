@@ -5,11 +5,13 @@
  */
 package ejb.session.stateless;
 
+import entity.BidEntity;
 import entity.CreditPackageEntity;
 import entity.CreditTransactionEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBContext;
 import javax.ejb.Local;
@@ -21,6 +23,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.CreditTransactionTypeEnum;
+import util.exception.InsufficientCreditsException;
+import util.exception.InvalidBidException;
+import util.exception.PlaceBidException;
 
 @Local(CreditTransactionEntityControllerLocal.class)
 @Remote(CreditTransactionEntityControllerRemote.class)
@@ -28,13 +33,20 @@ import util.enumeration.CreditTransactionTypeEnum;
 public class CreditTransactionEntityController implements CreditTransactionEntityControllerRemote, CreditTransactionEntityControllerLocal {
 
     @EJB
-    private CustomerEntityControllerLocal customerEntityControllerLocal;
+    private BidEntityControllerLocal bidEntityController;
 
+    @EJB
+    private CustomerEntityControllerLocal customerEntityControllerLocal;
+    
+    
+    @Resource
     private EJBContext eJBContext;
+    
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public CreditTransactionEntity createCreditTransactionEntity(CreditTransactionEntity creditTransactionEntity) {
         em.persist(creditTransactionEntity);
         em.flush();
@@ -69,6 +81,23 @@ public class CreditTransactionEntityController implements CreditTransactionEntit
 
         } catch (Exception ex) {
             eJBContext.setRollbackOnly();
+        }
+    }
+    
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void placeBid(BidEntity bidEntity) throws PlaceBidException{
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, bidEntity.getCustomerEntity().getCustomerId());
+        CreditTransactionEntity creditTransactionEntity = new CreditTransactionEntity(bidEntity.getBidAmount(), CreditTransactionTypeEnum.USAGE);
+        creditTransactionEntity.setCustomerEntity(customerEntity);
+        
+        try{
+            customerEntityControllerLocal.useCredits(bidEntity.getCustomerEntity().getCustomerId(), bidEntity.getBidAmount());
+            createCreditTransactionEntity(creditTransactionEntity);
+            bidEntityController.createNewBid(bidEntity);
+        } catch (InsufficientCreditsException | InvalidBidException ex){
+            eJBContext.setRollbackOnly();
+            throw new PlaceBidException(ex.getMessage());
         }
     }
 }

@@ -30,7 +30,7 @@ public class BidEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(length = 255, nullable = false)
     private Long auctionTransactionId;
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal bidAmount;
     @Column(nullable = false)
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)

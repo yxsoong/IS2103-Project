@@ -23,5 +23,7 @@ public interface AuctionListingEntityControllerLocal {
     public List<AuctionListingEntity> retrieveAllActiveAuctionListings() throws AuctionListingNotFoundException;
 
     public void removeDeliveryAddress(AddressEntity addressEntity);
+    
+    public AuctionListingEntity retrieveActiveAuctionListing(Long auctionListingId) throws AuctionListingNotFoundException;
 
 }

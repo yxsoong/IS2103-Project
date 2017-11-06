@@ -30,8 +30,10 @@ public class AuctionListingEntity implements Serializable {
     private Long auctionListingId;
     @Column(length = 255, nullable = false)
     private String itemName;
-    @Column(nullable = true)
+    @Column(nullable = true, precision = 18, scale = 4)
     private BigDecimal startingBidAmount;
+    @Column(nullable = true, precision = 18, scale = 4)
+    private BigDecimal currentBidAmount;
     @Column(nullable = false)
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Calendar startDateTime;
@@ -45,10 +47,13 @@ public class AuctionListingEntity implements Serializable {
     @Column(nullable = false)
     private Boolean enabled;
     @ManyToOne
+    @JoinColumn(nullable = true)
     private AddressEntity deliveryAddress;
     @OneToOne(mappedBy = "winningAuctionListingEntity")
+    @JoinColumn(nullable = true)
     private BidEntity bidEntity;
     @OneToMany(mappedBy = "auctionListingEntity")
+    @JoinColumn(nullable = true)
     private List<BidEntity> bidEntities;
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -57,19 +62,21 @@ public class AuctionListingEntity implements Serializable {
     public AuctionListingEntity() {
     }
 
-    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, Calendar startDateTime, Calendar endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enabled) {
+    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, BigDecimal currentBidAmount, Calendar startDateTime, Calendar endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enabled) {
         this.itemName = itemName;
         this.startingBidAmount = startingBidAmount;
+        this.currentBidAmount = currentBidAmount;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.reservePrice = reservePrice;
         this.openListing = openListing;
         this.enabled = enabled;
     }
-    
-    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, Calendar startDateTime, Calendar endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enabled, AddressEntity deliveryAddress) {
+
+    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, BigDecimal currentBidAmount, Calendar startDateTime, Calendar endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enabled, AddressEntity deliveryAddress) {
         this.itemName = itemName;
         this.startingBidAmount = startingBidAmount;
+        this.currentBidAmount = currentBidAmount;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.reservePrice = reservePrice;
@@ -77,8 +84,6 @@ public class AuctionListingEntity implements Serializable {
         this.enabled = enabled;
         this.deliveryAddress = deliveryAddress;
     }
-
-
 
     @Override
     public int hashCode() {
@@ -127,6 +132,14 @@ public class AuctionListingEntity implements Serializable {
 
     public void setStartingBidAmount(BigDecimal startingBidAmount) {
         this.startingBidAmount = startingBidAmount;
+    }
+
+    public BigDecimal getCurrentBidAmount() {
+        return currentBidAmount;
+    }
+
+    public void setCurrentBidAmount(BigDecimal currentBidAmount) {
+        this.currentBidAmount = currentBidAmount;
     }
 
     public Calendar getStartDateTime() {

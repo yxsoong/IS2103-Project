@@ -5,13 +5,20 @@
  */
 package ejb.session.stateless;
 
+import entity.AuctionListingEntity;
 import entity.BidEntity;
+import entity.CustomerEntity;
 import java.math.BigDecimal;
+import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import util.exception.InvalidBidException;
 
 /**
  *
@@ -22,15 +29,33 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class BidEntityController implements BidEntityControllerRemote, BidEntityControllerLocal {
 
+    @EJB
+    private AuctionListingEntityControllerLocal auctionListingEntityControllerLocal;
+
+    @EJB
+    private CustomerEntityControllerLocal customerEntityControllerLocal;
+
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
 
     @Override
-    public BidEntity createNewBid(BidEntity bidEntity) {
-        em.persist(bidEntity);
-        em.flush();
-        em.refresh(bidEntity);
-        return bidEntity;
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public BidEntity createNewBid(BidEntity bidEntity) throws InvalidBidException{
+        AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, bidEntity.getAuctionListingEntity().getAuctionListingId());
+        //List<BidEntity> bidEntities = auctionListingEntity.getBidEntities();
+        
+        if((auctionListingEntity.getCurrentBidAmount() == null && bidEntity.getBidAmount().compareTo(auctionListingEntity.getStartingBidAmount()) > 0)
+                || bidEntity.getBidAmount().compareTo(auctionListingEntity.getCurrentBidAmount()) > 0) {
+            em.persist(bidEntity);
+            auctionListingEntity.getBidEntities().add(bidEntity);
+            auctionListingEntity.setCurrentBidAmount(bidEntity.getBidAmount());
+            em.flush();
+            em.refresh(bidEntity);
+            return bidEntity;
+        } else {
+            throw new InvalidBidException("Bid is lower than current bid!");
+        }
+
     }
 
     @Override
