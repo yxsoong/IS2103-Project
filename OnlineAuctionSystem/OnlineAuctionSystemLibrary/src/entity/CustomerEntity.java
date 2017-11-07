@@ -27,21 +27,21 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author User
  */
-//@XmlRootElement
-//@XmlType(name = "customerEntity", propOrder = {
-//    "firstName",
-//    "lastName",
-//    "identificationNo",
-//    "phoneNumber",
-//    "creditBalance",
-//    "holdiinBalance",
-//    "premium",
-//    "username",
-//    "password",
-//    "addressEntities",
-//    "creditTransaction",
-//    "bidEntities"
-//})
+@XmlRootElement
+@XmlType(name = "customerEntity", propOrder = {
+    "firstName",
+    "lastName",
+    "identificationNo",
+    "phoneNumber",
+    "creditBalance",
+    "holdiinBalance",
+    "premium",
+    "username",
+    "password",
+    "addressEntities",
+    "creditTransaction",
+    "bidEntities"
+})
 
 @Entity
 public class CustomerEntity implements Serializable {
