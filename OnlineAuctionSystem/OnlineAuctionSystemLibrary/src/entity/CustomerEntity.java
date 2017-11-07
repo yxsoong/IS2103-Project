@@ -17,11 +17,32 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
  * @author User
  */
+@XmlRootElement
+@XmlType(name = "customerEntity", propOrder = {
+    "firstName",
+    "lastName",
+    "identificationNo",
+    "phoneNumber",
+    "creditBalance",
+    "holdiinBalance",
+    "premium",
+    "username",
+    "password",
+    "addressEntities",
+    "creditTransaction",
+    "bidEntities"
+})
+
 @Entity
 public class CustomerEntity implements Serializable {
 
