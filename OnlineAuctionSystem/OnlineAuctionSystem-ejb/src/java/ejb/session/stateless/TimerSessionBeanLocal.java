@@ -11,4 +11,6 @@ public interface TimerSessionBeanLocal {
     public void createTimers(Long auctionListingId, Calendar dateTime, String type);
     
     public void cancelTimers();
+    
+    public void updateTimer(Long auctionListingId, Calendar dateTime, String type);
 }

@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.AddressEntity;
 import entity.AuctionListingEntity;
 import entity.BidEntity;
+import entity.CreditTransactionEntity;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,6 +23,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.CreditTransactionTypeEnum;
 import util.exception.AuctionListingNotFoundException;
 
 @Local(AuctionListingEntityControllerLocal.class)
@@ -30,8 +32,11 @@ import util.exception.AuctionListingNotFoundException;
 public class AuctionListingEntityController implements AuctionListingEntityControllerRemote, AuctionListingEntityControllerLocal {
 
     @EJB
+    private CreditTransactionEntityControllerLocal creditTransactionEntityControllerLocal;
+
+    @EJB
     private TimerSessionBeanLocal timerSessionBeanLocal;
-    
+
     @EJB
     private CustomerEntityControllerLocal customerEntityControllerLocal;
 
@@ -64,6 +69,10 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a");
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
 
+        for (AuctionListingEntity auctionListingEntity : auctionListingEntities) {
+            em.refresh(auctionListingEntity);
+        }
+
         return auctionListingEntities;
     }
 
@@ -87,10 +96,10 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     public AuctionListingEntity retrieveActiveAuctionListing(Long auctionListingId) throws AuctionListingNotFoundException {
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.auctionListingId = :inAuctionListingId  AND a.openListing = true");
         query.setParameter("inAuctionListingId", auctionListingId);
-        
-        try{
+
+        try {
             return (AuctionListingEntity) query.getSingleResult();
-        } catch(NonUniqueResultException | NoResultException ex){
+        } catch (NonUniqueResultException | NoResultException ex) {
             throw new AuctionListingNotFoundException("No auction listing with ID: " + auctionListingId);
         }
     }
@@ -158,22 +167,45 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
                 bidEntity.setWinningBid(Boolean.TRUE);
                 auctionListingEntity.setWinningBidEntity(bidEntity);
                 customerEntityControllerLocal.deductCreditBalance(bidEntity.getCustomerEntity().getCustomerId(), lastBidPrice);
-            } else if(reservePrice.compareTo(lastBidPrice) >= 0) {
+            } else if (reservePrice.compareTo(lastBidPrice) >= 0) {
                 // should we have a attribute to mark the auction listing as required intervention?
             }
         }
     }
-    
+
     @Override
-    public List<AuctionListingEntity> retrieveWonAuctionListings(Long customerId){
+    public List<AuctionListingEntity> retrieveWonAuctionListings(Long customerId) {
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.winningBidEntity.customerEntity.customerId = :inCustomerId");
         query.setParameter("inCustomerId", customerId);
-        
+
         return query.getResultList();
     }
-    
+
     @Override
-    public void updateAuctionListing(AuctionListingEntity auctionListingEntity){
-        em.merge(auctionListingEntity);
+    public void updateAuctionListing(AuctionListingEntity auctionListingEntity) {
+        auctionListingEntity = em.merge(auctionListingEntity);
+        timerSessionBeanLocal.updateTimer(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getStartDateTime(), "openListing");
+        timerSessionBeanLocal.updateTimer(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getEndDateTime(), "closeListing");
+    }
+
+    @Override
+    public void deleteAuctionListing(Long auctionListingId) {
+        AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
+
+        List<BidEntity> bidEntities = auctionListingEntity.getBidEntities();
+        BigDecimal refundAmount;
+        Long customerId;
+        for (BidEntity bidEntity : bidEntities) {
+            refundAmount = bidEntity.getBidAmount();
+            customerId = bidEntity.getCustomerEntity().getCustomerId();
+            customerEntityControllerLocal.refundCredits(customerId, refundAmount);
+            creditTransactionEntityControllerLocal.createCreditTransactionEntity(new CreditTransactionEntity(refundAmount, CreditTransactionTypeEnum.REFUND));
+        }
+
+        auctionListingEntity.setEnabled(Boolean.FALSE);
+        auctionListingEntity.setOpenListing(Boolean.FALSE);
+
+        em.remove(auctionListingEntity);
+        em.flush();
     }
 }

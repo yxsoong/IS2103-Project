@@ -1,6 +1,8 @@
 package oasadministrationpanel;
 
 import ejb.session.stateless.AuctionListingEntityControllerRemote;
+import ejb.session.stateless.CustomerEntityControllerRemote;
+import ejb.session.stateless.TimerSessionBeanRemote;
 import entity.AddressEntity;
 import entity.AuctionListingEntity;
 import entity.EmployeeEntity;
@@ -16,6 +18,7 @@ import util.exception.InvalidAccessRightException;
 public class SalesStaffModule {
 
     private AuctionListingEntityControllerRemote auctionListingEntityControllerRemote;
+    private CustomerEntityControllerRemote customerEntityControllerRemote;
     private EmployeeEntity currentEmployeeEntity;
 
     public SalesStaffModule() {
@@ -184,7 +187,7 @@ public class SalesStaffModule {
         newAuctionListingEntity = new AuctionListingEntity(itemName, startingBidAmount, currentBidAmount, startDateTime, endDateTime, reservePrice, open, true, deliveryAddress);
 
         newAuctionListingEntity.setEmployeeEntity(currentEmployeeEntity);
-        
+
         newAuctionListingEntity = auctionListingEntityControllerRemote.createAuctionListing(newAuctionListingEntity);
 
         System.out.println("Auction Listing created! Auction Listing ID: " + newAuctionListingEntity.getAuctionListingId() + "\n\n");
@@ -269,30 +272,30 @@ public class SalesStaffModule {
     private void viewAllAuctionListings() {
         Scanner sc = new Scanner(System.in);
 
-        try{
-        List<AuctionListingEntity> auctionListingEntities = auctionListingEntityControllerRemote.retrieveAllAuctionListings();
+        try {
+            List<AuctionListingEntity> auctionListingEntities = auctionListingEntityControllerRemote.retrieveAllAuctionListings();
 
-        System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s%20s\n", "Auction Listing ID", "Item Name", "Starting Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable", "Delivery Address");
-        for (AuctionListingEntity auctionListingEntity : auctionListingEntities) {
-            String startDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getStartDateTime().getTime());
-            String endDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getEndDateTime().getTime());
+            System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s%20s\n", "Auction Listing ID", "Item Name", "Starting Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable", "Delivery Address");
+            for (AuctionListingEntity auctionListingEntity : auctionListingEntities) {
+                String startDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getStartDateTime().getTime());
+                String endDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getEndDateTime().getTime());
 
-            String deliveryAddress;
+                String deliveryAddress;
 
-            if (auctionListingEntity.getDeliveryAddress() == null) {
-                deliveryAddress = "nil";
-            } else {
-                deliveryAddress = auctionListingEntity.getDeliveryAddress().getAddressID().toString();
+                if (auctionListingEntity.getDeliveryAddress() == null) {
+                    deliveryAddress = "nil";
+                } else {
+                    deliveryAddress = auctionListingEntity.getDeliveryAddress().getAddressID().toString();
+                }
+
+                System.out.printf("%20s%20s%14s%26s%26s%12.4f%14s%10s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(),
+                        auctionListingEntity.getStartingBidAmount(), startDate, endDate, auctionListingEntity.getReservePrice(),
+                        auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled(), deliveryAddress);
             }
 
-            System.out.printf("%20s%20s%14s%26s%26s%12.4f%14s%10s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(),
-                    auctionListingEntity.getStartingBidAmount(), startDate, endDate, auctionListingEntity.getReservePrice(),
-                    auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled(), deliveryAddress);
-        }
-
-        System.out.print("Press enter to continue...> ");
-        sc.nextLine();
-        } catch(AuctionListingNotFoundException ex){
+            System.out.print("Press enter to continue...> ");
+            sc.nextLine();
+        } catch (AuctionListingNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -302,10 +305,112 @@ public class SalesStaffModule {
     }
 
     private void doUpdateAuctionListing(AuctionListingEntity auctionListingEntity) {
+        System.out.println("*** OAS Administration Panel :: Sales Staff :: Update Auction Listing ***\n");
 
+        Scanner sc = new Scanner(System.in);
+        String input, dateTime, type;
+        BigDecimal bigDecInput;
+        int year, month, day, hour, min;
+        int count = 0;
+        Calendar startDateTime = Calendar.getInstance();
+        Calendar endDateTime = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+
+        System.out.print("Enter Auction Listing Name (blank if no change)> ");
+        input = sc.nextLine().trim();
+        if (input.length() > 0) {
+            auctionListingEntity.setItemName(input);
+        }
+
+        System.out.print("Enter Starting Bid Amount (-1 if no change)> ");
+        bigDecInput = sc.nextBigDecimal();
+        if (bigDecInput.compareTo(BigDecimal.ZERO) > -1) {
+            auctionListingEntity.setStartingBidAmount(bigDecInput);
+        }
+        sc.nextLine(); //consume enter character
+
+        count = 0;
+        do {
+            if (count > 0) {
+                System.out.println("Start date time cannot be before current date time!\n");
+            } else if (count == -1) {
+                System.out.println("Start date time has 12 characters!\n");
+                count = 0;
+            }
+
+            System.out.print("Enter Start Date Time (format to yyyymmddhhmm; blank if no change)> ");
+            dateTime = sc.nextLine().trim();
+            if (dateTime.isEmpty()) {
+                break;
+            }
+            if (dateTime.length() == 12) {
+                count++;
+
+                year = Integer.parseInt(dateTime.substring(0, 4).trim());
+                month = Integer.parseInt(dateTime.substring(4, 6).trim());
+                day = Integer.parseInt(dateTime.substring(6, 8).trim());
+                hour = Integer.parseInt(dateTime.substring(8, 10).trim());
+                min = Integer.parseInt(dateTime.substring(10, 12).trim());
+                startDateTime.clear();
+                startDateTime.set(year, month - 1, day, hour, min);
+            } else {
+                count = -1;
+            }
+        } while (now.compareTo(startDateTime) > 0 || count < 0);
+        auctionListingEntity.setStartDateTime(startDateTime);
+
+        count = 0;
+        do {
+            if (count > 0) {
+                System.out.println("End date time must be later than start date time!\n");
+            } else if (count == -1) {
+                System.out.println("End date time has 12 characters!\n");
+                count = 0;
+            }
+
+            System.out.print("Enter End Date Time (format to yyyymmddhhmm; blank if no change)> ");
+            dateTime = sc.nextLine().trim();
+            if (dateTime.isEmpty()) {
+                break;
+            }
+            if (dateTime.length() == 12) {
+                count++;
+                year = Integer.parseInt(dateTime.substring(0, 4).trim());
+                month = Integer.parseInt(dateTime.substring(4, 6).trim());
+                day = Integer.parseInt(dateTime.substring(6, 8).trim());
+                hour = Integer.parseInt(dateTime.substring(8, 10).trim());
+                min = Integer.parseInt(dateTime.substring(10, 12).trim());
+                endDateTime.clear();
+                endDateTime.set(year, month - 1, day, hour, min);
+            } else {
+                count = -1;
+            }
+        } while (endDateTime.before(startDateTime) || count == -1);
+        auctionListingEntity.setEndDateTime(endDateTime);
+
+        System.out.print("Enter Reserve Price (-1 if no change)> ");
+        bigDecInput = sc.nextBigDecimal();
+        if (bigDecInput.compareTo(BigDecimal.ZERO) > -1) {
+            auctionListingEntity.setReservePrice(bigDecInput);
+        }
+        sc.nextLine(); //consume enter character
+
+        System.out.print("Enable Listing? (Enter Y, N, or blank if no change)> ");
+        input = sc.nextLine();
+        if (input.equals("Y")) {
+            auctionListingEntity.setEnabled(Boolean.TRUE);
+        } else if (input.equals("N")) {
+            auctionListingEntity.setEnabled(Boolean.FALSE);
+        }
+
+        auctionListingEntityControllerRemote.updateAuctionListing(auctionListingEntity);
+        System.out.println("Auction listing updated successfully!\n");
     }
 
     private void doDeleteAuctionListing(AuctionListingEntity auctionListingEntity) {
+        System.out.println("*** OAS Administration Panel :: Sales Staff :: Delete Auction Listing ***\n");
+        auctionListingEntityControllerRemote.deleteAuctionListing(auctionListingEntity.getAuctionListingId());
 
+        System.out.println("Auction Listing disabled/deleted successfully.");
     }
 }

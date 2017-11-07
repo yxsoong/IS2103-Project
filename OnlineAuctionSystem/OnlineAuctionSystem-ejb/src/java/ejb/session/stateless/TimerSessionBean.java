@@ -30,52 +30,68 @@ import javax.ejb.TimerService;
 @Stateless
 public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBeanLocal {
 
-@EJB
+    @EJB
     private AuctionListingEntityControllerLocal auctionListingEntityControllerLocal;
 
     @Resource
     private SessionContext sessionContext;
-    
-    
 
     public TimerSessionBean() {
     }
-    
+
     @Override
-    public void createTimers(Long auctionListingId, Calendar dateTime, String type){
+    public void createTimers(Long auctionListingId, Calendar dateTime, String type) {
         TimerService timerService = sessionContext.getTimerService();
         ScheduleExpression schedule = new ScheduleExpression();
 
         schedule.year(dateTime.get(Calendar.YEAR)).month(dateTime.get(Calendar.MONTH) + 1).dayOfMonth(dateTime.get(Calendar.DATE))
                 .hour(dateTime.get(Calendar.HOUR_OF_DAY)).minute(dateTime.get(Calendar.MINUTE)).second(dateTime.get(Calendar.SECOND));
-        
+
         timerService.createCalendarTimer(schedule, new TimerConfig(new TimerEntity(auctionListingId, type), true));
     }
-    
+
     @Override
-    public void cancelTimers(){
+    public void cancelTimers() {
         TimerService timerService = sessionContext.getTimerService();
         Collection<Timer> timers = timerService.getTimers();
-        
-        for(Timer timer:timers){
-            try{
+
+        for (Timer timer : timers) {
+            try {
                 timer.cancel();
                 System.out.println("********** EjbTimerSession.cancelTimers(): " + timer.getInfo().toString());
-            } catch(NoSuchObjectLocalException ex){
+            } catch (NoSuchObjectLocalException ex) {
                 System.out.println(ex.getMessage());
             }
         }
     }
-    
+
+    @Override
+    public void updateTimer(Long auctionListingId, Calendar dateTime, String type) {
+        TimerService timerService = sessionContext.getTimerService();
+        Collection<Timer> timers = timerService.getTimers();
+
+        for (Timer timer : timers) {
+            try {
+                TimerEntity timerEntity = (TimerEntity) timer.getInfo();
+                if (timerEntity.getAuctionListingId().equals(auctionListingId) && timerEntity.getType().equals(type)) {
+                    timer.cancel();
+                }
+                createTimers(auctionListingId, dateTime, type);
+            } catch (NoSuchObjectLocalException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+    }
+
     @Timeout
-    public void handleTimeout(Timer timer){
+    public void handleTimeout(Timer timer) {
         TimerEntity timerEntity = (TimerEntity) timer.getInfo();
-        if(timerEntity.getType().equals("openListing")){
+        if (timerEntity.getType().equals("openListing")) {
             auctionListingEntityControllerLocal.openAuctionListing(timerEntity.getAuctionListingId());
-        } else if(timerEntity.getType().equals("closeListing")){
+        } else if (timerEntity.getType().equals("closeListing")) {
             auctionListingEntityControllerLocal.closeAuctionListing(timerEntity.getAuctionListingId());
         }
-        
+
     }
 
 //    @Schedule(hour = "*", minute = "*/5", second = "0", info = "scheduleEvery5Minutes")
@@ -87,7 +103,6 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
 //    public void openAuctionListing(){
 //        auctionListingEntityControllerLocal.openAuctionListings();
 //    }
-
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 }

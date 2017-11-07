@@ -14,7 +14,7 @@ public class MainApp {
     private AuctionListingEntityControllerRemote auctionListingEntityControllerRemote;
     private BidEntityControllerRemote bidEntityControllerRemote;
     private CreditPackageEntityControllerRemote creditPackageEntityControllerRemote;
-    private EmployeeEntityControllerRemote employeeEntityControllerRemote;    
+    private EmployeeEntityControllerRemote employeeEntityControllerRemote;
     private SystemAdministratorModule systemAdministratorModule;
     private FinanceStaffModule financeStaffModule;
     private SalesStaffModule salesStaffModule;
@@ -59,7 +59,7 @@ public class MainApp {
                         if (doLogin()) {
                             systemAdministratorModule = new SystemAdministratorModule(employeeEntityControllerRemote, currentEmployeeEntity);
                             financeStaffModule = new FinanceStaffModule(creditPackageEntityControllerRemote, currentEmployeeEntity);
-                            salesStaffModule = new SalesStaffModule(auctionListingEntityControllerRemote,currentEmployeeEntity);
+                            salesStaffModule = new SalesStaffModule(auctionListingEntityControllerRemote, currentEmployeeEntity);
                             mainMenu();
                         }
                     } catch (InvalidLoginCredentialException ex) {
@@ -137,12 +137,12 @@ public class MainApp {
         String username = "";
         String password = "";
 
-        System.out.println("*** OAS Administration System :: Login ***\n");
-        System.out.print("Enter username> ");
-        username = sc.nextLine().trim();
-        System.out.print("Enter password> ");
-        password = sc.nextLine().trim();
         while (true) {
+            System.out.println("*** OAS Administration System :: Login ***\n");
+            System.out.print("Enter username> ");
+            username = sc.nextLine().trim();
+            System.out.print("Enter password> ");
+            password = sc.nextLine().trim();
             if (username.length() > 0 && password.length() > 0) {
                 try {
                     currentEmployeeEntity = employeeEntityControllerRemote.employeeLogin(username, password);
@@ -168,8 +168,8 @@ public class MainApp {
             String newPassword = sc.nextLine().trim();
             System.out.print("Confirm New Password> ");
             String newPasswordConfirm = sc.nextLine().trim();
-            
-            if(newPassword.equals(newPasswordConfirm)){
+
+            if (newPassword.equals(newPasswordConfirm)) {
                 currentEmployeeEntity.setPassword(newPassword);
                 employeeEntityControllerRemote.changePassword(currentEmployeeEntity);
             } else {
