@@ -76,8 +76,8 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         return auctionListingEntities;
     }
 
-    public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice() throws AuctionListingNotFoundException{
-        Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.bidEntities.bidAmount < a.reservePrice");
+    public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice() throws AuctionListingNotFoundException {
+        Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.manualAssignment = true");
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
 
         return auctionListingEntities;
@@ -87,11 +87,11 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     public List<AuctionListingEntity> retrieveAllActiveAuctionListings() throws AuctionListingNotFoundException {
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.openListing = true");
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
-        
-        if(auctionListingEntities.isEmpty()){
+
+        if (auctionListingEntities.isEmpty()) {
             throw new AuctionListingNotFoundException("No active auction listings");
         }
-        
+
         return auctionListingEntities;
     }
 
@@ -144,7 +144,7 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
                 bidEntity.setWinningBid(Boolean.TRUE);
                 auctionListingEntity.setWinningBidEntity(bidEntity);
                 customerEntityControllerLocal.deductCreditBalance(bidEntity.getCustomerEntity().getCustomerId(), lastBidPrice);
-                
+
                 CreditTransactionEntity creditTransactionEntity = new CreditTransactionEntity(lastBidPrice, CreditTransactionTypeEnum.USAGE);
                 creditTransactionEntity.setCustomerEntity(bidEntity.getCustomerEntity());
                 creditTransactionEntityControllerLocal.createCreditTransactionEntity(creditTransactionEntity);

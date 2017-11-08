@@ -121,5 +121,8 @@ public class DataInitializationSessionBean {
         AuctionListingEntity auctionListingEntity = new AuctionListingEntity("itemA", BigDecimal.valueOf(20), null, startDT , endDT, BigDecimal.ZERO, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
         auctionListingEntity.setEmployeeEntity(salesEmployee);
         auctionListingEntityControllerLocal.createAuctionListing(auctionListingEntity);
+        AuctionListingEntity auctionListingEntity2 = new AuctionListingEntity("itemB", BigDecimal.valueOf(20), BigDecimal.valueOf(25), startDT , endDT, BigDecimal.valueOf(30), Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+        auctionListingEntity2.setEmployeeEntity(salesEmployee);
+        auctionListingEntityControllerLocal.createAuctionListing(auctionListingEntity2);
     }
 }

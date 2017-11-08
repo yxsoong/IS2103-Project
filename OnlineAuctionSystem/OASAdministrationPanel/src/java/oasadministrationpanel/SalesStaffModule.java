@@ -301,14 +301,14 @@ public class SalesStaffModule {
 
     private void viewListingsBelowReservePrice() {
         Scanner sc = new Scanner(System.in);
-        
-        try{
+
+        try {
             List<AuctionListingEntity> listingsBelowReserve = auctionListingEntityControllerRemote.retrieveAllAuctionListingsBelowReservePrice();
             System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s%20s\n", "Auction Listing ID", "Item Name", "Starting Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable", "Delivery Address");
-            for(AuctionListingEntity auctionListingEntity : listingsBelowReserve){
-                System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(),auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getStartDateTime(), auctionListingEntity.getEndDateTime(),auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled(), auctionListingEntity.getDeliveryAddress());
+            for (AuctionListingEntity auctionListingEntity : listingsBelowReserve) {
+                System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getStartDateTime(), auctionListingEntity.getEndDateTime(), auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled(), auctionListingEntity.getDeliveryAddress());
             }
-        }catch(AuctionListingNotFoundException ex){
+        } catch (AuctionListingNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -366,7 +366,9 @@ public class SalesStaffModule {
                 count = -1;
             }
         } while (now.compareTo(startDateTime) > 0 || count < 0);
-        auctionListingEntity.setStartDateTime(startDateTime);
+        if (!dateTime.isEmpty()) {
+            auctionListingEntity.setStartDateTime(startDateTime);
+        }
 
         count = 0;
         do {
@@ -395,7 +397,9 @@ public class SalesStaffModule {
                 count = -1;
             }
         } while (endDateTime.before(startDateTime) || count == -1);
-        auctionListingEntity.setEndDateTime(endDateTime);
+        if (!dateTime.isEmpty()) {
+            auctionListingEntity.setEndDateTime(endDateTime);
+        }
 
         System.out.print("Enter Reserve Price (-1 if no change)> ");
         bigDecInput = sc.nextBigDecimal();
