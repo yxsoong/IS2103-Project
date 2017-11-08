@@ -304,9 +304,12 @@ public class SalesStaffModule {
 
         try {
             List<AuctionListingEntity> listingsBelowReserve = auctionListingEntityControllerRemote.retrieveAllAuctionListingsBelowReservePrice();
-            System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s%20s\n", "Auction Listing ID", "Item Name", "Starting Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable", "Delivery Address");
+            System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s\n", "Auction Listing ID", "Item Name", "Highest Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable");
             for (AuctionListingEntity auctionListingEntity : listingsBelowReserve) {
-                System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getStartDateTime(), auctionListingEntity.getEndDateTime(), auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled(), auctionListingEntity.getDeliveryAddress());
+                 String startDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getStartDateTime().getTime());
+                String endDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getEndDateTime().getTime());
+
+                System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getCurrentBidAmount(), startDate, endDate, auctionListingEntity.getReservePrice(), auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled());
             }
         } catch (AuctionListingNotFoundException ex) {
             System.out.println(ex.getMessage());

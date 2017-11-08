@@ -66,6 +66,10 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
 
     @Override
     public List<AuctionListingEntity> retrieveAllAuctionListings() throws AuctionListingNotFoundException {
+        timerSessionBeanLocal.cancelTimers();
+        //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        System.out.println(cal.get(Calendar.DATE)); //2016/11/16 12:08:43
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a");
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
 
@@ -150,6 +154,7 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
                 creditTransactionEntityControllerLocal.createCreditTransactionEntity(creditTransactionEntity);
             } else if (reservePrice.compareTo(lastBidPrice) >= 0) {
                 // should we have a attribute to mark the auction listing as required intervention?
+                auctionListingEntity.setManualAssignment(Boolean.TRUE);
             }
         }
     }

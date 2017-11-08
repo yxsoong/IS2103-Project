@@ -113,15 +113,16 @@ public class DataInitializationSessionBean {
         creditPackageEntity2.getCreditTransactionEntities().add(creditTransactionEntity2);
         
         Calendar startDT = Calendar.getInstance();
-        startDT.set(2017, 10, 20, 00, 00);
+        startDT.set(2017, 10, 9, 1, 15);
         
         Calendar endDT = Calendar.getInstance();
         endDT.set(2018, 01, 01, 00, 00);
         
-        AuctionListingEntity auctionListingEntity = new AuctionListingEntity("itemA", BigDecimal.valueOf(20), null, startDT , endDT, BigDecimal.ZERO, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+        AuctionListingEntity auctionListingEntity = new AuctionListingEntity("itemA", BigDecimal.valueOf(20), null, startDT , endDT, BigDecimal.ZERO, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
         auctionListingEntity.setEmployeeEntity(salesEmployee);
         auctionListingEntityControllerLocal.createAuctionListing(auctionListingEntity);
-        AuctionListingEntity auctionListingEntity2 = new AuctionListingEntity("itemB", BigDecimal.valueOf(20), BigDecimal.valueOf(25), startDT , endDT, BigDecimal.valueOf(30), Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+        endDT.set(2017, 10, 9, 1, 17);
+        AuctionListingEntity auctionListingEntity2 = new AuctionListingEntity("itemB", BigDecimal.valueOf(20), BigDecimal.valueOf(25), startDT , endDT, BigDecimal.valueOf(30), Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
         auctionListingEntity2.setEmployeeEntity(salesEmployee);
         auctionListingEntityControllerLocal.createAuctionListing(auctionListingEntity2);
     }

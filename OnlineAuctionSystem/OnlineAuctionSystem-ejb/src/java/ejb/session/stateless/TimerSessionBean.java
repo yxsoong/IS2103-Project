@@ -57,8 +57,10 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
 
         for (Timer timer : timers) {
             try {
-                timer.cancel();
-                System.out.println("********** EjbTimerSession.cancelTimers(): " + timer.getInfo().toString());
+                //timer.cancel();
+                TimerEntity timerEntity = (TimerEntity) timer.getInfo();
+                
+                System.out.println("********** EjbTimerSession.cancelTimers(): " + timerEntity.getAuctionListingId() + " " + timerEntity.getType());
             } catch (NoSuchObjectLocalException ex) {
                 System.out.println(ex.getMessage());
             }
@@ -87,6 +89,7 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
     public void handleTimeout(Timer timer) {
         TimerEntity timerEntity = (TimerEntity) timer.getInfo();
         if (timerEntity.getType().equals("openListing")) {
+            System.out.println("Timeout!");
             auctionListingEntityControllerLocal.openAuctionListing(timerEntity.getAuctionListingId());
         } else if (timerEntity.getType().equals("closeListing")) {
             auctionListingEntityControllerLocal.closeAuctionListing(timerEntity.getAuctionListingId());
