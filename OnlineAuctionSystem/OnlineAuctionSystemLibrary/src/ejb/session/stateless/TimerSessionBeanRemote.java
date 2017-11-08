@@ -13,4 +13,6 @@ public interface TimerSessionBeanRemote {
 
     public void cancelTimers();
 
+    public void updateTimer(Long auctionListingId, Calendar dateTime, String type);
+
 }

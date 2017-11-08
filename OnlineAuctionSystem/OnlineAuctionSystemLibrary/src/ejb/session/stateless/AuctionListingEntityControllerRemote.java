@@ -38,4 +38,6 @@ public interface AuctionListingEntityControllerRemote {
 
     public void updateAuctionListing(AuctionListingEntity auctionListingEntity);
 
+    public void deleteAuctionListing(Long auctionListingId);
+
 }
