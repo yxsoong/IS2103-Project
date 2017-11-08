@@ -16,8 +16,6 @@ public interface AuctionListingEntityControllerRemote {
 
     public AuctionListingEntity retrieveAuctionListingById(Long auctionListingId) throws AuctionListingNotFoundException;
 
-    public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice();
-
     public List<AuctionListingEntity> retrieveAllActiveAuctionListings() throws AuctionListingNotFoundException;
 
     public List<AuctionListingEntity> retrieveAllAuctionListings() throws AuctionListingNotFoundException;
@@ -35,6 +33,8 @@ public interface AuctionListingEntityControllerRemote {
     public void closeAuctionListing(Long auctionListingId);
 
     public List<AuctionListingEntity> retrieveWonAuctionListings(Long customerId);
+
+    public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice() throws AuctionListingNotFoundException;
 
     public void updateAuctionListing(AuctionListingEntity auctionListingEntity);
 
