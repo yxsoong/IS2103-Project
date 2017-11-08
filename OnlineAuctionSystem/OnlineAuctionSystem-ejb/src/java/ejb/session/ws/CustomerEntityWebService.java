@@ -5,6 +5,7 @@
  */
 package ejb.session.ws;
 
+import datamodel.CreditBalance;
 import ejb.session.stateless.CustomerEntityControllerLocal;
 import entity.CustomerEntity;
 import javax.ejb.EJB;
@@ -12,6 +13,8 @@ import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.InvalidRegistrationException;
 
@@ -23,6 +26,9 @@ import util.exception.InvalidRegistrationException;
 @Stateless()
 public class CustomerEntityWebService {
 
+    @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
+    private EntityManager em;
+    
     @EJB
     private CustomerEntityControllerLocal customerEntityControllerLocal;
     
@@ -48,6 +54,10 @@ public class CustomerEntityWebService {
             CustomerEntity customerEntity = customerEntityControllerLocal.customerLogin(username, password);
             
             if(customerEntity.getPremium()){
+                em.detach(customerEntity);
+                customerEntity.setBidEntities(null);
+                customerEntity.setAddressEntities(null);
+                customerEntity.setCreditTransactions(null);
                 return customerEntity;
             } else {
                 throw new InvalidLoginCredentialException("Please register to become a premium member");
@@ -58,13 +68,9 @@ public class CustomerEntityWebService {
     }
 
     @WebMethod(operationName = "retrieveCreditBalance")
-    public CustomerEntity retrieveCreditBalance(@WebParam(name = "customerId") Long customerId) {
+    public CreditBalance retrieveCreditBalance(@WebParam(name = "customerId") Long customerId) {
         //TODO write your implementation code here:
-        return customerEntityControllerLocal.retrieveCustomerById(customerId);
+        return customerEntityControllerLocal.retrieveCreditBalance(customerId);
     }
-
-    
-
-
 
 }
