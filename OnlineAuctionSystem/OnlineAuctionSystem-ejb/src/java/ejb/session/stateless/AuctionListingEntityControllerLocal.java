@@ -18,7 +18,7 @@ public interface AuctionListingEntityControllerLocal {
 
     public List<AuctionListingEntity> retrieveAllAuctionListings() throws AuctionListingNotFoundException;
 
-    public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice();
+    public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice() throws AuctionListingNotFoundException;
 
     public List<AuctionListingEntity> retrieveAllActiveAuctionListings() throws AuctionListingNotFoundException;
 

@@ -76,8 +76,7 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         return auctionListingEntities;
     }
 
-    @Override
-    public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice() {
+    public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice() throws AuctionListingNotFoundException{
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.bidEntities.bidAmount < a.reservePrice");
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
 

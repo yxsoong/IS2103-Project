@@ -301,7 +301,17 @@ public class SalesStaffModule {
     }
 
     private void viewListingsBelowReservePrice() {
-
+        Scanner sc = new Scanner(System.in);
+        
+        try{
+            List<AuctionListingEntity> listingsBelowReserve = auctionListingEntityControllerRemote.retrieveAllAuctionListingsBelowReservePrice();
+            System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s%20s\n", "Auction Listing ID", "Item Name", "Starting Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable", "Delivery Address");
+            for(AuctionListingEntity auctionListingEntity : listingsBelowReserve){
+                System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s%20s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(),auctionListingEntity.getStartingBidAmount(), auctionListingEntity.getStartDateTime(), auctionListingEntity.getEndDateTime(),auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled(), auctionListingEntity.getDeliveryAddress());
+            }
+        }catch(AuctionListingNotFoundException ex){
+            System.out.println(ex.getMessage());
+        }
     }
 
     private void doUpdateAuctionListing(AuctionListingEntity auctionListingEntity) {
