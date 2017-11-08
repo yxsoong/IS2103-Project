@@ -142,6 +142,10 @@ public class MainApp {
                 
                 if(response == 1){
                     viewCreditBalance();
+                } else if (response == 5) { 
+                    break;
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
                 }
             }
 
