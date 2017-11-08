@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,9 +44,11 @@ public class CreditPackageEntity implements Serializable {
     private List<CreditTransactionEntity> creditTransactionEntities;
 
     public CreditPackageEntity() {
+        creditTransactionEntities = new ArrayList<>();
     }
 
     public CreditPackageEntity(String creditPackageName, BigDecimal price, BigDecimal numberOfCredits, Boolean enabled) {
+        this();
         this.creditPackageName = creditPackageName;
         this.price = price;
         this.numberOfCredits = numberOfCredits;
@@ -53,6 +56,7 @@ public class CreditPackageEntity implements Serializable {
     }
     
     public CreditPackageEntity(String creditPackageName, BigDecimal price, BigDecimal numberOfCredits, Boolean enabled, EmployeeEntity employeeEntity) {
+        this();
         this.creditPackageName = creditPackageName;
         this.price = price;
         this.numberOfCredits = numberOfCredits;

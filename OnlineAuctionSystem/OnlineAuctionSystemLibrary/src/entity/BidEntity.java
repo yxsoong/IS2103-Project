@@ -29,7 +29,7 @@ public class BidEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(length = 255, nullable = false)
-    private Long auctionTransactionId;
+    private Long bidId;
     @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal bidAmount;
     @Column(nullable = false)
@@ -59,7 +59,7 @@ public class BidEntity implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (auctionTransactionId != null ? auctionTransactionId.hashCode() : 0);
+        hash += (bidId != null ? bidId.hashCode() : 0);
         return hash;
     }
     
@@ -70,7 +70,7 @@ public class BidEntity implements Serializable {
             return false;
         }
         BidEntity other = (BidEntity) object;
-        if ((this.auctionTransactionId == null && other.auctionTransactionId != null) || (this.auctionTransactionId != null && !this.auctionTransactionId.equals(other.auctionTransactionId))) {
+        if ((this.bidId == null && other.bidId != null) || (this.bidId != null && !this.bidId.equals(other.bidId))) {
             return false;
         }
         return true;
@@ -78,21 +78,15 @@ public class BidEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.AuctionTransactionEntity[ id=" + auctionTransactionId + " ]";
+        return "entity.AuctionTransactionEntity[ id=" + bidId + " ]";
     }
 
-    /**
-     * @return the auctionTransactionId
-     */
-    public Long getAuctionTransactionId() {
-        return auctionTransactionId;
+    public Long getBidId() {
+        return bidId;
     }
 
-    /**
-     * @param auctionTransactionId the auctionTransactionId to set
-     */
-    public void setAuctionTransactionId(Long auctionTransactionId) {
-        this.auctionTransactionId = auctionTransactionId;
+    public void setBidId(Long bidId) {
+        this.bidId = bidId;
     }
 
     /**

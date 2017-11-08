@@ -77,7 +77,7 @@ public class DataInitializationSessionBean {
         EmployeeEntity financeEmployee = employeeEntityControllerLocal.createEmployee(new EmployeeEntity("B", "B", EmployeeAccessRightEnum.FINANCE, "finance", "password"));
         EmployeeEntity salesEmployee = employeeEntityControllerLocal.createEmployee(new EmployeeEntity("C", "C", EmployeeAccessRightEnum.SALES, "sales", "password"));
 
-        CustomerEntity customerEntity = customerEntityControllerLocal.createCustomer(new CustomerEntity("A", "A", "123", "123", BigDecimal.ZERO, BigDecimal.ZERO, Boolean.FALSE, "customer", "password"));
+        CustomerEntity customerEntity = customerEntityControllerLocal.createCustomer(new CustomerEntity("A", "A", "123", "123", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, Boolean.FALSE, "customer", "password"));
 
         AddressEntity addressEntity1 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-10", "111111", Boolean.TRUE));
         AddressEntity addressEntity2 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-11", "222222", Boolean.TRUE));
@@ -98,6 +98,7 @@ public class DataInitializationSessionBean {
         creditTransactionEntityControllerLocal.createCreditTransactionEntity(creditTransactionEntity1);
 
         customerEntity.setCreditBalance(customerEntity.getCreditBalance().add(creditTransactionEntity1.getNumberOfCredits()));
+        customerEntity.setAvailableBalance(customerEntity.getAvailableBalance().add(creditTransactionEntity1.getNumberOfCredits()));
         //customerEntityControllerLocal.updateCustomer(customerEntity);
 
         CreditTransactionEntity creditTransactionEntity2 = new CreditTransactionEntity(BigDecimal.valueOf(320), CreditTransactionTypeEnum.TOPUP);
@@ -106,6 +107,7 @@ public class DataInitializationSessionBean {
         creditTransactionEntityControllerLocal.createCreditTransactionEntity(creditTransactionEntity2);
 
         customerEntity.setCreditBalance(customerEntity.getCreditBalance().add(creditTransactionEntity2.getNumberOfCredits()));
+        customerEntity.setAvailableBalance(customerEntity.getAvailableBalance().add(creditTransactionEntity2.getNumberOfCredits()));
         //customerEntityControllerLocal.updateCustomer(customerEntity);
 
         creditPackageEntity2.getCreditTransactionEntities().add(creditTransactionEntity2);
@@ -116,7 +118,7 @@ public class DataInitializationSessionBean {
         Calendar endDT = Calendar.getInstance();
         endDT.set(2018, 01, 01, 00, 00);
         
-        AuctionListingEntity auctionListingEntity = new AuctionListingEntity("itemA", BigDecimal.valueOf(20), null, startDT , endDT, BigDecimal.ZERO, Boolean.TRUE, Boolean.TRUE, addressEntity2);
+        AuctionListingEntity auctionListingEntity = new AuctionListingEntity("itemA", BigDecimal.valueOf(20), null, startDT , endDT, BigDecimal.ZERO, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
         auctionListingEntity.setEmployeeEntity(salesEmployee);
         auctionListingEntityControllerLocal.createAuctionListing(auctionListingEntity);
     }

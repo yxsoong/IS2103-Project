@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import datamodel.CreditBalance;
 import entity.CreditTransactionEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
@@ -81,6 +82,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
     public void topUpCredits(Long customerId, BigDecimal amount, CreditTransactionEntity creditTransactionEntity) {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
         customerEntity.setCreditBalance(customerEntity.getCreditBalance().add(amount));
+        customerEntity.setAvailableBalance(customerEntity.getAvailableBalance().add(amount));
     }
 
     @Override
@@ -112,5 +114,13 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
         
         customerEntity.setHoldingBalance(customerEntity.getHoldingBalance().subtract(amount));
         customerEntity.setCreditBalance(customerEntity.getCreditBalance().subtract(amount));
+    }
+    
+    @Override
+    public CreditBalance retrieveCreditBalance(Long customerId){
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
+        
+        CreditBalance creditBalance = new CreditBalance(customerEntity.getCreditBalance(),customerEntity.getHoldingBalance(), customerEntity.getAvailableBalance());
+        return creditBalance;
     }
 }

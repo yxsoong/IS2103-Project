@@ -5,6 +5,7 @@
  */
 package oasauctionclient;
 
+import datamodel.CreditBalance;
 import ejb.session.stateless.AddressEntityControllerRemote;
 import ejb.session.stateless.AuctionListingEntityControllerRemote;
 import ejb.session.stateless.BidEntityControllerRemote;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Scanner;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionListingNotFoundException;
+import util.exception.InvalidBidException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PlaceBidException;
 
@@ -114,7 +116,7 @@ public class MainApp {
 
         String firstName, lastName, identificationNo, phoneNumber, username, password;
         Boolean isPremium = false;
-        BigDecimal creditBalance = BigDecimal.ZERO, holdingBalance = BigDecimal.ZERO;
+        BigDecimal creditBalance = BigDecimal.ZERO, holdingBalance = BigDecimal.ZERO, ledgerBalance = BigDecimal.ZERO;
         int count = 0;
 
         do {
@@ -202,7 +204,7 @@ public class MainApp {
 
         } while (password.isEmpty() || !samePassword);
 
-        CustomerEntity newCustomerEntity = new CustomerEntity(firstName, lastName, identificationNo, phoneNumber, creditBalance, holdingBalance, isPremium, username, password);
+        CustomerEntity newCustomerEntity = new CustomerEntity(firstName, lastName, identificationNo, phoneNumber, creditBalance, holdingBalance, ledgerBalance, isPremium, username, password);
 
         newCustomerEntity = customerEntityControllerRemote.createCustomer(newCustomerEntity);
 
@@ -521,12 +523,11 @@ public class MainApp {
     private void viewCreditBalance() {
         Scanner sc = new Scanner(System.in);
 
-        BigDecimal creditBalance = currentCustomerEntity.getCreditBalance();
-        BigDecimal holdingBalance = currentCustomerEntity.getHoldingBalance();
+        CreditBalance creditBalance = customerEntityControllerRemote.retrieveCreditBalance(currentCustomerEntity.getCustomerId());
 
-        System.out.println("Credit balance: " + creditBalance);
-        System.out.println("Holding balance: " + holdingBalance);
-        System.out.println("Available balance: " + creditBalance.subtract(holdingBalance) + "\n");
+        System.out.println("Credit balance: " + creditBalance.getCreditBalance());
+        System.out.println("Holding balance: " + creditBalance.getHoldingBalance());
+        System.out.println("Available balance: " + creditBalance.getAvailableBalance() + "\n");
 
         System.out.print("Press enter to continue...");
         sc.nextLine();
@@ -623,9 +624,9 @@ public class MainApp {
             }
         } catch (AuctionListingNotFoundException ex) {
             System.out.println(ex.getMessage());
-            System.out.print("Press enter to continue...");
-            sc.nextLine();
         }
+        System.out.print("Press enter to continue...");
+        sc.nextLine();
     }
 
     private void viewAuctionListingDetails() {
@@ -649,15 +650,6 @@ public class MainApp {
 
             sc.nextLine(); // consume enter character 
             try {
-                /*if (!auctionListingEntityControllerRemote.retrieveAllActiveAuctionListings().isEmpty()) {
-                    auctionListingEntity = auctionListingEntityControllerRemote.retrieveAllActiveAuctionListings().get((int) (auctionListingId - 1L));
-                } else {
-                    System.out.println("No Auction Listings Available");
-//                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//                    Calendar cal = Calendar.getInstance();
-//                    System.out.println(dateFormat.format(cal.getTime()));
-                    return;
-                }*/
                 auctionListingEntity = auctionListingEntityControllerRemote.retrieveActiveAuctionListing(auctionListingId);
 
                 cal = auctionListingEntity.getEndDateTime();
@@ -733,23 +725,21 @@ public class MainApp {
             userBid = sc.nextBigDecimal();
             count++;
         } while (userBid.compareTo(BigDecimal.ZERO) <= 0 || userBid.compareTo(nextExpectedBid) < 0);
+        
         sc.nextLine(); //consume enter character
 
         bidEntity = new BidEntity(userBid, currentTimestamp);
         bidEntity.setCustomerEntity(currentCustomerEntity);
         bidEntity.setAuctionListingEntity(auctionListingEntity);
         try {
-            creditTransactionEntityControllerRemote.placeBid(bidEntity);
-            System.out.println("Bid placed.");
-        } catch (PlaceBidException ex) {
+            bidEntity = bidEntityControllerRemote.createNewBid(bidEntity);
+            System.out.println("Bid placed! Bid ID: " + bidEntity.getBidId());
+        } catch (InvalidBidException ex) {
             System.out.println(ex.getMessage());
         }
 
         System.out.print("Press enter to continue...");
         sc.nextLine();
-        //bidEntity = bidEntityControllerRemote.createNewBid(bidEntity);
-
-        //System.out.println("Bid placed! Auction Transaction ID: " + bidEntity.getAuctionTransactionId() + "\n\n");
     }
 
     private void browseWonAuctionListing() {
@@ -828,9 +818,9 @@ public class MainApp {
                     addressRow = sc.nextInt();
 
                 } while (addressRow >= addressEntities.size() || addressRow <= 0);
-                
+
                 sc.nextLine(); //consume enter character
-                
+
                 auctionListingEntity.setDeliveryAddress(addressEntities.get(addressRow - 1));
                 auctionListingEntityControllerRemote.updateAuctionListing(auctionListingEntity);
 

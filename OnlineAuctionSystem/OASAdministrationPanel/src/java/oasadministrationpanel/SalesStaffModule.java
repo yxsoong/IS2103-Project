@@ -80,8 +80,7 @@ public class SalesStaffModule {
         BigDecimal startingBidAmount, reservePrice, currentBidAmount = null;
         Calendar startDateTime = Calendar.getInstance();
         Calendar endDateTime = Calendar.getInstance();
-        Boolean open = false;
-        AddressEntity deliveryAddress = null;
+        Boolean open = false, enabled = true, manualAssignment = false;
         int year, month, day, hour, min;
 
         AuctionListingEntity newAuctionListingEntity;
@@ -184,7 +183,7 @@ public class SalesStaffModule {
             open = false;
         }
 
-        newAuctionListingEntity = new AuctionListingEntity(itemName, startingBidAmount, currentBidAmount, startDateTime, endDateTime, reservePrice, open, true, deliveryAddress);
+        newAuctionListingEntity = new AuctionListingEntity(itemName, startingBidAmount, currentBidAmount, startDateTime, endDateTime, reservePrice, open, enabled, manualAssignment);
 
         newAuctionListingEntity.setEmployeeEntity(currentEmployeeEntity);
 

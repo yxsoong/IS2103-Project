@@ -5,7 +5,7 @@
  */
 package ejb.session.stateless;
 
-import entity.TimerEntity;
+import datamodel.TimerEntity;
 import java.util.Calendar;
 import java.util.Collection;
 import javax.annotation.Resource;

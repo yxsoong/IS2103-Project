@@ -27,22 +27,6 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author User
  */
-@XmlRootElement
-@XmlType(name = "customerEntity", propOrder = {
-    "firstName",
-    "lastName",
-    "identificationNo",
-    "phoneNumber",
-    "creditBalance",
-    "holdiinBalance",
-    "premium",
-    "username",
-    "password",
-    "addressEntities",
-    "creditTransaction",
-    "bidEntities"
-})
-
 @Entity
 public class CustomerEntity implements Serializable {
 
@@ -62,6 +46,8 @@ public class CustomerEntity implements Serializable {
     private BigDecimal creditBalance;
     @Column(precision = 18, scale = 4)
     private BigDecimal holdingBalance;
+    @Column(precision = 18, scale = 4)
+    private BigDecimal availableBalance;
     @Column(nullable = false)
     private Boolean premium;
     @Column(unique = true, nullable = false, length = 255)
@@ -82,20 +68,20 @@ public class CustomerEntity implements Serializable {
         bidEntities = new ArrayList<>();
     }
 
-    public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, BigDecimal holdingBalance, Boolean premium, String username, String password) {
+    public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, BigDecimal holdingBalance, BigDecimal availableBalance, Boolean premium, String username, String password) {
+        this();
+        
         this.firstName = firstName;
         this.lastName = lastName;
         this.identificationNo = identificationNo;
         this.phoneNumber = phoneNumber;
         this.creditBalance = creditBalance;
         this.holdingBalance = holdingBalance;
+        this.availableBalance = availableBalance;
         this.premium = premium;
         this.username = username;
         this.password = password;
     }
-
-    
-
 
     @Override
     public int hashCode() {
@@ -176,6 +162,14 @@ public class CustomerEntity implements Serializable {
 
     public void setHoldingBalance(BigDecimal holdingBalance) {
         this.holdingBalance = holdingBalance;
+    }
+
+    public BigDecimal getAvailableBalance() {
+        return availableBalance;
+    }
+
+    public void setAvailableBalance(BigDecimal availableBalance) {
+        this.availableBalance = availableBalance;
     }
 
     public Boolean getPremium() {

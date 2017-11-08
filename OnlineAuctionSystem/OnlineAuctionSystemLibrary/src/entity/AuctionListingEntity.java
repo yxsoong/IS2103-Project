@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +47,8 @@ public class AuctionListingEntity implements Serializable {
     private Boolean openListing;
     @Column(nullable = false)
     private Boolean enabled;
+    @Column(nullable = false)
+    private Boolean manualAssignment;
     @ManyToOne
     @JoinColumn(nullable = true)
     private AddressEntity deliveryAddress;
@@ -59,9 +62,11 @@ public class AuctionListingEntity implements Serializable {
     private EmployeeEntity employeeEntity;
 
     public AuctionListingEntity() {
+        bidEntities = new ArrayList<>();
     }
 
-    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, BigDecimal currentBidAmount, Calendar startDateTime, Calendar endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enabled) {
+    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, BigDecimal currentBidAmount, Calendar startDateTime, Calendar endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enabled, Boolean manualAssignment) {
+        this();
         this.itemName = itemName;
         this.startingBidAmount = startingBidAmount;
         this.currentBidAmount = currentBidAmount;
@@ -70,18 +75,7 @@ public class AuctionListingEntity implements Serializable {
         this.reservePrice = reservePrice;
         this.openListing = openListing;
         this.enabled = enabled;
-    }
-
-    public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, BigDecimal currentBidAmount, Calendar startDateTime, Calendar endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enabled, AddressEntity deliveryAddress) {
-        this.itemName = itemName;
-        this.startingBidAmount = startingBidAmount;
-        this.currentBidAmount = currentBidAmount;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
-        this.reservePrice = reservePrice;
-        this.openListing = openListing;
-        this.enabled = enabled;
-        this.deliveryAddress = deliveryAddress;
+        this.manualAssignment = manualAssignment;
     }
 
     @Override
@@ -181,6 +175,14 @@ public class AuctionListingEntity implements Serializable {
         this.enabled = enabled;
     }
 
+    public Boolean getManualAssignment() {
+        return manualAssignment;
+    }
+
+    public void setManualAssignment(Boolean manualAssignment) {
+        this.manualAssignment = manualAssignment;
+    }
+    
     public AddressEntity getDeliveryAddress() {
         return deliveryAddress;
     }

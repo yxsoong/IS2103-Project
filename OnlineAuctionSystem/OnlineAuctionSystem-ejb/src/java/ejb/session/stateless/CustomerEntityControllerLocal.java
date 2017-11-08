@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import datamodel.CreditBalance;
 import entity.CreditTransactionEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
@@ -30,4 +31,6 @@ public interface CustomerEntityControllerLocal {
     public void refundCredits(Long customerId, BigDecimal amount);
     
     public void deductCreditBalance(Long customerId, BigDecimal amount);
+    
+    public CreditBalance retrieveCreditBalance(Long customerId);
 }

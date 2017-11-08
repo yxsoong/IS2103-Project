@@ -19,5 +19,5 @@ public interface CreditTransactionEntityControllerLocal {
 
     public void purchaseCreditPackage(CreditPackageEntity creditPackageEntity, int quantity, Long customerId);
     
-    public void placeBid(BidEntity bidEntity) throws PlaceBidException;
+    //public void placeBid(BidEntity bidEntity) throws PlaceBidException;
 }

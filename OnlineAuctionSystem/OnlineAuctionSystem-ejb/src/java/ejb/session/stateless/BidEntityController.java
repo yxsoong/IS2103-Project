@@ -10,7 +10,9 @@ import entity.BidEntity;
 import entity.CustomerEntity;
 import java.math.BigDecimal;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.EJBContext;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -18,6 +20,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import util.exception.InsufficientCreditsException;
 import util.exception.InvalidBidException;
 
 /**
@@ -29,6 +32,9 @@ import util.exception.InvalidBidException;
 @Stateless
 public class BidEntityController implements BidEntityControllerRemote, BidEntityControllerLocal {
 
+    @Resource
+    private EJBContext eJBContext;
+    
     @EJB
     private AuctionListingEntityControllerLocal auctionListingEntityControllerLocal;
 
@@ -40,21 +46,35 @@ public class BidEntityController implements BidEntityControllerRemote, BidEntity
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public BidEntity createNewBid(BidEntity bidEntity) throws InvalidBidException{
+    public BidEntity createNewBid(BidEntity bidEntity) throws InvalidBidException {
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, bidEntity.getCustomerEntity().getCustomerId());
         AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, bidEntity.getAuctionListingEntity().getAuctionListingId());
-        //List<BidEntity> bidEntities = auctionListingEntity.getBidEntities();
-        
-        if((auctionListingEntity.getCurrentBidAmount() == null && bidEntity.getBidAmount().compareTo(auctionListingEntity.getStartingBidAmount()) > 0)
-                || bidEntity.getBidAmount().compareTo(auctionListingEntity.getCurrentBidAmount()) > 0) {
-            em.persist(bidEntity);
-            auctionListingEntity.getBidEntities().add(bidEntity);
-            auctionListingEntity.setCurrentBidAmount(bidEntity.getBidAmount());
-            em.flush();
-            em.refresh(bidEntity);
-            return bidEntity;
-        } else {
-            throw new InvalidBidException("Bid is lower than current bid!");
+
+        try {
+            if ((auctionListingEntity.getCurrentBidAmount() == null && bidEntity.getBidAmount().compareTo(auctionListingEntity.getStartingBidAmount()) > 0)
+                    || bidEntity.getBidAmount().compareTo(auctionListingEntity.getCurrentBidAmount()) > 0) {
+                em.persist(bidEntity);
+                auctionListingEntity.getBidEntities().add(bidEntity);
+                auctionListingEntity.setCurrentBidAmount(bidEntity.getBidAmount());
+            } else {
+                throw new InvalidBidException("Bid is lower than current bid!");
+            }
+            customerEntityControllerLocal.useCredits(customerEntity.getCustomerId(), bidEntity.getBidAmount());
+            
+            //refund
+            List<BidEntity> bidEntities = auctionListingEntity.getBidEntities();
+            if (bidEntities.size() > 1) {
+                BidEntity refundBid = bidEntities.get(bidEntities.size() - 2);
+                customerEntityControllerLocal.refundCredits(refundBid.getCustomerEntity().getCustomerId(), refundBid.getBidAmount());
+            }
+            
+        } catch (InsufficientCreditsException ex) {
+            eJBContext.setRollbackOnly();
+            throw new InvalidBidException(ex.getMessage());
         }
+        em.flush();
+        em.refresh(bidEntity);
+        return bidEntity;
 
     }
 

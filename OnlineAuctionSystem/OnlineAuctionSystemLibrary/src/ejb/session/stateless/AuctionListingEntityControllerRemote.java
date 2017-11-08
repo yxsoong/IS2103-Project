@@ -24,10 +24,6 @@ public interface AuctionListingEntityControllerRemote {
 
     public AuctionListingEntity retrieveActiveAuctionListing(Long auctionListingId) throws AuctionListingNotFoundException;
 
-    public void openAuctionListings();
-
-    public void closeAuctionListings();
-
     public void openAuctionListing(Long auctionListingId);
 
     public void closeAuctionListing(Long auctionListingId);

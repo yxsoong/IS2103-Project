@@ -87,7 +87,11 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     public List<AuctionListingEntity> retrieveAllActiveAuctionListings() throws AuctionListingNotFoundException {
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.openListing = true");
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
-
+        
+        if(auctionListingEntities.isEmpty()){
+            throw new AuctionListingNotFoundException("No active auction listings");
+        }
+        
         return auctionListingEntities;
     }
 
@@ -119,35 +123,9 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     }
 
     @Override
-    public void openAuctionListings() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Calendar currentDateTime = Calendar.getInstance();
-        Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.startDateTime <= CURRENT_TIMESTAMP AND a.openListing = false");
-
-        List<AuctionListingEntity> auctionListingEntities = query.getResultList();
-
-        for (AuctionListingEntity auctionListingEntity : auctionListingEntities) {
-            auctionListingEntity.setOpenListing(Boolean.TRUE);
-        }
-    }
-
-    @Override
     public void openAuctionListing(Long auctionListingId) {
         AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
         auctionListingEntity.setOpenListing(Boolean.TRUE);
-    }
-
-    @Override
-    public void closeAuctionListings() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Calendar currentDateTime = Calendar.getInstance();
-        Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.endDateTime <= CURRENT_TIMESTAMP AND a.openListing = true");
-
-        List<AuctionListingEntity> auctionListingEntities = query.getResultList();
-
-        for (AuctionListingEntity auctionListingEntity : auctionListingEntities) {
-            auctionListingEntity.setOpenListing(Boolean.FALSE);
-        }
     }
 
     @Override
@@ -166,6 +144,10 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
                 bidEntity.setWinningBid(Boolean.TRUE);
                 auctionListingEntity.setWinningBidEntity(bidEntity);
                 customerEntityControllerLocal.deductCreditBalance(bidEntity.getCustomerEntity().getCustomerId(), lastBidPrice);
+                
+                CreditTransactionEntity creditTransactionEntity = new CreditTransactionEntity(lastBidPrice, CreditTransactionTypeEnum.USAGE);
+                creditTransactionEntity.setCustomerEntity(bidEntity.getCustomerEntity());
+                creditTransactionEntityControllerLocal.createCreditTransactionEntity(creditTransactionEntity);
             } else if (reservePrice.compareTo(lastBidPrice) >= 0) {
                 // should we have a attribute to mark the auction listing as required intervention?
             }

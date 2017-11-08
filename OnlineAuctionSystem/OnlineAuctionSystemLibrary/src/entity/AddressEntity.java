@@ -48,6 +48,7 @@ public class AddressEntity implements Serializable {
     }
 
     public AddressEntity(String streetAddress, String unitNumber, String postalCode, Boolean enabled) {
+        this();
         this.streetAddress = streetAddress;
         this.unitNumber = unitNumber;
         this.postalCode = postalCode;
