@@ -194,4 +194,25 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         em.remove(auctionListingEntity);
         em.flush();
     }
+
+    @Override
+    public void setWinningBidEntity(Long auctionListingId) {
+        AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
+        int lastIndex = auctionListingEntity.getBidEntities().size() - 1;
+        BidEntity winningBidEntity = auctionListingEntity.getBidEntities().get(lastIndex);
+        auctionListingEntity.setWinningBidEntity(winningBidEntity);
+        auctionListingEntity.setManualAssignment(Boolean.FALSE);
+        em.persist(auctionListingEntity);
+        em.flush();
+        em.refresh(auctionListingEntity);
+    }
+
+    @Override
+    public void noWinningBidEntity(Long auctionListingId) {
+        AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
+        auctionListingEntity.setManualAssignment(Boolean.FALSE);
+        em.persist(auctionListingEntity);
+        em.flush();
+        em.refresh(auctionListingEntity);
+    }
 }

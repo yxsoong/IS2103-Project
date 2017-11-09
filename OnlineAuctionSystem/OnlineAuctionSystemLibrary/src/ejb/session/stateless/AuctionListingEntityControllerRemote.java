@@ -36,4 +36,8 @@ public interface AuctionListingEntityControllerRemote {
 
     public void deleteAuctionListing(Long auctionListingId);
 
+    public void setWinningBidEntity(Long auctionListingId);
+
+    public void noWinningBidEntity(Long auctionListingId);
+
 }
