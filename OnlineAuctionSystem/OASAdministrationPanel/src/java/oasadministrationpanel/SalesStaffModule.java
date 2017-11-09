@@ -305,7 +305,6 @@ public class SalesStaffModule {
 
         try {
             List<AuctionListingEntity> listingsBelowReserve = auctionListingEntityControllerRemote.retrieveAllAuctionListingsBelowReservePrice();
-            System.out.println("LOOK AT THIS. IT'S THE SIZE>>>> " + listingsBelowReserve.size());
             System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s\n", "Auction Listing ID", "Item Name", "Highest Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable");
             for (AuctionListingEntity auctionListingEntity : listingsBelowReserve) {
                 String startDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getStartDateTime().getTime());
