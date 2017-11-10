@@ -5,6 +5,7 @@ import ejb.session.stateless.CustomerEntityControllerRemote;
 import ejb.session.stateless.TimerSessionBeanRemote;
 import entity.AddressEntity;
 import entity.AuctionListingEntity;
+import entity.BidEntity;
 import entity.EmployeeEntity;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -306,14 +307,98 @@ public class SalesStaffModule {
             List<AuctionListingEntity> listingsBelowReserve = auctionListingEntityControllerRemote.retrieveAllAuctionListingsBelowReservePrice();
             System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s\n", "Auction Listing ID", "Item Name", "Highest Bid", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable");
             for (AuctionListingEntity auctionListingEntity : listingsBelowReserve) {
-                 String startDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getStartDateTime().getTime());
+                String startDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getStartDateTime().getTime());
                 String endDate = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(auctionListingEntity.getEndDateTime().getTime());
 
                 System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getCurrentBidAmount(), startDate, endDate, auctionListingEntity.getReservePrice(), auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled());
             }
+            if(listingsBelowReserve.isEmpty()){
+                System.out.print("Press Enter to continue...");
+                sc.nextLine();
+                return;
+            }
+            System.out.println("------------------------");
+            System.out.println("1: Manual Assignment of Winning Bid");
+            System.out.println("2: Back\n");
+            System.out.print("> ");
+            Integer response = 0;
+
+            while (true) {
+                try {
+                    response = Integer.parseInt(sc.next());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.\n");
+                    continue;
+                }
+
+                if (response >= 1 && response <= 2) {
+                    break;
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
+                }
+            }
+
+            if (response == 1) {
+                Long listingId;
+                while (true) {
+                    System.out.print("Enter Auction Listing Id> ");
+                    listingId = sc.nextLong();
+                    AuctionListingEntity selectedListing = auctionListingEntityControllerRemote.retrieveAuctionListingById(listingId);
+
+                    if (!listingsBelowReserve.contains(selectedListing)) {
+                        System.out.println("Invalid Auction Listing Id");
+                        continue;
+                    } else {
+                        manualAssignmentWinningBid(selectedListing);
+                        break;
+                    }
+                }
+            } else if (response == 2) {
+                return;
+            }
+
         } catch (AuctionListingNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
+    }
+
+    private void manualAssignmentWinningBid(AuctionListingEntity auctionListingEntity) {
+        System.out.println("*** OAS Administration Panel :: Sales Staff :: Manual Assignment of Winning Bid for auction listing " + auctionListingEntity.getAuctionListingId() + "***\n");
+        System.out.println("1: Mark Highest Bid as Winning Bid");
+        System.out.println("2: Mark Listing with No Winning Bid");
+        System.out.println("3: Back\n");
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("> ");
+        Integer response = 0;
+
+        while (true) {
+            try {
+                response = Integer.parseInt(sc.next());
+            } catch (NumberFormatException ex) {
+                System.out.println("Please enter numeric values.\n");
+                continue;
+            }
+
+            if (response >= 1 && response <= 3) {
+                break;
+            } else {
+                System.out.println("Invalid option, please try again!\n");
+            }
+        }
+
+        if (response == 1) {
+            auctionListingEntityControllerRemote.setWinningBidEntity(auctionListingEntity.getAuctionListingId());
+        } else if (response == 2) {
+            auctionListingEntityControllerRemote.noWinningBidEntity(auctionListingEntity.getAuctionListingId());
+            System.out.println("No winning bid for auction listing " + auctionListingEntity.getAuctionListingId());
+            System.out.println(auctionListingEntity.getManualAssignment());
+        } else if (response == 3) {
+            return;
+        }
+
+        System.out.println("Press enter to continue...");
+        sc.nextLine();
     }
 
     private void doUpdateAuctionListing(AuctionListingEntity auctionListingEntity) {
