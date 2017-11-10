@@ -5,13 +5,15 @@
  */
 package datamodel;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  *
  * @author User
  */
-public class CreditBalance {
+public class CreditBalance implements Serializable{
+    private static final long serialVersionUID = 1L;
     private BigDecimal creditBalance;
     private BigDecimal holdingBalance;
     private BigDecimal availableBalance;
