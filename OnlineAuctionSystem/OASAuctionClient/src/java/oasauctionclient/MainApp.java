@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Scanner;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionListingNotFoundException;
+import util.exception.InsufficientCreditsException;
 import util.exception.InvalidBidException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PlaceBidException;
@@ -524,7 +525,7 @@ public class MainApp {
         Scanner sc = new Scanner(System.in);
 
         CreditBalance creditBalance = customerEntityControllerRemote.retrieveCreditBalance(currentCustomerEntity.getCustomerId());
-
+        
         System.out.println("Credit balance: " + creditBalance.getCreditBalance());
         System.out.println("Holding balance: " + creditBalance.getHoldingBalance());
         System.out.println("Available balance: " + creditBalance.getAvailableBalance() + "\n");
@@ -708,15 +709,6 @@ public class MainApp {
         currentBidAmount = ((auctionListingEntity.getCurrentBidAmount() == null) ? auctionListingEntity.getStartingBidAmount() : auctionListingEntity.getCurrentBidAmount());
         nextIncrement = bidEntityControllerRemote.getBidIncrement(currentBidAmount);
         nextExpectedBid = currentBidAmount.add(nextIncrement);
-        /*try {
-
-            currentBidAmount = ((auctionListingEntity.getCurrentBidAmount() == null) ? auctionListingEntity.getStartingBidAmount() : auctionListingEntity.getStartingBidAmount());
-            nextIncrement = bidEntityControllerRemote.getBidIncrement(currentBidAmount);
-            nextExpectedBid = currentBidAmount.add(nextIncrement);
-        } catch (NullPointerException ex) {
-            currentBidAmount = auctionListingEntity.nextIncrement = BigDecimal.valueOf(0.05); //Is minimum bid 0.05 based on project manual?
-            nextExpectedBid = currentBidAmount.add(nextIncrement);
-        }*/
 
         do {
             System.out.println("Minimum bid price is " + nextExpectedBid.doubleValue() + "\n");
@@ -733,6 +725,11 @@ public class MainApp {
         bidEntity.setAuctionListingEntity(auctionListingEntity);
         try {
             bidEntity = bidEntityControllerRemote.createNewBid(bidEntity);
+            try{
+            customerEntityControllerRemote.useCredits(currentCustomerEntity.getCustomerId(), userBid);
+            } catch(InsufficientCreditsException ex){
+                System.out.println(ex.getMessage());
+            }
             System.out.println("Bid placed! Bid ID: " + bidEntity.getBidId());
         } catch (InvalidBidException ex) {
             System.out.println(ex.getMessage());
