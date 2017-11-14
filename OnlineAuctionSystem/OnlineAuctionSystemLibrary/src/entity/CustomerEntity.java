@@ -11,17 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -61,6 +55,8 @@ public class CustomerEntity implements Serializable {
     private List<CreditTransactionEntity> creditTransactions;
     @OneToMany(mappedBy = "customerEntity")
     private List<BidEntity> bidEntities;
+    @OneToMany(mappedBy = "customerEntity")
+    private List<ProxyBiddingEntity> proxyBiddingEntities;
 
     public CustomerEntity() {
         addressEntities = new ArrayList<>();
@@ -70,7 +66,7 @@ public class CustomerEntity implements Serializable {
 
     public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, BigDecimal holdingBalance, BigDecimal availableBalance, Boolean premium, String username, String password) {
         this();
-        
+
         this.firstName = firstName;
         this.lastName = lastName;
         this.identificationNo = identificationNo;
@@ -220,5 +216,11 @@ public class CustomerEntity implements Serializable {
         this.bidEntities = bidEntities;
     }
 
-    
+    public List<ProxyBiddingEntity> getProxyBiddingEntities() {
+        return proxyBiddingEntities;
+    }
+
+    public void setProxyBiddingEntities(List<ProxyBiddingEntity> proxyBiddingEntities) {
+        this.proxyBiddingEntities = proxyBiddingEntities;
+    }
 }

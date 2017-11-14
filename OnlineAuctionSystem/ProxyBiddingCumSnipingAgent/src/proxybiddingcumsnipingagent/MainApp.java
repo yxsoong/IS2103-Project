@@ -305,5 +305,4 @@ public class MainApp {
         ejb.session.ws.AuctionListingEntityWebService port = service.getAuctionListingEntityWebServicePort();
         return port.viewWonAuctionListings(customerId);
     }
-
 }

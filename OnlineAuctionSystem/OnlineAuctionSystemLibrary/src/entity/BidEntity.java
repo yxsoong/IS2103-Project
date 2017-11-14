@@ -15,13 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
-/**
- *
- * @author lowru
- */
 @Entity
 public class BidEntity implements Serializable {
 
@@ -46,7 +41,9 @@ public class BidEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private CustomerEntity customerEntity;
-
+    @ManyToOne(optional = true)
+    @JoinColumn(nullable = true)
+    private ProxyBiddingEntity proxyBiddingEntity;
 
     public BidEntity() {
     }
@@ -62,7 +59,7 @@ public class BidEntity implements Serializable {
         hash += (bidId != null ? bidId.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -132,7 +129,7 @@ public class BidEntity implements Serializable {
     public void setCustomerEntity(CustomerEntity customerEntity) {
         this.customerEntity = customerEntity;
     }
-    
+
 //    public AuctionListingEntity getWinningAuctionListingEntity() {
 //        return winningAuctionListingEntity;
 //    }
@@ -140,7 +137,6 @@ public class BidEntity implements Serializable {
 //    public void setWinningAuctionListingEntity(AuctionListingEntity winningAuctionListingEntity) {
 //        this.winningAuctionListingEntity = winningAuctionListingEntity;
 //    }
-
     public Boolean getWinningBid() {
         return winningBid;
     }
@@ -148,6 +144,12 @@ public class BidEntity implements Serializable {
     public void setWinningBid(Boolean winningBid) {
         this.winningBid = winningBid;
     }
-    
-    
+
+    public ProxyBiddingEntity getProxyBiddingEntity() {
+        return proxyBiddingEntity;
+    }
+
+    public void setProxyBiddingEntity(ProxyBiddingEntity proxyBiddingEntity) {
+        this.proxyBiddingEntity = proxyBiddingEntity;
+    }
 }
