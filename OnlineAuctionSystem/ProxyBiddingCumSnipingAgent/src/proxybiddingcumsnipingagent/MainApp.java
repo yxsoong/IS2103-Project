@@ -5,11 +5,17 @@
  */
 package proxybiddingcumsnipingagent;
 
+import ejb.session.ws.AuctionListingEntity;
+import ejb.session.ws.AuctionListingNotFoundException_Exception;
 import ejb.session.ws.CreditBalance;
 import ejb.session.ws.CustomerEntity;
 import ejb.session.ws.InvalidLoginCredentialException_Exception;
 import ejb.session.ws.InvalidRegistrationException_Exception;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -139,10 +145,16 @@ public class MainApp {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
-                
-                if(response == 1){
+
+                if (response == 1) {
                     viewCreditBalance();
-                } else if (response == 5) { 
+                } else if (response == 2) {
+                    viewAuctionListingDetails();
+                } else if (response == 3) {
+                    browseAllAuctionListings();
+                } else if (response == 4) {
+                    retrieveWonListings();
+                } else if (response == 5) {
                     break;
                 } else {
                     System.out.println("Invalid option, please try again!\n");
@@ -154,16 +166,106 @@ public class MainApp {
             }
         }
     }
-    
-    private void viewCreditBalance(){
+
+    private void viewCreditBalance() {
         Scanner sc = new Scanner(System.in);
-        
+
         CreditBalance creditBalance = retrieveCreditBalance(currentCustomerEntity.getCustomerId());
 
         System.out.println("Credit balance: " + creditBalance.getCreditBalance());
         System.out.println("Holding balance: " + creditBalance.getHoldingBalance());
         System.out.println("Available balance: " + creditBalance.getAvailableBalance() + "\n");
 
+        System.out.print("Press enter to continue...");
+        sc.nextLine();
+    }
+
+    private void viewAuctionListingDetails() {
+        Scanner sc = new Scanner(System.in);
+        try {
+            System.out.print("Enter Auction Listing Id> ");
+            Long auctionListingId = sc.nextLong();
+            AuctionListingEntity auctionListingEntity = viewAuctionListingDetails(auctionListingId);
+
+            Integer response = 0;
+            while (true) {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                BigDecimal curentBidAmount = ((auctionListingEntity.getCurrentBidAmount() == null) ? auctionListingEntity.getStartingBidAmount() : auctionListingEntity.getCurrentBidAmount());
+                Calendar cal = auctionListingEntity.getEndDateTime().toGregorianCalendar();
+
+                System.out.printf("%20s%15s%25s%25s%25s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "Current Bid Amount", "End Date Time");
+                System.out.printf("%20s%15s%25s%25s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), curentBidAmount, dateFormat.format(cal.getTime()));
+
+                System.out.println("------------------------");
+                System.out.println("1: Configure Proxy Bidding for Auction Listing");
+                System.out.println("2: Configure Sniping for Auction Listing");
+                System.out.println("3: Back\n");
+                System.out.print("> ");
+
+                try {
+                    response = Integer.parseInt(sc.next());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.\n");
+                    continue;
+                }
+
+                if (response == 1) {
+                } else if (response == 2) {
+                } else if (response == 3) {
+                    return;
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
+                }
+            }
+        } catch (AuctionListingNotFoundException_Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        System.out.print("Press enter to continue...");
+        sc.nextLine();
+    }
+
+    private void browseAllAuctionListings() {
+        Scanner sc = new Scanner(System.in);
+
+        try {
+            List<AuctionListingEntity> auctionListings = retrieveAllAuctionListings();
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Calendar cal;
+
+            System.out.printf("%20s%15s%20s%25s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "End Date Time");
+            for (AuctionListingEntity auctionListingEntity : auctionListings) {
+                cal = auctionListingEntity.getEndDateTime().toGregorianCalendar();
+                System.out.printf("%20s%15s%20s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), dateFormat.format(cal.getTime()));
+            }
+        } catch (AuctionListingNotFoundException_Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        System.out.print("Press enter to continue...");
+        sc.nextLine();
+    }
+
+    private void retrieveWonListings() {
+        Scanner sc = new Scanner(System.in);
+        
+        try {
+            Long customerId = currentCustomerEntity.getCustomerId();
+            List<AuctionListingEntity> wonListings = viewWonAuctionListings(customerId);
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Calendar cal;
+
+            System.out.printf("%20s%15s%20s%25s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "End Date Time");
+            for (AuctionListingEntity auctionListingEntity : wonListings) {
+                cal = auctionListingEntity.getEndDateTime().toGregorianCalendar();
+                System.out.printf("%20s%15s%20s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), dateFormat.format(cal.getTime()));
+            }
+        } catch (AuctionListingNotFoundException_Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        
         System.out.print("Press enter to continue...");
         sc.nextLine();
     }
@@ -178,7 +280,7 @@ public class MainApp {
         ejb.session.ws.CustomerEntityWebService_Service service = new ejb.session.ws.CustomerEntityWebService_Service();
         ejb.session.ws.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
         return port.customerLogin(username, password);
-    }   
+    }
 
     private static CreditBalance retrieveCreditBalance(java.lang.Long customerId) {
         ejb.session.ws.CustomerEntityWebService_Service service = new ejb.session.ws.CustomerEntityWebService_Service();
@@ -186,5 +288,22 @@ public class MainApp {
         return port.retrieveCreditBalance(customerId);
     }
 
-}
+    private static AuctionListingEntity viewAuctionListingDetails(java.lang.Long auctionListingId) throws AuctionListingNotFoundException_Exception {
+        ejb.session.ws.AuctionListingEntityWebService_Service service = new ejb.session.ws.AuctionListingEntityWebService_Service();
+        ejb.session.ws.AuctionListingEntityWebService port = service.getAuctionListingEntityWebServicePort();
+        return port.viewAuctionListingDetails(auctionListingId);
+    }
 
+    private static java.util.List<ejb.session.ws.AuctionListingEntity> retrieveAllAuctionListings() throws AuctionListingNotFoundException_Exception {
+        ejb.session.ws.AuctionListingEntityWebService_Service service = new ejb.session.ws.AuctionListingEntityWebService_Service();
+        ejb.session.ws.AuctionListingEntityWebService port = service.getAuctionListingEntityWebServicePort();
+        return port.retrieveAllAuctionListings();
+    }
+
+    private static java.util.List<ejb.session.ws.AuctionListingEntity> viewWonAuctionListings(java.lang.Long customerId) throws AuctionListingNotFoundException_Exception {
+        ejb.session.ws.AuctionListingEntityWebService_Service service = new ejb.session.ws.AuctionListingEntityWebService_Service();
+        ejb.session.ws.AuctionListingEntityWebService port = service.getAuctionListingEntityWebServicePort();
+        return port.viewWonAuctionListings(customerId);
+    }
+
+}
