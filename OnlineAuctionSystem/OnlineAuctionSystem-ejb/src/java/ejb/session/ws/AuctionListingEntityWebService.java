@@ -30,7 +30,7 @@ public class AuctionListingEntityWebService {
     @WebMethod(operationName = "viewAuctionListingDetails")
     public AuctionListingEntity viewAuctionListingDetails(@WebParam(name = "auctionListingId") Long auctionListingId) throws AuctionListingNotFoundException {
         try {
-            AuctionListingEntity auctionListingEntity = auctionListingEntityControllerLocal.retrieveAuctionListingById(auctionListingId);
+            AuctionListingEntity auctionListingEntity = auctionListingEntityControllerLocal.retrieveActiveAuctionListing(auctionListingId);
             em.detach(auctionListingEntity);
             auctionListingEntity.setBidEntities(null);
             auctionListingEntity.setDeliveryAddress(null);
@@ -63,7 +63,7 @@ public class AuctionListingEntityWebService {
     public List<AuctionListingEntity> viewWonAuctionListings(@WebParam(name = "customerId") Long customerId) throws AuctionListingNotFoundException {
         //TODO write your implementation code here:
         if (auctionListingEntityControllerLocal.retrieveWonAuctionListings(customerId).isEmpty()) {
-            throw new AuctionListingNotFoundException();
+            throw new AuctionListingNotFoundException("No auctions avaiable at this moment");
         }
         List<AuctionListingEntity> wonListings = auctionListingEntityControllerLocal.retrieveWonAuctionListings(customerId);
         for (AuctionListingEntity auctionListingEntity : wonListings) {
