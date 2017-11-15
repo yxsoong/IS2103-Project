@@ -66,7 +66,7 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
 
     @Override
     public List<AuctionListingEntity> retrieveAllAuctionListings() throws AuctionListingNotFoundException {
-        timerSessionBeanLocal.cancelTimers();
+        //timerSessionBeanLocal.cancelTimers();
         //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
         System.out.println(cal.get(Calendar.DATE)); //2016/11/16 12:08:43
@@ -80,9 +80,14 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         return auctionListingEntities;
     }
 
+    @Override
     public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice() throws AuctionListingNotFoundException {
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.manualAssignment = true");
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
+        
+        if(auctionListingEntities.isEmpty()){
+            throw new AuctionListingNotFoundException("No auction listings below reserve price");
+        }
 
         return auctionListingEntities;
     }
