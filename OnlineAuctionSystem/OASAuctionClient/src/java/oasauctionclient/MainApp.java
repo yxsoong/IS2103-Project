@@ -140,11 +140,12 @@ public class MainApp {
             if (count > 0) {
                 System.out.println("Identification number cannot be empty!\n");
             }
-            System.out.print("Enter idendtification number> ");
+            System.out.print("Enter identification number> ");
             identificationNo = sc.nextLine().trim();
-            if (identificationNo.length() != 9) {
-                System.out.println("Identification number should be of length 9 E.g. S1234567A");
+            if (identificationNo.length() != 9 || !identificationNo.matches("^[a-zA-Z]+\\p{Digit}+[a-zA-Z]$")) {
+                System.out.println("Identification number should be of length 9 and formatted e.g. S1234567A");
                 count = 0;
+                identificationNo = "";
                 continue;
             }
             count++;
@@ -158,9 +159,17 @@ public class MainApp {
             }
             System.out.print("Enter phone number> ");
             phoneNumber = sc.nextLine().trim();
+            try {
+                Integer.parseInt(phoneNumber);
+            } catch (NumberFormatException ex) {
+                System.out.println("Please enter numeric values.\n");
+                phoneNumber = "";
+                continue;
+            }
             if (phoneNumber.length() != 8) {
                 System.out.println("Phone number should be of length 8 E.g. 91234567");
                 count = 0;
+                phoneNumber = "";
                 continue;
             }
             count++;
