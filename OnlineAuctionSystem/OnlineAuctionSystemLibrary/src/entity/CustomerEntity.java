@@ -17,10 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
-/**
- *
- * @author User
- */
 @Entity
 public class CustomerEntity implements Serializable {
 
@@ -32,9 +28,9 @@ public class CustomerEntity implements Serializable {
     private String firstName;
     @Column(nullable = false, length = 255)
     private String lastName;
-    @Column(unique = true, nullable = false, length = 20)
+    @Column(unique = true, nullable = false, length = 9)
     private String identificationNo;
-    @Column(unique = true, nullable = false, length = 15)
+    @Column(unique = true, nullable = false, length = 8)
     private String phoneNumber;
     @Column(precision = 18, scale = 4)
     private BigDecimal creditBalance;

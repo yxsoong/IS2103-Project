@@ -27,15 +27,9 @@ import java.util.List;
 import java.util.Scanner;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionListingNotFoundException;
-import util.exception.InsufficientCreditsException;
 import util.exception.InvalidBidException;
 import util.exception.InvalidLoginCredentialException;
-import util.exception.PlaceBidException;
 
-/**
- *
- * @author User
- */
 public class MainApp {
 
     private AddressEntityControllerRemote addressEntityControllerRemote;
@@ -148,6 +142,11 @@ public class MainApp {
             }
             System.out.print("Enter idendtification number> ");
             identificationNo = sc.nextLine().trim();
+            if (identificationNo.length() != 9) {
+                System.out.println("Identification number should be of length 9 E.g. S1234567A");
+                count = 0;
+                continue;
+            }
             count++;
         } while (identificationNo.isEmpty());
 
@@ -159,6 +158,11 @@ public class MainApp {
             }
             System.out.print("Enter phone number> ");
             phoneNumber = sc.nextLine().trim();
+            if (phoneNumber.length() != 8) {
+                System.out.println("Phone number should be of length 8 E.g. 91234567");
+                count = 0;
+                continue;
+            }
             count++;
         } while (phoneNumber.isEmpty());
 
@@ -526,7 +530,7 @@ public class MainApp {
         Scanner sc = new Scanner(System.in);
 
         CreditBalance creditBalance = customerEntityControllerRemote.retrieveCreditBalance(currentCustomerEntity.getCustomerId());
-        
+
         System.out.println("Credit balance: " + creditBalance.getCreditBalance());
         System.out.println("Holding balance: " + creditBalance.getHoldingBalance());
         System.out.println("Available balance: " + creditBalance.getAvailableBalance() + "\n");
@@ -718,7 +722,7 @@ public class MainApp {
             userBid = sc.nextBigDecimal();
             count++;
         } while (userBid.compareTo(BigDecimal.ZERO) <= 0 || userBid.compareTo(nextExpectedBid) < 0);
-        
+
         sc.nextLine(); //consume enter character
 
         bidEntity = new BidEntity(userBid, currentTimestamp);
