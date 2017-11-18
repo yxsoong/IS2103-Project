@@ -84,6 +84,12 @@ public class DataInitializationSessionBean {
 
         customerEntity.getAddressEntities().add(addressEntity1);
         customerEntity.getAddressEntities().add(addressEntity2);
+        
+        CustomerEntity customerEntity2 = customerEntityControllerLocal.createCustomer(new CustomerEntity("A", "A", "456", "456", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, Boolean.FALSE, "customer2", "password"));
+
+        AddressEntity addressEntity3 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-11", "333333", Boolean.TRUE));
+
+        customerEntity2.getAddressEntities().add(addressEntity3);
 
         CreditPackageEntity creditPackageEntity = new CreditPackageEntity("Basic Package", BigDecimal.valueOf(100), BigDecimal.valueOf(100), Boolean.TRUE);
         creditPackageEntity.setEmployeeEntity(financeEmployee);
@@ -99,6 +105,8 @@ public class DataInitializationSessionBean {
 
         customerEntity.setCreditBalance(customerEntity.getCreditBalance().add(creditTransactionEntity1.getNumberOfCredits()));
         customerEntity.setAvailableBalance(customerEntity.getAvailableBalance().add(creditTransactionEntity1.getNumberOfCredits()));
+        customerEntity2.setCreditBalance(customerEntity.getCreditBalance().add(creditTransactionEntity1.getNumberOfCredits()));
+        customerEntity2.setAvailableBalance(customerEntity.getAvailableBalance().add(creditTransactionEntity1.getNumberOfCredits()));
         //customerEntityControllerLocal.updateCustomer(customerEntity);
 
         CreditTransactionEntity creditTransactionEntity2 = new CreditTransactionEntity(BigDecimal.valueOf(320), CreditTransactionTypeEnum.TOPUP);
