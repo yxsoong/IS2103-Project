@@ -54,7 +54,8 @@ public class BidEntityController implements BidEntityControllerRemote, BidEntity
     public BidEntity createNewBid(BidEntity bidEntity) throws InvalidBidException {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, bidEntity.getCustomerEntity().getCustomerId());
         AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, bidEntity.getAuctionListingEntity().getAuctionListingId());
-
+        
+        System.out.println("checking " + bidEntity.getBidAmount() + " " + auctionListingEntity.getStartingBidAmount());
         try {
             if ((auctionListingEntity.getCurrentBidAmount() == null && bidEntity.getBidAmount().compareTo(auctionListingEntity.getStartingBidAmount()) > 0)
                     || bidEntity.getBidAmount().compareTo(auctionListingEntity.getCurrentBidAmount()) > 0) {
