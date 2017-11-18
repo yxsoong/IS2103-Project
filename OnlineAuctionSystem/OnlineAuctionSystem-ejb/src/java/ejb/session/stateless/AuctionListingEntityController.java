@@ -10,8 +10,6 @@ import entity.AuctionListingEntity;
 import entity.BidEntity;
 import entity.CreditTransactionEntity;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import javax.ejb.EJB;
@@ -48,8 +46,8 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         em.persist(auctionListingEntity);
         em.flush();
         em.refresh(auctionListingEntity);
-        timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getStartDateTime(), "openListing");
-        timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getEndDateTime(), "closeListing");
+        timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getStartDateTime(), "openListing", null, null);
+        timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getEndDateTime(), "closeListing", null, null);
         return auctionListingEntity;
     }
 
@@ -139,10 +137,14 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
 
     @Override
     public void closeAuctionListing(Long auctionListingId) {
+        
         AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
+        Query query = em.createQuery("SELECT b FROM BidEntity b WHERE b.auctionListingEntity.auctionListingId = :inAuctionListingEntityId ORDER BY b.bidId");
+        query.setParameter("inAuctionListingEntityId", auctionListingId);
         auctionListingEntity.setOpenListing(Boolean.FALSE);
-
-        List<BidEntity> bidEntities = auctionListingEntity.getBidEntities();
+        
+        List<BidEntity> bidEntities = query.getResultList();
+        
 
         if (!bidEntities.isEmpty()) {
             BigDecimal reservePrice = auctionListingEntity.getReservePrice();

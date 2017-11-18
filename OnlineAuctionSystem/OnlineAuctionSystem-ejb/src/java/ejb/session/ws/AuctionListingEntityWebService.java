@@ -36,6 +36,7 @@ public class AuctionListingEntityWebService {
             auctionListingEntity.setDeliveryAddress(null);
             auctionListingEntity.setWinningBidEntity(null);
             auctionListingEntity.setEmployeeEntity(null);
+            auctionListingEntity.setProxyBiddingEntities(null);
             return auctionListingEntity;
         } catch (AuctionListingNotFoundException ex) {
             throw ex;
@@ -55,6 +56,7 @@ public class AuctionListingEntityWebService {
             auctionListingEntity.setDeliveryAddress(null);
             auctionListingEntity.setWinningBidEntity(null);
             auctionListingEntity.setEmployeeEntity(null);
+            auctionListingEntity.setProxyBiddingEntities(null);
         }
         return activeListings;
     }
@@ -63,7 +65,7 @@ public class AuctionListingEntityWebService {
     public List<AuctionListingEntity> viewWonAuctionListings(@WebParam(name = "customerId") Long customerId) throws AuctionListingNotFoundException {
         //TODO write your implementation code here:
         if (auctionListingEntityControllerLocal.retrieveWonAuctionListings(customerId).isEmpty()) {
-            throw new AuctionListingNotFoundException("No auctions avaiable at this moment");
+            throw new AuctionListingNotFoundException("No auctions won.");
         }
         List<AuctionListingEntity> wonListings = auctionListingEntityControllerLocal.retrieveWonAuctionListings(customerId);
         for (AuctionListingEntity auctionListingEntity : wonListings) {
@@ -72,6 +74,7 @@ public class AuctionListingEntityWebService {
             auctionListingEntity.setDeliveryAddress(null);
             auctionListingEntity.setWinningBidEntity(null);
             auctionListingEntity.setEmployeeEntity(null);
+            auctionListingEntity.setProxyBiddingEntities(null);
         }
         return wonListings;
     }

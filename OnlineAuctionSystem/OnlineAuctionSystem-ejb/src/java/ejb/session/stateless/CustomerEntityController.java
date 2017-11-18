@@ -97,7 +97,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
         if (holdingBalance.compareTo(customerEntity.getCreditBalance()) <= 0) {
             customerEntity.setHoldingBalance(holdingBalance);
             customerEntity.setAvailableBalance(availableBalance);
-            em.merge(customerEntity);
+            //em.merge(customerEntity);
         } else {
             throw new InsufficientCreditsException("Insufficient credits!");
         }
@@ -111,7 +111,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
         
         customerEntity.setHoldingBalance(customerEntity.getHoldingBalance().subtract(amount));
         customerEntity.setAvailableBalance(customerEntity.getAvailableBalance().add(amount));
-        em.merge(customerEntity);
+        //em.merge(customerEntity);
     }
     
     @Override
@@ -120,7 +120,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
         
         customerEntity.setHoldingBalance(customerEntity.getHoldingBalance().subtract(amount));
         customerEntity.setCreditBalance(customerEntity.getCreditBalance().subtract(amount));
-        em.merge(customerEntity);
+        //em.merge(customerEntity);
     }
     
     @Override

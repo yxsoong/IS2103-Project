@@ -7,7 +7,9 @@ package ejb.session.ws;
 
 import datamodel.CreditBalance;
 import ejb.session.stateless.CustomerEntityControllerLocal;
+import ejb.session.stateless.ProxyBiddingEntityControllerLocal;
 import entity.CustomerEntity;
+import entity.ProxyBiddingEntity;
 import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
@@ -15,6 +17,7 @@ import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import util.exception.InsufficientCreditsException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.InvalidRegistrationException;
 
@@ -26,43 +29,48 @@ import util.exception.InvalidRegistrationException;
 @Stateless()
 public class CustomerEntityWebService {
 
-    @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
-    private EntityManager em;
-    
+    @EJB
+    private ProxyBiddingEntityControllerLocal proxyBiddingEntityControllerLocal;
+
     @EJB
     private CustomerEntityControllerLocal customerEntityControllerLocal;
-    
+
+    @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
+    private EntityManager em;
+
     @WebMethod(operationName = "regsterPremiumCustomer")
     public void regsterPremiumCustomer(@WebParam(name = "username") String username, @WebParam(name = "password") String password) throws InvalidRegistrationException {
-        try{
+        try {
             CustomerEntity customerEntity = customerEntityControllerLocal.customerLogin(username, password);
-            if(!customerEntity.getPremium())
+            if (!customerEntity.getPremium()) {
                 customerEntity.setPremium(Boolean.TRUE);
-            else
+            } else {
                 throw new InvalidLoginCredentialException("Already registered as premium");
-            
-        } catch(InvalidLoginCredentialException ex){
+            }
+
+        } catch (InvalidLoginCredentialException ex) {
             throw new InvalidRegistrationException(ex.getMessage());
         }
-        
+
     }
 
     @WebMethod(operationName = "customerLogin")
     public CustomerEntity customerLogin(@WebParam(name = "username") String username, @WebParam(name = "password") String password) throws InvalidLoginCredentialException {
         //TODO write your implementation code here:
-        try{
+        try {
             CustomerEntity customerEntity = customerEntityControllerLocal.customerLogin(username, password);
-            
-            if(customerEntity.getPremium()){
+
+            if (customerEntity.getPremium()) {
                 em.detach(customerEntity);
                 customerEntity.setBidEntities(null);
                 customerEntity.setAddressEntities(null);
                 customerEntity.setCreditTransactions(null);
+                customerEntity.setProxyBiddingEntities(null);
                 return customerEntity;
             } else {
                 throw new InvalidLoginCredentialException("Please register to become a premium member");
             }
-        } catch(InvalidLoginCredentialException ex){
+        } catch (InvalidLoginCredentialException ex) {
             throw ex;
         }
     }

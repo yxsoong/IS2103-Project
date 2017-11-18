@@ -403,6 +403,7 @@ public class MainApp {
 
         addressEntity = addressEntityControllerRemote.createAddress(addressEntity);
 
+        // cannot do this!!
         currentCustomerEntity.getAddressEntities().add(addressEntity);
 
         customerEntityControllerRemote.updateCustomer(currentCustomerEntity);
@@ -725,11 +726,11 @@ public class MainApp {
         bidEntity.setAuctionListingEntity(auctionListingEntity);
         try {
             bidEntity = bidEntityControllerRemote.createNewBid(bidEntity);
-            try{
-            customerEntityControllerRemote.useCredits(currentCustomerEntity.getCustomerId(), userBid);
-            } catch(InsufficientCreditsException ex){
-                System.out.println(ex.getMessage());
-            }
+//            try{
+//            customerEntityControllerRemote.useCredits(currentCustomerEntity.getCustomerId(), userBid);
+//            } catch(InsufficientCreditsException ex){
+//                System.out.println(ex.getMessage());
+//            }
             System.out.println("Bid placed! Bid ID: " + bidEntity.getBidId());
         } catch (InvalidBidException ex) {
             System.out.println(ex.getMessage());

@@ -60,9 +60,12 @@ public class AuctionListingEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private EmployeeEntity employeeEntity;
+    @OneToMany(mappedBy = "auctionListingEntity")
+    private List<ProxyBiddingEntity> proxyBiddingEntities;
 
     public AuctionListingEntity() {
         bidEntities = new ArrayList<>();
+        proxyBiddingEntities = new ArrayList<>();
     }
 
     public AuctionListingEntity(String itemName, BigDecimal startingBidAmount, BigDecimal currentBidAmount, Calendar startDateTime, Calendar endDateTime, BigDecimal reservePrice, Boolean openListing, Boolean enabled, Boolean manualAssignment) {
@@ -214,4 +217,13 @@ public class AuctionListingEntity implements Serializable {
     public void setWinningBidEntity(BidEntity winningBidEntity) {
         this.winningBidEntity = winningBidEntity;
     }
+
+    public List<ProxyBiddingEntity> getProxyBiddingEntities() {
+        return proxyBiddingEntities;
+    }
+
+    public void setProxyBiddingEntities(List<ProxyBiddingEntity> proxyBiddingEntities) {
+        this.proxyBiddingEntities = proxyBiddingEntities;
+    }
+
 }

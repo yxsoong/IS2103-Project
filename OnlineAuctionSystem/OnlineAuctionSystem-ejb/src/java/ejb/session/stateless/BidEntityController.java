@@ -8,7 +8,9 @@ package ejb.session.stateless;
 import entity.AuctionListingEntity;
 import entity.BidEntity;
 import entity.CustomerEntity;
+import entity.ProxyBiddingEntity;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -19,7 +21,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import util.exception.InsufficientCreditsException;
 import util.exception.InvalidBidException;
 
@@ -34,7 +39,7 @@ public class BidEntityController implements BidEntityControllerRemote, BidEntity
 
     @Resource
     private EJBContext eJBContext;
-    
+
     @EJB
     private AuctionListingEntityControllerLocal auctionListingEntityControllerLocal;
 
@@ -56,26 +61,135 @@ public class BidEntityController implements BidEntityControllerRemote, BidEntity
                 em.persist(bidEntity);
                 auctionListingEntity.getBidEntities().add(bidEntity);
                 auctionListingEntity.setCurrentBidAmount(bidEntity.getBidAmount());
+                
+                
+                em.flush();
+                em.refresh(bidEntity);
+
+                System.out.println("current " + auctionListingEntity.getCurrentBidAmount());
             } else {
                 throw new InvalidBidException("Bid is lower than current bid!");
             }
             customerEntityControllerLocal.useCredits(customerEntity.getCustomerId(), bidEntity.getBidAmount());
-            
+
             //refund
             List<BidEntity> bidEntities = auctionListingEntity.getBidEntities();
+
             if (bidEntities.size() > 1) {
                 BidEntity refundBid = bidEntities.get(bidEntities.size() - 2);
+                //System.out.println(refundBid.getCustomerEntity().getCustomerId() + " " + refundBid.getBidAmount());
                 customerEntityControllerLocal.refundCredits(refundBid.getCustomerEntity().getCustomerId(), refundBid.getBidAmount());
             }
-            
+
+            //check proxyBids
+            checkProxyBids(auctionListingEntity, bidEntity, customerEntity);
+
+            return bidEntity;
         } catch (InsufficientCreditsException ex) {
             eJBContext.setRollbackOnly();
+            Query query = em.createQuery("SELECT p FROM ProxyBiddingEntity p WHERE p.auctionListingEntity.auctionListingId = :inAuctionListingId AND p.customerEntity.customerId = :inCustomerId AND p.enabled = true");
+            query.setParameter("inAuctionListingId", auctionListingEntity.getAuctionListingId());
+            query.setParameter("inCustomerId", customerEntity.getCustomerId());
+
+            try {
+                ProxyBiddingEntity proxyBiddingEntity = (ProxyBiddingEntity) query.getSingleResult();
+                proxyBiddingEntity.setEnabled(Boolean.FALSE);
+            } catch (NonUniqueResultException | NoResultException exception) {
+                System.out.println("Not proxy bid");
+            }
+
             throw new InvalidBidException(ex.getMessage());
         }
-        em.flush();
-        em.refresh(bidEntity);
-        return bidEntity;
 
+    }
+
+    private void checkProxyBids(AuctionListingEntity auctionListingEntity, BidEntity bidEntity, CustomerEntity customerEntity) {
+        em.refresh(auctionListingEntity);
+        
+        if(!auctionListingEntity.getOpenListing()){
+            return;
+        }
+        Query query = em.createQuery("SELECT p FROM ProxyBiddingEntity p WHERE p.auctionListingEntity.auctionListingId = :inAuctionListingId AND p.enabled = true ORDER BY p.proxyBiddingId");
+        query.setParameter("inAuctionListingId", auctionListingEntity.getAuctionListingId());
+        List<ProxyBiddingEntity> proxyBiddingEntities = query.getResultList();
+
+        if (!proxyBiddingEntities.isEmpty()) {
+            for (ProxyBiddingEntity proxyBiddingEntity : proxyBiddingEntities) {
+                em.refresh(proxyBiddingEntity);
+
+                BigDecimal nextBidAmount = bidEntity.getBidAmount().add(getBidIncrement(bidEntity.getBidAmount()));
+                if (proxyBiddingEntity.getCustomerEntity().equals(customerEntity) && proxyBiddingEntity.getAuctionListingEntity().equals(auctionListingEntity)) {
+                    if (proxyBiddingEntity.getMaximumAmount().compareTo(nextBidAmount) < 0) {
+                        proxyBiddingEntity.setEnabled(Boolean.FALSE);
+                    }
+                } else {
+
+                    if (proxyBiddingEntity.getMaximumAmount().compareTo(nextBidAmount) >= 0) {
+                        BidEntity newBidEntity = new BidEntity();
+                        newBidEntity.setBidAmount(nextBidAmount);
+                        newBidEntity.setDateTime(Calendar.getInstance());
+                        newBidEntity.setCustomerEntity(proxyBiddingEntity.getCustomerEntity());
+                        newBidEntity.setAuctionListingEntity(auctionListingEntity);
+                        newBidEntity.setProxyBiddingEntity(proxyBiddingEntity);
+
+                        try {
+                            newBidEntity = createNewBid(newBidEntity);
+                            proxyBiddingEntity.getBidEntities().add(newBidEntity);
+                        } catch (InvalidBidException ex) {
+
+                        }
+
+                    } else {
+                        proxyBiddingEntity.setEnabled(Boolean.FALSE);
+                    }
+                }
+            }
+        }
+
+
+        /*List<ProxyBiddingEntity> proxyBiddingEntities = query.getResultList();
+        if (!proxyBiddingEntities.isEmpty()) {
+            int startIndex = 0;
+            ProxyBiddingEntity highestProxy = proxyBiddingEntities.get(startIndex);
+            System.out.println(highestProxy);
+            CustomerEntity highestCustomerEntity = highestProxy.getCustomerEntity();
+            System.out.println(highestCustomerEntity);
+            if (highestCustomerEntity.equals(customerEntity)) {
+                return;
+            }
+            BigDecimal newBidAmt = BigDecimal.ZERO;
+            BigDecimal minimumBidAmt = bidEntity.getBidAmount().add(getBidIncrement(bidEntity.getBidAmount()));
+            if (proxyBiddingEntities.get(startIndex).getMaximumAmount().compareTo(minimumBidAmt) > 0) {
+                if (proxyBiddingEntities.size() > 1) {
+                    BigDecimal secondHighest = proxyBiddingEntities.get(1).getMaximumAmount();
+                    BigDecimal increment = getBidIncrement(secondHighest);
+                    newBidAmt = increment.add(secondHighest);
+                } else {
+                    newBidAmt = minimumBidAmt;
+                }
+                startIndex = 1;
+            }
+
+            for (int i = startIndex; i < proxyBiddingEntities.size(); i++) {
+                proxyBiddingEntities.get(i).setEnabled(Boolean.FALSE);
+                customerEntityControllerLocal.refundCredits(proxyBiddingEntities.get(i).getCustomerEntity().getCustomerId(), proxyBiddingEntities.get(i).getMaximumAmount());
+                proxyBiddingEntities.get(i).setMaximumAmount(BigDecimal.ZERO);
+            }
+
+            if (startIndex > 0) {
+                try {
+                    BidEntity newBidEntity = new BidEntity(newBidAmt, Calendar.getInstance());
+                    newBidEntity.setCustomerEntity(highestProxy.getCustomerEntity());
+                    newBidEntity.setAuctionListingEntity(auctionListingEntity);
+                    newBidEntity = createNewBid(newBidEntity);
+
+                    proxyBiddingEntities.get(0).getBidEntities().add(bidEntity);
+                    newBidEntity.setProxyBiddingEntity(proxyBiddingEntities.get(0));
+                } catch (InvalidBidException ex) {
+
+                }
+            }
+        }*/
     }
 
     @Override

@@ -5,10 +5,11 @@
  */
 package ejb.session.stateless;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 public interface TimerSessionBeanLocal {
-    public void createTimers(Long auctionListingId, Calendar dateTime, String type);
+    public void createTimers(Long auctionListingId, Calendar dateTime, String type, BigDecimal maxAmt, Long customerId);
     
     public void cancelTimers();
     

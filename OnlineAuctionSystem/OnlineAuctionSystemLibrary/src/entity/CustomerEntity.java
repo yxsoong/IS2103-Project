@@ -62,6 +62,7 @@ public class CustomerEntity implements Serializable {
         addressEntities = new ArrayList<>();
         creditTransactions = new ArrayList<>();
         bidEntities = new ArrayList<>();
+        proxyBiddingEntities = new ArrayList<>();
     }
 
     public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, BigDecimal holdingBalance, BigDecimal availableBalance, Boolean premium, String username, String password) {
