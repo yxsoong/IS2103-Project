@@ -2,10 +2,7 @@ package oasadministrationpanel;
 
 import ejb.session.stateless.AuctionListingEntityControllerRemote;
 import ejb.session.stateless.CustomerEntityControllerRemote;
-import ejb.session.stateless.TimerSessionBeanRemote;
-import entity.AddressEntity;
 import entity.AuctionListingEntity;
-import entity.BidEntity;
 import entity.EmployeeEntity;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;

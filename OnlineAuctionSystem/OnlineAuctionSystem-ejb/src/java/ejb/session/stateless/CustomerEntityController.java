@@ -79,6 +79,26 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
     }
 
     @Override
+    public Boolean checkIdentificationNumber(String identificationNumber) {
+        Query query = em.createQuery("SELECT COUNT(c) FROM CustomerEntity c WHERE c.identificationNo = :inId");
+        query.setParameter("inId", identificationNumber);
+
+        Long count = (Long) query.getSingleResult();
+
+        return count > 0;
+    }
+    
+    @Override
+    public Boolean checkPhoneNumber(String PhoneNumber) {
+        Query query = em.createQuery("SELECT COUNT(c) FROM CustomerEntity c WHERE c.phoneNumber = :inPhoneNo");
+        query.setParameter("inPhoneNo", PhoneNumber);
+
+        Long count = (Long) query.getSingleResult();
+
+        return count > 0;
+    }
+
+    @Override
     public void topUpCredits(Long customerId, BigDecimal amount, CreditTransactionEntity creditTransactionEntity) {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
         customerEntity.setCreditBalance(customerEntity.getCreditBalance().add(amount));
@@ -93,7 +113,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
         holdingBalance = holdingBalance.add(amount);
         BigDecimal availableBalance = customerEntity.getAvailableBalance();
         availableBalance = availableBalance.subtract(amount);
-        
+
         if (holdingBalance.compareTo(customerEntity.getCreditBalance()) <= 0) {
             customerEntity.setHoldingBalance(holdingBalance);
             customerEntity.setAvailableBalance(availableBalance);
@@ -103,31 +123,31 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
         }
 
     }
-    
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void refundCredits(Long customerId, BigDecimal amount){
+    public void refundCredits(Long customerId, BigDecimal amount) {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
-        
+
         customerEntity.setHoldingBalance(customerEntity.getHoldingBalance().subtract(amount));
         customerEntity.setAvailableBalance(customerEntity.getAvailableBalance().add(amount));
         //em.merge(customerEntity);
     }
-    
+
     @Override
-    public void deductCreditBalance(Long customerId, BigDecimal amount){
+    public void deductCreditBalance(Long customerId, BigDecimal amount) {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
-        
+
         customerEntity.setHoldingBalance(customerEntity.getHoldingBalance().subtract(amount));
         customerEntity.setCreditBalance(customerEntity.getCreditBalance().subtract(amount));
         //em.merge(customerEntity);
     }
-    
+
     @Override
-    public CreditBalance retrieveCreditBalance(Long customerId){
+    public CreditBalance retrieveCreditBalance(Long customerId) {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
-        
-        CreditBalance creditBalance = new CreditBalance(customerEntity.getCreditBalance(),customerEntity.getHoldingBalance(), customerEntity.getAvailableBalance());
+
+        CreditBalance creditBalance = new CreditBalance(customerEntity.getCreditBalance(), customerEntity.getHoldingBalance(), customerEntity.getAvailableBalance());
         return creditBalance;
     }
 }

@@ -117,7 +117,7 @@ public class SystemAdministratorModule {
                 count = 0;
             }
             if (count > 0) {
-                System.out.println("Last name cannot be empty!\n");
+                System.out.println("Username cannot be empty!\n");
                 isUnique = true;
             }
 
@@ -135,7 +135,7 @@ public class SystemAdministratorModule {
 
             if (count > 0) {
                 System.out.println("Password must not be empty!\n");
-                isUnique = true;
+                samePassword = true;
             }
 
             System.out.print("Enter password> ");

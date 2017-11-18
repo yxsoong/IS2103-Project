@@ -135,10 +135,15 @@ public class MainApp {
         } while (lastName.isEmpty());
 
         count = 0;
-
+        Boolean isUnique = true;
         do {
+            if (!isUnique) {
+                System.out.println("Identification number is not available.\n");
+                count = 0;
+            }
             if (count > 0) {
                 System.out.println("Identification number cannot be empty!\n");
+                isUnique = true;
             }
             System.out.print("Enter identification number> ");
             identificationNo = sc.nextLine().trim();
@@ -148,23 +153,31 @@ public class MainApp {
                 identificationNo = "";
                 continue;
             }
+            isUnique = !customerEntityControllerRemote.checkIdentificationNumber(identificationNo);
+
             count++;
-        } while (identificationNo.isEmpty());
+        } while (identificationNo.isEmpty() || !isUnique);
 
         count = 0;
-
+        isUnique = true;
         do {
+            if (!isUnique) {
+                System.out.println("Phone number is not available.\n");
+                count = 0;
+            }
             if (count > 0) {
                 System.out.println("Phone number cannot be empty!\n");
             }
             System.out.print("Enter phone number> ");
             phoneNumber = sc.nextLine().trim();
-            try {
-                Integer.parseInt(phoneNumber);
-            } catch (NumberFormatException ex) {
-                System.out.println("Please enter numeric values.\n");
-                phoneNumber = "";
-                continue;
+            if (!phoneNumber.isEmpty()) {
+                try {
+                    Integer.parseInt(phoneNumber);
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.\n");
+                    phoneNumber = "";
+                    continue;
+                }
             }
             if (phoneNumber.length() != 8) {
                 System.out.println("Phone number should be of length 8 E.g. 91234567");
@@ -172,18 +185,20 @@ public class MainApp {
                 phoneNumber = "";
                 continue;
             }
+            isUnique = !customerEntityControllerRemote.checkPhoneNumber(phoneNumber);
+
             count++;
-        } while (phoneNumber.isEmpty());
+        } while (phoneNumber.isEmpty() || !isUnique);
 
         count = 0;
-        Boolean isUnique = true;
+        isUnique = true;
         do {
             if (!isUnique) {
                 System.out.println("Username is not available.\n");
                 count = 0;
             }
             if (count > 0) {
-                System.out.println("Last name cannot be empty!\n");
+                System.out.println("Username cannot be empty!\n");
                 isUnique = true;
             }
 

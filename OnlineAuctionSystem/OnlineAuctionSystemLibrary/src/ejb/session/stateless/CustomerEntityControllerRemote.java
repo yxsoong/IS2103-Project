@@ -31,4 +31,8 @@ public interface CustomerEntityControllerRemote {
     public void deductCreditBalance(Long customerId, BigDecimal amount);
 
     public CreditBalance retrieveCreditBalance(Long customerId);
+
+    public Boolean checkIdentificationNumber(String identificationNumber);
+
+    public Boolean checkPhoneNumber(String PhoneNumber);
 }
