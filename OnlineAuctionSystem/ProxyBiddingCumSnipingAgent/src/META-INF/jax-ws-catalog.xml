@@ -2,4 +2,8 @@
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
     <system systemId="http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?wsdl" uri="wsdl/localhost_8080/CustomerEntityWebService/CustomerEntityWebService.wsdl"/>
     <system systemId="http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?xsd=1" uri="wsdl/localhost_8080/CustomerEntityWebService/CustomerEntityWebService.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/AuctionListingEntityWebService/AuctionListingEntityWebService?wsdl" uri="wsdl/localhost_8080/AuctionListingEntityWebService/AuctionListingEntityWebService.wsdl"/>
+    <system systemId="http://localhost:8080/AuctionListingEntityWebService/AuctionListingEntityWebService?xsd=1" uri="wsdl/localhost_8080/AuctionListingEntityWebService/AuctionListingEntityWebService.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/BidEntityWebService/BidEntityWebService?wsdl" uri="wsdl/localhost_8080/BidEntityWebService/BidEntityWebService.wsdl"/>
+    <system systemId="http://localhost:8080/BidEntityWebService/BidEntityWebService?xsd=1" uri="wsdl/localhost_8080/BidEntityWebService/BidEntityWebService.xsd_1.xsd"/>
 </catalog>

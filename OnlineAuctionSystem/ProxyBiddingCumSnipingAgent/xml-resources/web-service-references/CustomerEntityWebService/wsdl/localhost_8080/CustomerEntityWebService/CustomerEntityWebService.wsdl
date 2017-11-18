@@ -4,21 +4,6 @@
 <xsd:import namespace="http://ws.session.ejb/" schemaLocation="http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?xsd=1"/>
 </xsd:schema>
 </types>
-<message name="customerLogin">
-<part name="parameters" element="tns:customerLogin"/>
-</message>
-<message name="customerLoginResponse">
-<part name="parameters" element="tns:customerLoginResponse"/>
-</message>
-<message name="InvalidLoginCredentialException">
-<part name="fault" element="tns:InvalidLoginCredentialException"/>
-</message>
-<message name="retrieveCreditBalance">
-<part name="parameters" element="tns:retrieveCreditBalance"/>
-</message>
-<message name="retrieveCreditBalanceResponse">
-<part name="parameters" element="tns:retrieveCreditBalanceResponse"/>
-</message>
 <message name="regsterPremiumCustomer">
 <part name="parameters" element="tns:regsterPremiumCustomer"/>
 </message>
@@ -28,25 +13,54 @@
 <message name="InvalidRegistrationException">
 <part name="fault" element="tns:InvalidRegistrationException"/>
 </message>
+<message name="retrieveCreditBalance">
+<part name="parameters" element="tns:retrieveCreditBalance"/>
+</message>
+<message name="retrieveCreditBalanceResponse">
+<part name="parameters" element="tns:retrieveCreditBalanceResponse"/>
+</message>
+<message name="createProxyBidding">
+<part name="parameters" element="tns:createProxyBidding"/>
+</message>
+<message name="createProxyBiddingResponse">
+<part name="parameters" element="tns:createProxyBiddingResponse"/>
+</message>
+<message name="InsufficientCreditsException">
+<part name="fault" element="tns:InsufficientCreditsException"/>
+</message>
+<message name="customerLogin">
+<part name="parameters" element="tns:customerLogin"/>
+</message>
+<message name="customerLoginResponse">
+<part name="parameters" element="tns:customerLoginResponse"/>
+</message>
+<message name="InvalidLoginCredentialException">
+<part name="fault" element="tns:InvalidLoginCredentialException"/>
+</message>
 <portType name="CustomerEntityWebService">
-<operation name="customerLogin">
-<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/customerLoginRequest" message="tns:customerLogin"/>
-<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/customerLoginResponse" message="tns:customerLoginResponse"/>
-<fault message="tns:InvalidLoginCredentialException" name="InvalidLoginCredentialException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/customerLogin/Fault/InvalidLoginCredentialException"/>
-</operation>
-<operation name="retrieveCreditBalance">
-<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/retrieveCreditBalanceRequest" message="tns:retrieveCreditBalance"/>
-<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/retrieveCreditBalanceResponse" message="tns:retrieveCreditBalanceResponse"/>
-</operation>
 <operation name="regsterPremiumCustomer">
 <input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/regsterPremiumCustomerRequest" message="tns:regsterPremiumCustomer"/>
 <output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/regsterPremiumCustomerResponse" message="tns:regsterPremiumCustomerResponse"/>
 <fault message="tns:InvalidRegistrationException" name="InvalidRegistrationException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/regsterPremiumCustomer/Fault/InvalidRegistrationException"/>
 </operation>
+<operation name="retrieveCreditBalance">
+<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/retrieveCreditBalanceRequest" message="tns:retrieveCreditBalance"/>
+<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/retrieveCreditBalanceResponse" message="tns:retrieveCreditBalanceResponse"/>
+</operation>
+<operation name="createProxyBidding">
+<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createProxyBiddingRequest" message="tns:createProxyBidding"/>
+<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createProxyBiddingResponse" message="tns:createProxyBiddingResponse"/>
+<fault message="tns:InsufficientCreditsException" name="InsufficientCreditsException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createProxyBidding/Fault/InsufficientCreditsException"/>
+</operation>
+<operation name="customerLogin">
+<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/customerLoginRequest" message="tns:customerLogin"/>
+<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/customerLoginResponse" message="tns:customerLoginResponse"/>
+<fault message="tns:InvalidLoginCredentialException" name="InvalidLoginCredentialException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/customerLogin/Fault/InvalidLoginCredentialException"/>
+</operation>
 </portType>
 <binding name="CustomerEntityWebServicePortBinding" type="tns:CustomerEntityWebService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-<operation name="customerLogin">
+<operation name="regsterPremiumCustomer">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -54,8 +68,8 @@
 <output>
 <soap:body use="literal"/>
 </output>
-<fault name="InvalidLoginCredentialException">
-<soap:fault name="InvalidLoginCredentialException" use="literal"/>
+<fault name="InvalidRegistrationException">
+<soap:fault name="InvalidRegistrationException" use="literal"/>
 </fault>
 </operation>
 <operation name="retrieveCreditBalance">
@@ -67,7 +81,7 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="regsterPremiumCustomer">
+<operation name="createProxyBidding">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -75,8 +89,20 @@
 <output>
 <soap:body use="literal"/>
 </output>
-<fault name="InvalidRegistrationException">
-<soap:fault name="InvalidRegistrationException" use="literal"/>
+<fault name="InsufficientCreditsException">
+<soap:fault name="InsufficientCreditsException" use="literal"/>
+</fault>
+</operation>
+<operation name="customerLogin">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="InvalidLoginCredentialException">
+<soap:fault name="InvalidLoginCredentialException" use="literal"/>
 </fault>
 </operation>
 </binding>

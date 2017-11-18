@@ -33,5 +33,39 @@
         <delete dir="${build.generated.dir}/jax-wsCache/CustomerEntityWebService"/>
         <delete dir="${build.generated.sources.dir}/jax-ws/ejb/session/ws"/>
     </target>
-    <target name="wsimport-client-generate" depends="wsimport-client-CustomerEntityWebService"/>
+    <target name="wsimport-client-AuctionListingEntityWebService" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/AuctionListingEntityWebService"/>
+        <property name="wsdl-AuctionListingEntityWebService" location="xml-resources/web-service-references/AuctionListingEntityWebService/wsdl/localhost_8080/AuctionListingEntityWebService/AuctionListingEntityWebService.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/AuctionListingEntityWebService" destdir="${build.generated.dir}/jax-wsCache/AuctionListingEntityWebService" wsdl="${wsdl-AuctionListingEntityWebService}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/AuctionListingEntityWebService/AuctionListingEntityWebService?wsdl" xnocompile="true" xendorsed="true">
+            <depends file="${wsdl-AuctionListingEntityWebService}"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/AuctionListingEntityWebService"/>
+        </wsimport>
+        <copy todir="${build.generated.sources.dir}/jax-ws">
+            <fileset dir="${build.generated.dir}/jax-wsCache/AuctionListingEntityWebService">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="wsimport-client-clean-AuctionListingEntityWebService" depends="-init-project">
+        <delete dir="${build.generated.dir}/jax-wsCache/AuctionListingEntityWebService"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/ejb/session/ws"/>
+    </target>
+    <target name="wsimport-client-BidEntityWebService" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/BidEntityWebService"/>
+        <property name="wsdl-BidEntityWebService" location="xml-resources/web-service-references/BidEntityWebService/wsdl/localhost_8080/BidEntityWebService/BidEntityWebService.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/BidEntityWebService" destdir="${build.generated.dir}/jax-wsCache/BidEntityWebService" wsdl="${wsdl-BidEntityWebService}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/BidEntityWebService/BidEntityWebService?wsdl" xnocompile="true" xendorsed="true">
+            <depends file="${wsdl-BidEntityWebService}"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/BidEntityWebService"/>
+        </wsimport>
+        <copy todir="${build.generated.sources.dir}/jax-ws">
+            <fileset dir="${build.generated.dir}/jax-wsCache/BidEntityWebService">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="wsimport-client-clean-BidEntityWebService" depends="-init-project">
+        <delete dir="${build.generated.dir}/jax-wsCache/BidEntityWebService"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/ejb/session/ws"/>
+    </target>
+    <target name="wsimport-client-generate" depends="wsimport-client-CustomerEntityWebService, wsimport-client-AuctionListingEntityWebService, wsimport-client-BidEntityWebService"/>
 </project>
