@@ -21,8 +21,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -359,15 +359,12 @@ public class MainApp {
         count = 0;
         do {
             System.out.println("Minimum bid price is " + nextBid.doubleValue() + "\n");
-
+            
             System.out.print("Enter maximum amount> ");
             maxAmount = sc.nextBigDecimal();
-
+            
         } while (maxAmount.compareTo(nextBid) < 0);
         sc.nextLine(); //consume enter character
-
-//        Timer timer = new Timer();
-//        timer.schedule(task, snipingDateTime);
 
         XMLGregorianCalendar xc;
         try {
@@ -385,10 +382,6 @@ public class MainApp {
         System.out.print("Press enter to continue...");
         sc.nextLine();
     }
-
-    /*public void print() {
-        System.out.println("i am running");
-    }*/
 
     private static void regsterPremiumCustomer(java.lang.String username, java.lang.String password) throws InvalidRegistrationException_Exception {
         ejb.session.ws.CustomerEntityWebService_Service service = new ejb.session.ws.CustomerEntityWebService_Service();
@@ -444,10 +437,4 @@ public class MainApp {
         return port.getBidIncrement(currentPrice);
     }
 
-    /*private static class MyTimeTask extends TimerTask {
-
-        public void run() {
-            //write your code here
-        }
-    }*/
 }
