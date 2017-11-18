@@ -10,9 +10,11 @@ import entity.AuctionListingEntity;
 import entity.BidEntity;
 import entity.CustomerEntity;
 import entity.ProxyBiddingEntity;
+import entity.SnipingEntity;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -27,6 +29,8 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import util.exception.AuctionListingNotFoundException;
 import util.exception.InvalidBidException;
 import util.exception.ProxyBiddingNotFoundException;
@@ -65,7 +69,19 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
         schedule.year(dateTime.get(Calendar.YEAR)).month(dateTime.get(Calendar.MONTH) + 1).dayOfMonth(dateTime.get(Calendar.DATE))
                 .hour(dateTime.get(Calendar.HOUR_OF_DAY)).minute(dateTime.get(Calendar.MINUTE)).second(dateTime.get(Calendar.SECOND));
 
-        timerService.createCalendarTimer(schedule, new TimerConfig(new TimerEntity(auctionListingId, type, maxAmt, customerId), true));
+        if (type.equals("snipe")) {
+            Query query = em.createQuery("SELECT s FROM SnipingEntity s WHERE s.snipingDate = :inSnipingDate AND s.auctionListingEntity.auctionListingId = :inAuctionListingId");
+            query.setParameter("inSnipingDate", dateTime, TemporalType.TIMESTAMP);
+            query.setParameter("inAuctionListingId", auctionListingId);
+
+            List<SnipingEntity> snipingEntities = query.getResultList();
+            if (snipingEntities.size() > 0) {
+                return;
+            }
+
+        }
+
+        timerService.createCalendarTimer(schedule, new TimerConfig(new TimerEntity(auctionListingId, type, maxAmt, customerId, dateTime), true));
     }
 
     @Override
@@ -116,6 +132,13 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
 
             CustomerEntity customerEntity = em.find(CustomerEntity.class, timerEntity.getCustomerId());
             AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, timerEntity.getAuctionListingId());
+            
+            Query query = em.createQuery("SELECT s FROM SnipingEntity s WHERE s.snipingDate = :inSnipingDate AND s.auctionListingEntity.auctionListingId = :inAuctionListingId");
+            query.setParameter("inSnipingDate", timerEntity.getRunDate(), TemporalType.TIMESTAMP);
+            query.setParameter("inAuctionListingId", auctionListingId);
+
+            List<SnipingEntity> snipingEntities = query.getResultList();
+            
             BigDecimal currentBid = auctionListingEntity.getCurrentBidAmount();
 
             if (currentBid == null) {
@@ -124,7 +147,7 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
 
             BigDecimal nextMinBid = bidEntityControllerLocal.getBidIncrement(currentBid);
             nextMinBid = currentBid.add(nextMinBid);
-            
+
             try {
                 ProxyBiddingEntity highestProxyBid = proxyBiddingEntityControllerLocal.retrieveHighestProxyBid(auctionListingId);
 
@@ -141,15 +164,15 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
             } else {
                 makeBid = timerEntity.getMaxAmount();
             }
-                BidEntity bidEntity = new BidEntity(makeBid, Calendar.getInstance());
-                bidEntity.setCustomerEntity(customerEntity);
-                bidEntity.setAuctionListingEntity(auctionListingEntity);
+            BidEntity bidEntity = new BidEntity(makeBid, Calendar.getInstance());
+            bidEntity.setCustomerEntity(customerEntity);
+            bidEntity.setAuctionListingEntity(auctionListingEntity);
             try {
-                    bidEntityControllerLocal.createNewBid(bidEntity);
-                    System.out.println("bid created");
-                } catch (InvalidBidException ex) {
+                bidEntityControllerLocal.createNewBid(bidEntity);
+                System.out.println("bid created");
+            } catch (InvalidBidException ex) {
 
-                }
+            }
         }
 
     }

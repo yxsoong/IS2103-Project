@@ -7,6 +7,7 @@ package datamodel;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Calendar;
 
 
 public class TimerEntity implements Serializable {
@@ -18,15 +19,17 @@ public class TimerEntity implements Serializable {
     private String type;
     private BigDecimal maxAmount;
     private Long customerId;
+    private Calendar runDate;
 
     public TimerEntity() {
     }
 
-    public TimerEntity(Long auctionListingId, String type, BigDecimal maxAmount, Long customerId) {
+    public TimerEntity(Long auctionListingId, String type, BigDecimal maxAmount, Long customerId, Calendar runDate) {
         this.auctionListingId = auctionListingId;
         this.type = type;
         this.maxAmount = maxAmount;
         this.customerId = customerId;
+        this.runDate = runDate;
     }
 
     public Long getTimerId() {
@@ -67,6 +70,14 @@ public class TimerEntity implements Serializable {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+    
+    public Calendar getRunDate() {
+        return runDate;
+    }
+
+    public void setRunDate(Calendar runDate) {
+        this.runDate = runDate;
     }
 
     @Override

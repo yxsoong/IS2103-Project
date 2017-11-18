@@ -11,6 +11,7 @@ import ejb.session.stateless.TimerSessionBeanLocal;
 import entity.AuctionListingEntity;
 import entity.CustomerEntity;
 import entity.ProxyBiddingEntity;
+import entity.SnipingEntity;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import javax.ejb.EJB;
@@ -77,6 +78,11 @@ public class BidEntityWebService {
             throw new InvalidSnipingException("Insufficient funds!");
         }
         
+        SnipingEntity snipingEntity = new SnipingEntity(snipingDateTime, maximumAmount, Boolean.TRUE);
+        snipingEntity.setCustomerEntity(customerEntity);
+        snipingEntity.setAuctionListingEntity(auctionListingEntity);
+        
+        em.persist(snipingEntity);
         timerSessionBeanLocal.createTimers(auctionListingId, snipingDateTime, "snipe", maximumAmount, customerId);
     }
 

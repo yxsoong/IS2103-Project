@@ -53,12 +53,15 @@ public class CustomerEntity implements Serializable {
     private List<BidEntity> bidEntities;
     @OneToMany(mappedBy = "customerEntity")
     private List<ProxyBiddingEntity> proxyBiddingEntities;
+    @OneToMany(mappedBy = "customerEntity")
+    private List<SnipingEntity> snipingEntities;
 
     public CustomerEntity() {
         addressEntities = new ArrayList<>();
         creditTransactions = new ArrayList<>();
         bidEntities = new ArrayList<>();
         proxyBiddingEntities = new ArrayList<>();
+        snipingEntities = new ArrayList<>();
     }
 
     public CustomerEntity(String firstName, String lastName, String identificationNo, String phoneNumber, BigDecimal creditBalance, BigDecimal holdingBalance, BigDecimal availableBalance, Boolean premium, String username, String password) {
@@ -220,4 +223,13 @@ public class CustomerEntity implements Serializable {
     public void setProxyBiddingEntities(List<ProxyBiddingEntity> proxyBiddingEntities) {
         this.proxyBiddingEntities = proxyBiddingEntities;
     }
+
+    public List<SnipingEntity> getSnipingEntities() {
+        return snipingEntities;
+    }
+
+    public void setSnipingEntities(List<SnipingEntity> snipingEntities) {
+        this.snipingEntities = snipingEntities;
+    }
+    
 }
