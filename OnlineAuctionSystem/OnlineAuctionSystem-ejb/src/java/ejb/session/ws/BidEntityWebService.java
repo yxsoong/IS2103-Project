@@ -5,6 +5,7 @@
  */
 package ejb.session.ws;
 
+import ejb.session.stateless.BidEntityControllerLocal;
 import ejb.session.stateless.ProxyBiddingEntityControllerLocal;
 import ejb.session.stateless.TimerSessionBeanLocal;
 import entity.AuctionListingEntity;
@@ -21,6 +22,7 @@ import javax.jws.Oneway;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import util.exception.InsufficientCreditsException;
+import util.exception.InvalidSnipingException;
 
 /**
  *
@@ -31,10 +33,15 @@ import util.exception.InsufficientCreditsException;
 public class BidEntityWebService {
 
     @EJB
+    private BidEntityControllerLocal bidEntityControllerLocal;
+
+    @EJB
     private TimerSessionBeanLocal timerSessionBeanLocal;
 
     @EJB
     private ProxyBiddingEntityControllerLocal proxyBiddingEntityControllerLocal;
+    
+    
     
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
@@ -58,8 +65,27 @@ public class BidEntityWebService {
     }
 
     @WebMethod(operationName = "createSnipingAuctionListing")
-    public void createSnipingAuctionListing(@WebParam(name = "snipingDateTime") Calendar snipingDateTime, @WebParam(name = "auctionListingId") Long auctionListingId, @WebParam(name = "maximumAmount") BigDecimal maximumAmount, @WebParam(name = "customerId") Long customerId) {
+    public void createSnipingAuctionListing(@WebParam(name = "snipingDateTime") Calendar snipingDateTime, @WebParam(name = "auctionListingId") Long auctionListingId, @WebParam(name = "maximumAmount") BigDecimal maximumAmount, @WebParam(name = "customerId") Long customerId) throws InvalidSnipingException{
+        AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
+        
+        if(!auctionListingEntity.getOpenListing()){
+            throw new InvalidSnipingException("Auction listing has expired!");
+        }
+        
+        if(customerEntity.getAvailableBalance().compareTo(maximumAmount) < 0){
+            throw new InvalidSnipingException("Insufficient funds!");
+        }
+        
         timerSessionBeanLocal.createTimers(auctionListingId, snipingDateTime, "snipe", maximumAmount, customerId);
     }
+
+
+    @WebMethod(operationName = "getBidIncrement")
+    public BigDecimal getBidIncrement(@WebParam(name = "currentPrice") BigDecimal currentPrice) {
+        //TODO write your implementation code here:
+        return bidEntityControllerLocal.getBidIncrement(currentPrice);
+    }
+    
     
 }

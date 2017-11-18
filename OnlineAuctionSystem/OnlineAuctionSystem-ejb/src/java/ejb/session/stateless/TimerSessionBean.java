@@ -123,12 +123,13 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
             }
 
             BigDecimal nextMinBid = bidEntityControllerLocal.getBidIncrement(currentBid);
-
+            nextMinBid = currentBid.add(nextMinBid);
+            
             try {
-                ProxyBiddingEntity proxyBiddingEntity = proxyBiddingEntityControllerLocal.retrieveHighestProxyBid(auctionListingId);
+                ProxyBiddingEntity highestProxyBid = proxyBiddingEntityControllerLocal.retrieveHighestProxyBid(auctionListingId);
 
-                if (proxyBiddingEntity.getMaximumAmount().compareTo(nextMinBid) > 0) {
-                    nextMinBid = proxyBiddingEntity.getMaximumAmount();
+                if (highestProxyBid.getMaximumAmount().compareTo(nextMinBid) > 0) {
+                    nextMinBid = highestProxyBid.getMaximumAmount();
                 }
             } catch (ProxyBiddingNotFoundException ex) {
 
@@ -151,20 +152,5 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
                 }
         }
 
-    }
-
-//    @Schedule(hour = "*", minute = "*/5", second = "0", info = "scheduleEvery5Minutes")
-//    public void closeExpiredAuctionListing() {
-//        auctionListingEntityControllerLocal.closeAuctionListings();
-//    }
-//    
-//    @Schedule(hour = "*", minute = "*/5", second = "0", info = "scheduleEvery5Minutes")
-//    public void openAuctionListing(){
-//        auctionListingEntityControllerLocal.openAuctionListings();
-//    }
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
-    public void persist(Object object) {
-        em.persist(object);
     }
 }

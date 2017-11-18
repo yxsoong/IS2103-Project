@@ -12,6 +12,7 @@ import ejb.session.ws.CustomerEntity;
 import ejb.session.ws.InsufficientCreditsException_Exception;
 import ejb.session.ws.InvalidLoginCredentialException_Exception;
 import ejb.session.ws.InvalidRegistrationException_Exception;
+import ejb.session.ws.InvalidSnipingException_Exception;
 import ejb.session.ws.ProxyBiddingEntity;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -193,10 +194,10 @@ public class MainApp {
         try {
             System.out.print("Enter Auction Listing Id> ");
             Long auctionListingId = sc.nextLong();
-            AuctionListingEntity auctionListingEntity = viewAuctionListingDetails(auctionListingId);
 
             Integer response = 0;
             while (true) {
+                AuctionListingEntity auctionListingEntity = viewAuctionListingDetails(auctionListingId);
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 BigDecimal curentBidAmount = ((auctionListingEntity.getCurrentBidAmount() == null) ? auctionListingEntity.getStartingBidAmount() : auctionListingEntity.getCurrentBidAmount());
                 Calendar cal = auctionListingEntity.getEndDateTime().toGregorianCalendar();
@@ -299,20 +300,28 @@ public class MainApp {
         System.out.println("Press enter to continue...");
         sc.nextLine();
     }
-    
-    private void doSniping(AuctionListingEntity auctionListingEntity){
+
+    private void doSniping(AuctionListingEntity auctionListingEntity) {
         Scanner sc = new Scanner(System.in);
-        
+
         int year, month, day, hour, min, sec;
-        
+
         String snipeString;
 
         Calendar startDateTime = auctionListingEntity.getStartDateTime().toGregorianCalendar();
         Calendar endDateTime = auctionListingEntity.getEndDateTime().toGregorianCalendar();
         GregorianCalendar snipingDateTime = new GregorianCalendar();
         int count = 0;
-        
-        do {
+
+        BigDecimal currentBidAmt = auctionListingEntity.getCurrentBidAmount();
+
+        if (currentBidAmt == null) {
+            currentBidAmt = auctionListingEntity.getStartingBidAmount();
+        }
+
+        BigDecimal nextBid = currentBidAmt.add(getBidIncrement(currentBidAmt));
+
+        while (true) {
             if (count > 0) {
                 System.out.println("Sniping date time must be later than start date time and earlier than end date time!\n");
             }
@@ -325,6 +334,11 @@ public class MainApp {
                 System.out.println("Snipe date time cannot be empty!");
                 count = 0;
                 continue;
+            } else if (snipeString.length() != 14) {
+                System.out.println("Invalid date time!");
+                count = 0;
+                snipeString = "";
+                continue;
             }
 
             year = Integer.parseInt(snipeString.substring(0, 4).trim());
@@ -336,21 +350,35 @@ public class MainApp {
             snipingDateTime.clear();
             snipingDateTime.set(year, month - 1, day, hour, min, sec);
 
-        } while (snipingDateTime.compareTo(endDateTime) > 0 || snipingDateTime.compareTo(startDateTime) < 0);
-        
-        System.out.print("Enter maximum amount> ");
-        BigDecimal maxAmount = sc.nextBigDecimal();
+            if (snipingDateTime.compareTo(endDateTime) < 0 || snipingDateTime.compareTo(startDateTime) > 0) {
+                break;
+            }
+        }
+
+        BigDecimal maxAmount;
+        count = 0;
+        do {
+            System.out.println("Minimum bid price is " + nextBid.doubleValue() + "\n");
+            
+            System.out.print("Enter maximum amount> ");
+            maxAmount = sc.nextBigDecimal();
+            
+        } while (maxAmount.compareTo(nextBid) < 0);
         sc.nextLine(); //consume enter character
-        
+
         XMLGregorianCalendar xc;
         try {
             xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(snipingDateTime);
-            createSnipingAuctionListing(xc, auctionListingEntity.getAuctionListingId(), maxAmount, currentCustomerEntity.getCustomerId());
+            try {
+                createSnipingAuctionListing(xc, auctionListingEntity.getAuctionListingId(), maxAmount, currentCustomerEntity.getCustomerId());
+                System.out.println("Snipe created! Ensure you have enough credits for sniping!");
+            } catch (InvalidSnipingException_Exception exception) {
+                System.out.println(exception.getMessage());
+            }
         } catch (DatatypeConfigurationException ex) {
             System.out.println("Error!");
         }
-        
-        System.out.println("Snipe created! Ensure you have enough credits for sniping!");
+
         System.out.print("Press enter to continue...");
         sc.nextLine();
     }
@@ -397,13 +425,16 @@ public class MainApp {
         return port.createProxyBidding(proxyBiddingEntity, customerId, auctionListingId);
     }
 
-    private static void createSnipingAuctionListing(javax.xml.datatype.XMLGregorianCalendar snipingDateTime, java.lang.Long auctionListingId, java.math.BigDecimal maximumAmount, java.lang.Long customerId) {
+    private static void createSnipingAuctionListing(javax.xml.datatype.XMLGregorianCalendar snipingDateTime, java.lang.Long auctionListingId, java.math.BigDecimal maximumAmount, java.lang.Long customerId) throws InvalidSnipingException_Exception {
         ejb.session.ws.BidEntityWebService_Service service = new ejb.session.ws.BidEntityWebService_Service();
         ejb.session.ws.BidEntityWebService port = service.getBidEntityWebServicePort();
         port.createSnipingAuctionListing(snipingDateTime, auctionListingId, maximumAmount, customerId);
     }
 
+    private static BigDecimal getBidIncrement(java.math.BigDecimal currentPrice) {
+        ejb.session.ws.BidEntityWebService_Service service = new ejb.session.ws.BidEntityWebService_Service();
+        ejb.session.ws.BidEntityWebService port = service.getBidEntityWebServicePort();
+        return port.getBidIncrement(currentPrice);
+    }
 
-    
-    
 }

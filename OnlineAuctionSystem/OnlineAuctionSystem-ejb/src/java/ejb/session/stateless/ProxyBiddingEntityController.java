@@ -46,14 +46,24 @@ public class ProxyBiddingEntityController implements ProxyBiddingEntityControlle
         if (proxyBiddingEntity.getMaximumAmount().compareTo(availableBal) > 0) {
             throw new InsufficientCreditsException("Insufficient funds!");
         }
+        
+        AuctionListingEntity auctionListingEntity = proxyBiddingEntity.getAuctionListingEntity();
+        CustomerEntity customerEntity = proxyBiddingEntity.getCustomerEntity();
+        
+        Query query  = em.createQuery("SELECT p FROM ProxyBiddingEntity p WHERE p.enabled = true AND p.customerEntity.customerId = :inCustomerId AND p.auctionListingEntity.auctionListingId = :inAuctionListingId");
+        query.setParameter("inCustomerId", customerEntity.getCustomerId());
+        query.setParameter("inAuctionListingId", auctionListingEntity.getAuctionListingId());
+        
+        List<ProxyBiddingEntity> proxyBiddingEntities = query.getResultList();
+        
+        for(ProxyBiddingEntity oldProxyBiddingEntity: proxyBiddingEntities){
+           oldProxyBiddingEntity.setEnabled(Boolean.FALSE);
+        }
 
         em.persist(proxyBiddingEntity);
-        em.flush();
-        em.refresh(proxyBiddingEntity);
 
-        AuctionListingEntity auctionListingEntity = proxyBiddingEntity.getAuctionListingEntity();
         auctionListingEntity.getProxyBiddingEntities().add(proxyBiddingEntity);
-        CustomerEntity customerEntity = proxyBiddingEntity.getCustomerEntity();
+
         customerEntity.getProxyBiddingEntities().add(proxyBiddingEntity);
 
         BigDecimal currentBidAmt = auctionListingEntity.getCurrentBidAmount();
@@ -73,8 +83,10 @@ public class ProxyBiddingEntityController implements ProxyBiddingEntityControlle
 
             }
         } else {
-            List<BidEntity> bidEntities = auctionListingEntity.getBidEntities();
-            BidEntity lastBid = bidEntities.get(bidEntities.size() - 1);
+            query = em.createQuery("SELECT b FROM BidEntity b WHERE b.auctionListingEntity.auctionListingId = :inAuctionListingId ORDER BY b.bidId DESC");
+            query.setParameter("inAuctionListingId", proxyBiddingEntity.getAuctionListingEntity().getAuctionListingId());
+            List<BidEntity> bidEntities = query.getResultList();
+            BidEntity lastBid = bidEntities.get(0);
             if (!lastBid.getCustomerEntity().equals(customerEntity)) {
                 Calendar currentTimestamp = Calendar.getInstance();
                 BigDecimal increment = bidEntityControllerLocal.getBidIncrement(currentBidAmt);
@@ -90,20 +102,26 @@ public class ProxyBiddingEntityController implements ProxyBiddingEntityControlle
                 } catch (InvalidBidException ex) {
 
                 }
+            } else {
+                if(lastBid.getProxyBiddingEntity() != null){
+                    lastBid.setProxyBiddingEntity(proxyBiddingEntity);
+                }
             }
         }
 
+        em.flush();
+        em.refresh(proxyBiddingEntity);
         return proxyBiddingEntity;
     }
 
     @Override
-    public ProxyBiddingEntity retrieveHighestProxyBid(Long auctionListingId) throws ProxyBiddingNotFoundException{
+    public ProxyBiddingEntity retrieveHighestProxyBid(Long auctionListingId) throws ProxyBiddingNotFoundException {
         Query query = em.createQuery("SELECT p FROM ProxyBiddingEntity p WHERE p.auctionListingEntity.auctionListingId = :inAuctionListingId AND p.enabled = true ORDER BY p.maximumAmount");
         query.setParameter("inAuctionListingId", auctionListingId);
-        
+
         List<ProxyBiddingEntity> proxyBiddingEntities = query.getResultList();
-        
-        if(!proxyBiddingEntities.isEmpty()){
+
+        if (!proxyBiddingEntities.isEmpty()) {
             return proxyBiddingEntities.get(0);
         } else {
             throw new ProxyBiddingNotFoundException();
