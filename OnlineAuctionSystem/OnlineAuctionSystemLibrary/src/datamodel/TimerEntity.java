@@ -6,6 +6,7 @@
 package datamodel;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 
 public class TimerEntity implements Serializable {
@@ -15,13 +16,17 @@ public class TimerEntity implements Serializable {
     private Long timerId;
     private Long auctionListingId;
     private String type;
+    private BigDecimal maxAmount;
+    private Long customerId;
 
     public TimerEntity() {
     }
 
-    public TimerEntity(Long auctionListingId, String type) {
+    public TimerEntity(Long auctionListingId, String type, BigDecimal maxAmount, Long customerId) {
         this.auctionListingId = auctionListingId;
         this.type = type;
+        this.maxAmount = maxAmount;
+        this.customerId = customerId;
     }
 
     public Long getTimerId() {
@@ -46,6 +51,22 @@ public class TimerEntity implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public BigDecimal getMaxAmount() {
+        return maxAmount;
+    }
+
+    public void setMaxAmount(BigDecimal maxAmount) {
+        this.maxAmount = maxAmount;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     @Override
