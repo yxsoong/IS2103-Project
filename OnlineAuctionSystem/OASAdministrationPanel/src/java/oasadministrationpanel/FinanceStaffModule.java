@@ -92,7 +92,7 @@ public class FinanceStaffModule {
 
         count = 0;
 
-        do {
+        while (true) {
             if (count > 0) {
                 System.out.println("Price cannot be negative or zero!\n");
             }
@@ -100,17 +100,23 @@ public class FinanceStaffModule {
             input = sc.nextLine();
             try {
                 price = new BigDecimal(input);
+                if (price.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0) {
+                    System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
+                    continue;
+                }
             } catch (NumberFormatException ex) {
                 System.out.println("Please enter numeric values.\n");
-                price = BigDecimal.ZERO;
                 continue;
             }
             count++;
-        } while (price.compareTo(BigDecimal.ZERO) <= 0);
+            if (price.compareTo(BigDecimal.ZERO) > 0) {
+                break;
+            }
+        }
 
         count = 0;
 
-        do {
+        while (true) {
             if (count > 0) {
                 System.out.println("Number of credits cannot be negative or zero!\n");
             }
@@ -118,13 +124,20 @@ public class FinanceStaffModule {
             input = sc.nextLine();
             try {
                 numberOfCredits = new BigDecimal(input);
+                if (numberOfCredits.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0) {
+                    System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
+                    continue;
+                }
             } catch (NumberFormatException ex) {
                 System.out.println("Please enter numeric values.\n");
                 numberOfCredits = BigDecimal.ZERO;
                 continue;
             }
             count++;
-        } while (numberOfCredits.compareTo(BigDecimal.ZERO) <= 0);
+            if (numberOfCredits.compareTo(BigDecimal.ZERO) > 0) {
+                break;
+            }
+        }
 
         newCreditPackage = new CreditPackageEntity(creditPackageName, price, numberOfCredits, true);
 
@@ -232,6 +245,10 @@ public class FinanceStaffModule {
             input = sc.nextLine();
             try {
                 bigDecInput = new BigDecimal(input);
+                if (bigDecInput.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0) {
+                    System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
+                    continue;
+                }
             } catch (NumberFormatException ex) {
                 System.out.println("Please input numeric values!\n");
                 continue;
@@ -247,6 +264,10 @@ public class FinanceStaffModule {
             input = sc.nextLine();
             try {
                 bigDecInput = new BigDecimal(input);
+                if (bigDecInput.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0) {
+                    System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
+                    continue;
+                }
             } catch (NumberFormatException ex) {
                 System.out.println("Please input numeric values!\n");
                 continue;

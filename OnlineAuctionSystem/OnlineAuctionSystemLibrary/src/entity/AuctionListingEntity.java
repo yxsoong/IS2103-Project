@@ -40,7 +40,7 @@ public class AuctionListingEntity implements Serializable {
     @Column(nullable = false)
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Calendar endDateTime;
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal reservePrice;
     @Column(nullable = false)
     private Boolean openListing;

@@ -5,6 +5,8 @@ import ejb.session.stateless.BidEntityControllerRemote;
 import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.EmployeeEntityControllerRemote;
 import entity.EmployeeEntity;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Scanner;
 import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;
@@ -20,6 +22,8 @@ public class MainApp {
     private SalesStaffModule salesStaffModule;
 
     private EmployeeEntity currentEmployeeEntity;
+    
+    public static final BigDecimal MAX_BIG_DECIMAL = new BigDecimal(100000000000000.0000);
 
     public MainApp() {
     }

@@ -105,27 +105,32 @@ public class SalesStaffModule {
 
         count = 0;
 
-        do {
+        while (true) {
             if (count > 0) {
                 System.out.println("Starting bid amount cannot be negative or zero!\n");
             }
             System.out.print("Enter starting bid amount> ");
             String input = sc.nextLine().trim();
             if (input.isEmpty()) {
-                startingBidAmount = BigDecimal.ZERO;
                 System.out.println("Starting bid cannot be empty!");
                 continue;
             } else {
                 try {
                     startingBidAmount = new BigDecimal(input);
+                    if (startingBidAmount.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0) {
+                        System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
+                        continue;
+                    }
                 } catch (NumberFormatException ex) {
                     System.out.println("Please enter numeric values.\n");
-                    startingBidAmount = BigDecimal.ZERO;
                     continue;
                 }
             }
             count++;
-        } while (startingBidAmount.compareTo(BigDecimal.ZERO) <= 0);
+            if (startingBidAmount.compareTo(BigDecimal.ZERO) > 0) {
+                break;
+            }
+        }
 
         count = 0;
 
@@ -201,21 +206,27 @@ public class SalesStaffModule {
 
         count = 0;
 
-        do {
+        while (true) {
             if (count > 0) {
                 System.out.println("Reserve price cannot be negative!\n");
             }
+            count++;
             System.out.print("Enter reserve price (0 for no reserve price)> ");
             String input = sc.nextLine().trim();
             try {
                 reservePrice = new BigDecimal(input);
+                if (reservePrice.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0) {
+                    System.out.println("Amount is too large. Max Digits: 14 + 4 decimal places.");
+                    continue;
+                }
             } catch (NumberFormatException ex) {
                 System.out.println("Enter numeric values.");
-                reservePrice = BigDecimal.ZERO;
                 continue;
             }
-            count++;
-        } while (reservePrice.compareTo(BigDecimal.ZERO) <= 0);
+            if (reservePrice.compareTo(BigDecimal.ZERO) >= 0) {
+                break;
+            }
+        }
 
         count = 0;
 
@@ -337,7 +348,7 @@ public class SalesStaffModule {
         } catch (AuctionListingNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
-        
+
         System.out.println("Press enter to continue...");
         sc.nextLine();
     }
@@ -468,6 +479,10 @@ public class SalesStaffModule {
             input = sc.nextLine().trim();
             try {
                 bigDecInput = new BigDecimal(input);
+                if (bigDecInput.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0) {
+                    System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
+                    continue;
+                }
             } catch (NumberFormatException ex) {
                 System.out.println("Please enter numeric values.\n");
                 continue;
@@ -561,6 +576,10 @@ public class SalesStaffModule {
             input = sc.nextLine();
             try {
                 bigDecInput = new BigDecimal(input);
+                if (bigDecInput.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0) {
+                    System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
+                    continue;
+                }
             } catch (NumberFormatException ex) {
                 System.out.println("Please enter numeric values!\n");
                 continue;
