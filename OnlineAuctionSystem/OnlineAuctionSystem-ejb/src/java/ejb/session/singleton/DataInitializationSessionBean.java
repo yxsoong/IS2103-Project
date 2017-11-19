@@ -29,6 +29,7 @@ import javax.persistence.PersistenceContext;
 import util.enumeration.CreditTransactionTypeEnum;
 import util.enumeration.EmployeeAccessRightEnum;
 import util.exception.EmployeeNotFoundException;
+import util.exception.InvalidAuctionListingException;
 
 /**
  *
@@ -81,7 +82,7 @@ public class DataInitializationSessionBean {
 
         AddressEntity addressEntity1 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-10", "111111", Boolean.TRUE), customerEntity.getCustomerId());
         AddressEntity addressEntity2 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-11", "222222", Boolean.TRUE), customerEntity.getCustomerId());
-        
+
         CustomerEntity customerEntity2 = customerEntityControllerLocal.createCustomer(new CustomerEntity("A", "A", "456", "456", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, Boolean.FALSE, "customer2", "password"));
 
         AddressEntity addressEntity3 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-11", "333333", Boolean.TRUE), customerEntity.getCustomerId());
@@ -116,17 +117,25 @@ public class DataInitializationSessionBean {
         //customerEntityControllerLocal.updateCustomer(customerEntity);
 
         creditPackageEntity2.getCreditTransactionEntities().add(creditTransactionEntity2);
-        
+
         Calendar startDT = Calendar.getInstance();
         startDT.set(2017, 10, 9, 1, 15);
-        
+
         Calendar endDT = Calendar.getInstance();
         endDT.set(2018, 01, 01, 00, 00);
-        
-        AuctionListingEntity auctionListingEntity = new AuctionListingEntity("itemA", BigDecimal.valueOf(20), null, startDT , endDT, BigDecimal.ZERO, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
-        auctionListingEntityControllerLocal.createAuctionListing(auctionListingEntity,salesEmployee.getEmployeeID());
+
+        AuctionListingEntity auctionListingEntity = new AuctionListingEntity("itemA", BigDecimal.valueOf(20), null, startDT, endDT, BigDecimal.ZERO, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
+        try {
+            auctionListingEntityControllerLocal.createAuctionListing(auctionListingEntity, salesEmployee.getEmployeeID());
+        } catch (InvalidAuctionListingException ex) {
+
+        }
         endDT.set(2017, 10, 9, 1, 17);
-        AuctionListingEntity auctionListingEntity2 = new AuctionListingEntity("itemB", BigDecimal.valueOf(20), BigDecimal.valueOf(25), startDT , endDT, BigDecimal.valueOf(30), Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
-        auctionListingEntityControllerLocal.createAuctionListing(auctionListingEntity2,salesEmployee.getEmployeeID());
+        AuctionListingEntity auctionListingEntity2 = new AuctionListingEntity("itemB", BigDecimal.valueOf(20), BigDecimal.valueOf(25), startDT, endDT, BigDecimal.valueOf(30), Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
+        try {
+            auctionListingEntityControllerLocal.createAuctionListing(auctionListingEntity2, salesEmployee.getEmployeeID());
+        } catch (InvalidAuctionListingException ex) {
+
+        }
     }
 }
