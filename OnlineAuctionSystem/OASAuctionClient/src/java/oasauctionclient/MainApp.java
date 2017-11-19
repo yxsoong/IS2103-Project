@@ -47,6 +47,8 @@ public class MainApp {
     private CreditTransactionEntityControllerRemote creditTransactionEntityControllerRemote;
 
     private CustomerEntity currentCustomerEntity;
+    
+    public static final BigDecimal MAX_BIG_DECIMAL = new BigDecimal(100000000000000.0000);
 
     public MainApp() {
     }
@@ -788,7 +790,6 @@ public class MainApp {
         BigDecimal userBid, currentBidAmount, nextIncrement, nextExpectedBid;
         BidEntity bidEntity;
         Calendar currentTimestamp = Calendar.getInstance();
-        int count = 0;
 
         currentBidAmount = ((auctionListingEntity.getCurrentBidAmount() == null) ? auctionListingEntity.getStartingBidAmount() : auctionListingEntity.getCurrentBidAmount());
         nextIncrement = bidEntityControllerRemote.getBidIncrement(currentBidAmount);
@@ -799,8 +800,11 @@ public class MainApp {
 
             System.out.print("Enter Bid Amount> ");
             userBid = sc.nextBigDecimal();
-            count++;
-        } while (userBid.compareTo(BigDecimal.ZERO) <= 0 || userBid.compareTo(nextExpectedBid) < 0);
+            
+            if(userBid.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0)
+                System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
+            
+        } while (userBid.compareTo(BigDecimal.ZERO) <= 0 || userBid.compareTo(nextExpectedBid) < 0 || userBid.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0);
 
         sc.nextLine(); //consume enter character
 
