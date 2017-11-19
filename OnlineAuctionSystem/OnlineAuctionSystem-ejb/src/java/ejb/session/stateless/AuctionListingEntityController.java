@@ -208,6 +208,8 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
             creditTransactionEntityControllerLocal.createCreditTransactionEntity(creditTransactionEntity);
             auctionListingEntity.setEnabled(Boolean.FALSE);
             auctionListingEntity.setOpenListing(Boolean.FALSE);
+            auctionListingEntity.setWinningBidEntity(null);
+            currentBidEntity.setWinningBid(Boolean.FALSE);
         }
     }
 
