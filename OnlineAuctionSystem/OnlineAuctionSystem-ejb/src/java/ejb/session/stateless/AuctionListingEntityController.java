@@ -46,14 +46,14 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
 
     @Override
     public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity, Long employeeId) {
+        EmployeeEntity employeeEntity = em.find(EmployeeEntity.class,employeeId);
+        auctionListingEntity.setEmployeeEntity(employeeEntity);
         em.persist(auctionListingEntity);
         em.flush();
         em.refresh(auctionListingEntity);
         timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getStartDateTime(), TimerTypeEnum.OPEN, null, null);
         timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getEndDateTime(), TimerTypeEnum.CLOSING, null, null);
         
-        EmployeeEntity employeeEntity = em.find(EmployeeEntity.class,employeeId);
-        auctionListingEntity.setEmployeeEntity(employeeEntity);
         return auctionListingEntity;
     }
 

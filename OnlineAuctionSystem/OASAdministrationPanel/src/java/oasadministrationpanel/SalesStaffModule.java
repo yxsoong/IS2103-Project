@@ -342,14 +342,12 @@ public class SalesStaffModule {
                         auctionListingEntity.getStartingBidAmount(), startDate, endDate, auctionListingEntity.getReservePrice(),
                         auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled(), deliveryAddress);
             }
-
-            System.out.print("Press enter to continue...> ");
-            sc.nextLine();
+            
         } catch (AuctionListingNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
 
-        System.out.println("Press enter to continue...");
+        System.out.print("Press enter to continue...");
         sc.nextLine();
     }
 
