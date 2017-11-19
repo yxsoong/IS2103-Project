@@ -773,6 +773,11 @@ public class MainApp {
 
         List<AuctionListingEntity> auctionListingEntities = auctionListingEntityControllerRemote.retrieveWonAuctionListings(currentCustomerEntity.getCustomerId());
 
+        if(auctionListingEntities.isEmpty()){
+            System.out.println("No won listings.");
+            return;
+        }
+        
         System.out.printf("%5s%25s%20s\n", "Row", "Auction Listing ID", "Item name");
         int i = 1;
         for (AuctionListingEntity auctionListingEntity : auctionListingEntities) {
