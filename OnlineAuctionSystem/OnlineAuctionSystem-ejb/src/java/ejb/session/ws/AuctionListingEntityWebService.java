@@ -76,6 +76,7 @@ public class AuctionListingEntityWebService {
             auctionListingEntity.setWinningBidEntity(null);
             auctionListingEntity.setEmployeeEntity(null);
             auctionListingEntity.setProxyBiddingEntities(null);
+            auctionListingEntity.setSnipingEntities(null);
         }
         return wonListings;
     }

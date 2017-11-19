@@ -104,6 +104,8 @@ public class MainApp {
                 } catch (InvalidRegistrationException_Exception ex) {
                     System.out.println(ex.getMessage() + "\n");
                 }
+                System.out.println("Press enter to continue...");
+                sc.nextLine();
                 return;
             } else {
                 System.out.println("Please enter valid username/password!\n");
@@ -137,7 +139,7 @@ public class MainApp {
     }
 
     private void mainMenu() {
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         Integer response = 0;
 
         while (true) {
@@ -153,7 +155,12 @@ public class MainApp {
             while (response < 1 || response > 5) {
                 System.out.print("> ");
 
-                response = scanner.nextInt();
+                try {
+                    response = Integer.parseInt(sc.next());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values");
+                    continue;
+                }
 
                 if (response == 1) {
                     viewCreditBalance();
@@ -341,16 +348,16 @@ public class MainApp {
                 continue;
             }
 
-            try{
-            year = Integer.parseInt(snipeString.substring(0, 4).trim());
-            month = Integer.parseInt(snipeString.substring(4, 6).trim());
-            day = Integer.parseInt(snipeString.substring(6, 8).trim());
-            hour = Integer.parseInt(snipeString.substring(8, 10).trim());
-            min = Integer.parseInt(snipeString.substring(10, 12).trim());
-            sec = Integer.parseInt(snipeString.substring(12, 14).trim());
-            snipingDateTime.clear();
-            snipingDateTime.set(year, month - 1, day, hour, min, sec);
-            } catch(NumberFormatException ex){
+            try {
+                year = Integer.parseInt(snipeString.substring(0, 4).trim());
+                month = Integer.parseInt(snipeString.substring(4, 6).trim());
+                day = Integer.parseInt(snipeString.substring(6, 8).trim());
+                hour = Integer.parseInt(snipeString.substring(8, 10).trim());
+                min = Integer.parseInt(snipeString.substring(10, 12).trim());
+                sec = Integer.parseInt(snipeString.substring(12, 14).trim());
+                snipingDateTime.clear();
+                snipingDateTime.set(year, month - 1, day, hour, min, sec);
+            } catch (NumberFormatException ex) {
                 System.out.println("Please enter numeric values.");
                 continue;
             }
@@ -363,10 +370,10 @@ public class MainApp {
         count = 0;
         do {
             System.out.println("Minimum bid price is " + nextBid.doubleValue() + "\n");
-            
+
             System.out.print("Enter maximum amount> ");
             maxAmount = sc.nextBigDecimal();
-            
+
         } while (maxAmount.compareTo(nextBid) < 0);
         sc.nextLine(); //consume enter character
 
