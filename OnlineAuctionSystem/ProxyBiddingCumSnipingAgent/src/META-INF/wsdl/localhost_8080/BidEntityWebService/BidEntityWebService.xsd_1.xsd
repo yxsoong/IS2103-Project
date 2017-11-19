@@ -2,6 +2,8 @@
 
 <xs:element name="InsufficientCreditsException" type="tns:InsufficientCreditsException"/>
 
+<xs:element name="InvalidSnipingException" type="tns:InvalidSnipingException"/>
+
 <xs:element name="createProxyBidding" type="tns:createProxyBidding"/>
 
 <xs:element name="createProxyBiddingResponse" type="tns:createProxyBiddingResponse"/>
@@ -9,6 +11,10 @@
 <xs:element name="createSnipingAuctionListing" type="tns:createSnipingAuctionListing"/>
 
 <xs:element name="createSnipingAuctionListingResponse" type="tns:createSnipingAuctionListingResponse"/>
+
+<xs:element name="getBidIncrement" type="tns:getBidIncrement"/>
+
+<xs:element name="getBidIncrementResponse" type="tns:getBidIncrementResponse"/>
 
 <xs:complexType name="createProxyBidding">
 <xs:sequence>
@@ -43,6 +49,7 @@
 <xs:element name="openListing" type="xs:boolean" minOccurs="0"/>
 <xs:element name="proxyBiddingEntities" type="tns:proxyBiddingEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="reservePrice" type="xs:decimal" minOccurs="0"/>
+<xs:element name="snipingEntities" type="tns:snipingEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="startDateTime" type="xs:dateTime" minOccurs="0"/>
 <xs:element name="startingBidAmount" type="xs:decimal" minOccurs="0"/>
 <xs:element name="winningBidEntity" type="tns:bidEntity" minOccurs="0"/>
@@ -77,6 +84,7 @@
 <xs:element name="phoneNumber" type="xs:string" minOccurs="0"/>
 <xs:element name="premium" type="xs:boolean" minOccurs="0"/>
 <xs:element name="proxyBiddingEntities" type="tns:proxyBiddingEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="snipingEntities" type="tns:snipingEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="username" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
@@ -128,6 +136,17 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="snipingEntity">
+<xs:sequence>
+<xs:element name="amount" type="xs:decimal" minOccurs="0"/>
+<xs:element name="auctionListingEntity" type="tns:auctionListingEntity" minOccurs="0"/>
+<xs:element name="customerEntity" type="tns:customerEntity" minOccurs="0"/>
+<xs:element name="enabled" type="xs:boolean" minOccurs="0"/>
+<xs:element name="snipingDate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="snipingId" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="createProxyBiddingResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:proxyBiddingEntity" minOccurs="0"/>
@@ -137,6 +156,18 @@
 <xs:complexType name="InsufficientCreditsException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getBidIncrement">
+<xs:sequence>
+<xs:element name="currentPrice" type="xs:decimal" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getBidIncrementResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:decimal" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -151,6 +182,12 @@
 
 <xs:complexType name="createSnipingAuctionListingResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="InvalidSnipingException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:simpleType name="employeeAccessRightEnum">

@@ -19,6 +19,15 @@
 <message name="createSnipingAuctionListingResponse">
 <part name="parameters" element="tns:createSnipingAuctionListingResponse"/>
 </message>
+<message name="InvalidSnipingException">
+<part name="fault" element="tns:InvalidSnipingException"/>
+</message>
+<message name="getBidIncrement">
+<part name="parameters" element="tns:getBidIncrement"/>
+</message>
+<message name="getBidIncrementResponse">
+<part name="parameters" element="tns:getBidIncrementResponse"/>
+</message>
 <portType name="BidEntityWebService">
 <operation name="createProxyBidding">
 <input wsam:Action="http://ws.session.ejb/BidEntityWebService/createProxyBiddingRequest" message="tns:createProxyBidding"/>
@@ -28,6 +37,11 @@
 <operation name="createSnipingAuctionListing">
 <input wsam:Action="http://ws.session.ejb/BidEntityWebService/createSnipingAuctionListingRequest" message="tns:createSnipingAuctionListing"/>
 <output wsam:Action="http://ws.session.ejb/BidEntityWebService/createSnipingAuctionListingResponse" message="tns:createSnipingAuctionListingResponse"/>
+<fault message="tns:InvalidSnipingException" name="InvalidSnipingException" wsam:Action="http://ws.session.ejb/BidEntityWebService/createSnipingAuctionListing/Fault/InvalidSnipingException"/>
+</operation>
+<operation name="getBidIncrement">
+<input wsam:Action="http://ws.session.ejb/BidEntityWebService/getBidIncrementRequest" message="tns:getBidIncrement"/>
+<output wsam:Action="http://ws.session.ejb/BidEntityWebService/getBidIncrementResponse" message="tns:getBidIncrementResponse"/>
 </operation>
 </portType>
 <binding name="BidEntityWebServicePortBinding" type="tns:BidEntityWebService">
@@ -45,6 +59,18 @@
 </fault>
 </operation>
 <operation name="createSnipingAuctionListing">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="InvalidSnipingException">
+<soap:fault name="InvalidSnipingException" use="literal"/>
+</fault>
+</operation>
+<operation name="getBidIncrement">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
