@@ -81,7 +81,7 @@ public class MainApp {
     }
 
     private void mainMenu() {
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         Integer response = 0;
 
         while (true) {
@@ -97,7 +97,14 @@ public class MainApp {
             while (response < 1 || response > 5) {
                 System.out.print("> ");
 
-                response = scanner.nextInt();
+                String input = sc.nextLine().trim();
+                
+                try {
+                    response = Integer.parseInt(input);
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.\n");
+                    continue;
+                }
 
                 if (response == 1) {
                     try {

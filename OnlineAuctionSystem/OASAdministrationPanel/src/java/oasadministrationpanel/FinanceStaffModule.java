@@ -43,7 +43,14 @@ public class FinanceStaffModule {
             while (response < 1 || response > 4) {
                 System.out.print("> ");
 
-                response = scanner.nextInt();
+                String input = scanner.nextLine();
+
+                try {
+                    response = Integer.parseInt(input);
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.\n");
+                    continue;
+                }
 
                 if (response == 1) {
                     createNewCreditPackage();
@@ -57,7 +64,6 @@ public class FinanceStaffModule {
                     System.out.println("Invalid option, please try again!\n");
                 }
             }
-
             if (response == 4) {
                 break;
             }
@@ -68,7 +74,7 @@ public class FinanceStaffModule {
         System.out.println("*** OAS Administration Panel :: Finance Staff :: Create New Credit Package ***\n");
         Scanner sc = new Scanner(System.in);
 
-        String creditPackageName;
+        String creditPackageName, input;
         BigDecimal price, numberOfCredits;
 
         CreditPackageEntity newCreditPackage;
@@ -91,7 +97,14 @@ public class FinanceStaffModule {
                 System.out.println("Price cannot be negative or zero!\n");
             }
             System.out.print("Enter price> ");
-            price = sc.nextBigDecimal();
+            input = sc.nextLine();
+            try {
+                price = new BigDecimal(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("Please enter numeric values.\n");
+                price = BigDecimal.ZERO;
+                continue;
+            }
             count++;
         } while (price.compareTo(BigDecimal.ZERO) <= 0);
 
@@ -102,12 +115,19 @@ public class FinanceStaffModule {
                 System.out.println("Number of credits cannot be negative or zero!\n");
             }
             System.out.print("Enter number of credits> ");
-            numberOfCredits = sc.nextBigDecimal();
+            input = sc.nextLine();
+            try {
+                numberOfCredits = new BigDecimal(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("Please enter numeric values.\n");
+                numberOfCredits = BigDecimal.ZERO;
+                continue;
+            }
             count++;
         } while (numberOfCredits.compareTo(BigDecimal.ZERO) <= 0);
 
         newCreditPackage = new CreditPackageEntity(creditPackageName, price, numberOfCredits, true);
-        
+
         newCreditPackage.setEmployeeEntity(currentEmployeeEntity);
 
         newCreditPackage = creditPackageEntityControllerRemote.createNewCreditPackage(newCreditPackage);
@@ -207,25 +227,50 @@ public class FinanceStaffModule {
             creditPackageEntity.setCreditPackageName(input);
         }
 
-        System.out.print("Enter Price (Enter -1 if no change)> ");
-        bigDecInput = sc.nextBigDecimal();
-        if (bigDecInput.compareTo(BigDecimal.ZERO) > -1) {
-            creditPackageEntity.setPrice(bigDecInput);
+        while (true) {
+            System.out.print("Enter Price (Enter -1 if no change)> ");
+            input = sc.nextLine();
+            try {
+                bigDecInput = new BigDecimal(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("Please input numeric values!\n");
+                continue;
+            }
+            if (bigDecInput.compareTo(BigDecimal.ZERO) > -1) {
+                creditPackageEntity.setPrice(bigDecInput);
+            }
+            break;
         }
 
-        System.out.print("Enter Number of Credits (Enter -1 if no change)> ");
-        bigDecInput = sc.nextBigDecimal();
-        if (bigDecInput.compareTo(BigDecimal.ZERO) > -1) {
-            creditPackageEntity.setNumberOfCredits(bigDecInput);
+        while (true) {
+            System.out.print("Enter Number of Credits (Enter -1 if no change)> ");
+            input = sc.nextLine();
+            try {
+                bigDecInput = new BigDecimal(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("Please input numeric values!\n");
+                continue;
+            }
+            if (bigDecInput.compareTo(BigDecimal.ZERO) > -1) {
+                creditPackageEntity.setNumberOfCredits(bigDecInput);
+            }
+            break;
         }
 
-        System.out.print("Enable Package (Enter Y, N, or blank if no change)> ");
-        sc.nextLine(); //Consume enter character
-        input = sc.nextLine();
-        if (input.equals("Y")) {
-            creditPackageEntity.setEnabled(true);
-        } else if (input.equals("N")) {
-            creditPackageEntity.setEnabled(false);
+        while (true) {
+            System.out.print("Enable Package (Enter Y, N, or blank if no change)> ");
+            input = sc.nextLine();
+            if (input.equalsIgnoreCase("Y")) {
+                creditPackageEntity.setEnabled(true);
+                break;
+            } else if (input.equalsIgnoreCase("N")) {
+                creditPackageEntity.setEnabled(false);
+                break;
+            } else if (input.isEmpty()) {
+                break;
+            } else {
+                continue;
+            }
         }
 
         creditPackageEntityControllerRemote.updateCreditPackage(creditPackageEntity);

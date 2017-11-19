@@ -10,6 +10,7 @@ import entity.AuctionListingEntity;
 import entity.BidEntity;
 import entity.CreditTransactionEntity;
 import entity.CustomerEntity;
+import entity.EmployeeEntity;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
@@ -43,12 +44,15 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     private EntityManager em;
 
     @Override
-    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity) {
+    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity, Long employeeId) {
         em.persist(auctionListingEntity);
         em.flush();
         em.refresh(auctionListingEntity);
         timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getStartDateTime(), "openListing", null, null);
         timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getEndDateTime(), "closeListing", null, null);
+        
+        EmployeeEntity employeeEntity = em.find(EmployeeEntity.class,employeeId);
+        auctionListingEntity.setEmployeeEntity(employeeEntity);
         return auctionListingEntity;
     }
 

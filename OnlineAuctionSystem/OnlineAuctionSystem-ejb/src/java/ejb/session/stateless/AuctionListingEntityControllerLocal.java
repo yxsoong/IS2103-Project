@@ -12,8 +12,6 @@ import util.exception.AuctionListingNotFoundException;
 
 public interface AuctionListingEntityControllerLocal {
 
-    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity);
-
     public AuctionListingEntity retrieveAuctionListingById(Long auctionListingId) throws AuctionListingNotFoundException;
 
     public List<AuctionListingEntity> retrieveAllAuctionListings() throws AuctionListingNotFoundException;
@@ -39,4 +37,6 @@ public interface AuctionListingEntityControllerLocal {
     public void setWinningBidEntity(Long auctionListingId);
 
     public void noWinningBidEntity(Long auctionListingId);
+
+    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity, Long employeeId);
 }
