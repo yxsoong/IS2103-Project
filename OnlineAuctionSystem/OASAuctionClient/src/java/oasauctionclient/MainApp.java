@@ -23,6 +23,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import util.exception.AddressNotFoundException;
@@ -267,7 +268,7 @@ public class MainApp {
     }
 
     private void mainMenu() {
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         Integer response = 0;
 
         while (true) {
@@ -290,7 +291,12 @@ public class MainApp {
             while (response < 1 || response > 12) {
                 System.out.print("> ");
 
-                response = scanner.nextInt();
+                try{
+                    response = Integer.parseInt(sc.next());
+                } catch(NumberFormatException ex){
+                    System.out.println("Please enter numeric values\n");
+                    continue;
+                }
 
                 if (response == 1) {
                     viewProfile();
