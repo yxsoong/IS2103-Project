@@ -4,15 +4,6 @@
 <xsd:import namespace="http://ws.session.ejb/" schemaLocation="http://localhost:8080/BidEntityWebService/BidEntityWebService?xsd=1"/>
 </xsd:schema>
 </types>
-<message name="createProxyBidding">
-<part name="parameters" element="tns:createProxyBidding"/>
-</message>
-<message name="createProxyBiddingResponse">
-<part name="parameters" element="tns:createProxyBiddingResponse"/>
-</message>
-<message name="InsufficientCreditsException">
-<part name="fault" element="tns:InsufficientCreditsException"/>
-</message>
 <message name="createSnipingAuctionListing">
 <part name="parameters" element="tns:createSnipingAuctionListing"/>
 </message>
@@ -22,6 +13,18 @@
 <message name="InvalidSnipingException">
 <part name="fault" element="tns:InvalidSnipingException"/>
 </message>
+<message name="createProxyBidding">
+<part name="parameters" element="tns:createProxyBidding"/>
+</message>
+<message name="createProxyBiddingResponse">
+<part name="parameters" element="tns:createProxyBiddingResponse"/>
+</message>
+<message name="InsufficientCreditsException">
+<part name="fault" element="tns:InsufficientCreditsException"/>
+</message>
+<message name="InvalidProxyBidException">
+<part name="fault" element="tns:InvalidProxyBidException"/>
+</message>
 <message name="getBidIncrement">
 <part name="parameters" element="tns:getBidIncrement"/>
 </message>
@@ -29,15 +32,16 @@
 <part name="parameters" element="tns:getBidIncrementResponse"/>
 </message>
 <portType name="BidEntityWebService">
-<operation name="createProxyBidding">
-<input wsam:Action="http://ws.session.ejb/BidEntityWebService/createProxyBiddingRequest" message="tns:createProxyBidding"/>
-<output wsam:Action="http://ws.session.ejb/BidEntityWebService/createProxyBiddingResponse" message="tns:createProxyBiddingResponse"/>
-<fault message="tns:InsufficientCreditsException" name="InsufficientCreditsException" wsam:Action="http://ws.session.ejb/BidEntityWebService/createProxyBidding/Fault/InsufficientCreditsException"/>
-</operation>
 <operation name="createSnipingAuctionListing">
 <input wsam:Action="http://ws.session.ejb/BidEntityWebService/createSnipingAuctionListingRequest" message="tns:createSnipingAuctionListing"/>
 <output wsam:Action="http://ws.session.ejb/BidEntityWebService/createSnipingAuctionListingResponse" message="tns:createSnipingAuctionListingResponse"/>
 <fault message="tns:InvalidSnipingException" name="InvalidSnipingException" wsam:Action="http://ws.session.ejb/BidEntityWebService/createSnipingAuctionListing/Fault/InvalidSnipingException"/>
+</operation>
+<operation name="createProxyBidding">
+<input wsam:Action="http://ws.session.ejb/BidEntityWebService/createProxyBiddingRequest" message="tns:createProxyBidding"/>
+<output wsam:Action="http://ws.session.ejb/BidEntityWebService/createProxyBiddingResponse" message="tns:createProxyBiddingResponse"/>
+<fault message="tns:InsufficientCreditsException" name="InsufficientCreditsException" wsam:Action="http://ws.session.ejb/BidEntityWebService/createProxyBidding/Fault/InsufficientCreditsException"/>
+<fault message="tns:InvalidProxyBidException" name="InvalidProxyBidException" wsam:Action="http://ws.session.ejb/BidEntityWebService/createProxyBidding/Fault/InvalidProxyBidException"/>
 </operation>
 <operation name="getBidIncrement">
 <input wsam:Action="http://ws.session.ejb/BidEntityWebService/getBidIncrementRequest" message="tns:getBidIncrement"/>
@@ -46,6 +50,18 @@
 </portType>
 <binding name="BidEntityWebServicePortBinding" type="tns:BidEntityWebService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="createSnipingAuctionListing">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="InvalidSnipingException">
+<soap:fault name="InvalidSnipingException" use="literal"/>
+</fault>
+</operation>
 <operation name="createProxyBidding">
 <soap:operation soapAction=""/>
 <input>
@@ -57,17 +73,8 @@
 <fault name="InsufficientCreditsException">
 <soap:fault name="InsufficientCreditsException" use="literal"/>
 </fault>
-</operation>
-<operation name="createSnipingAuctionListing">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="InvalidSnipingException">
-<soap:fault name="InvalidSnipingException" use="literal"/>
+<fault name="InvalidProxyBidException">
+<soap:fault name="InvalidProxyBidException" use="literal"/>
 </fault>
 </operation>
 <operation name="getBidIncrement">

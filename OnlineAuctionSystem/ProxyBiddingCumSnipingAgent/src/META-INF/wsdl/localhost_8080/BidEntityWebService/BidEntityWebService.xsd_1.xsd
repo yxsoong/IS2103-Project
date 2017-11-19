@@ -2,6 +2,8 @@
 
 <xs:element name="InsufficientCreditsException" type="tns:InsufficientCreditsException"/>
 
+<xs:element name="InvalidProxyBidException" type="tns:InvalidProxyBidException"/>
+
 <xs:element name="InvalidSnipingException" type="tns:InvalidSnipingException"/>
 
 <xs:element name="createProxyBidding" type="tns:createProxyBidding"/>
@@ -154,6 +156,12 @@
 </xs:complexType>
 
 <xs:complexType name="InsufficientCreditsException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="InvalidProxyBidException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
