@@ -9,6 +9,7 @@ import entity.AddressEntity;
 import entity.AuctionListingEntity;
 import entity.BidEntity;
 import entity.CreditTransactionEntity;
+import entity.CustomerEntity;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
@@ -82,8 +83,8 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     public List<AuctionListingEntity> retrieveAllAuctionListingsBelowReservePrice() throws AuctionListingNotFoundException {
         Query query = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.manualAssignment = true");
         List<AuctionListingEntity> auctionListingEntities = query.getResultList();
-        
-        if(auctionListingEntities.isEmpty()){
+
+        if (auctionListingEntities.isEmpty()) {
             throw new AuctionListingNotFoundException("No auction listings below reserve price");
         }
 
@@ -137,14 +138,13 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
 
     @Override
     public void closeAuctionListing(Long auctionListingId) {
-        
+
         AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
         Query query = em.createQuery("SELECT b FROM BidEntity b WHERE b.auctionListingEntity.auctionListingId = :inAuctionListingEntityId ORDER BY b.bidId");
         query.setParameter("inAuctionListingEntityId", auctionListingId);
         auctionListingEntity.setOpenListing(Boolean.FALSE);
-        
+
         List<BidEntity> bidEntities = query.getResultList();
-        
 
         if (!bidEntities.isEmpty()) {
             BigDecimal reservePrice = auctionListingEntity.getReservePrice();
@@ -185,21 +185,30 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     public void deleteAuctionListing(Long auctionListingId) {
         AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
 
-        List<BidEntity> bidEntities = auctionListingEntity.getBidEntities();
-        BigDecimal refundAmount;
-        Long customerId;
-        for (BidEntity bidEntity : bidEntities) {
-            refundAmount = bidEntity.getBidAmount();
-            customerId = bidEntity.getCustomerEntity().getCustomerId();
-            customerEntityControllerLocal.refundCredits(customerId, refundAmount);
-            creditTransactionEntityControllerLocal.createCreditTransactionEntity(new CreditTransactionEntity(refundAmount, CreditTransactionTypeEnum.REFUND));
+        Query query = em.createQuery("SELECT b FROM BidEntity b WHERE b.auctionListingEntity.auctionListingId = :inAuctionListingId ORDER BY b.bidId DESC");
+        query.setParameter("inAuctionListingId", auctionListingId);
+        List<BidEntity> bidEntities = query.getResultList();
+        if (bidEntities.isEmpty()) {
+            em.remove(auctionListingEntity);
+        } else {
+            BigDecimal refundAmount;
+            Long customerId;
+            BidEntity currentBidEntity = bidEntities.get(0);
+            CustomerEntity currentCustomerEntity = currentBidEntity.getCustomerEntity();
+            refundAmount = currentBidEntity.getBidAmount();
+            customerId = currentBidEntity.getCustomerEntity().getCustomerId();
+            if (currentBidEntity.getWinningBid()) {
+                currentCustomerEntity.setAvailableBalance(currentCustomerEntity.getAvailableBalance().add(refundAmount));
+                currentCustomerEntity.setCreditBalance(currentCustomerEntity.getCreditBalance().add(refundAmount));
+            } else {
+                customerEntityControllerLocal.refundCredits(customerId, refundAmount);
+            }
+            CreditTransactionEntity creditTransactionEntity = new CreditTransactionEntity(refundAmount, CreditTransactionTypeEnum.REFUND);
+            creditTransactionEntity.setCustomerEntity(currentCustomerEntity);
+            creditTransactionEntityControllerLocal.createCreditTransactionEntity(creditTransactionEntity);
+            auctionListingEntity.setEnabled(Boolean.FALSE);
+            auctionListingEntity.setOpenListing(Boolean.FALSE);
         }
-
-        auctionListingEntity.setEnabled(Boolean.FALSE);
-        auctionListingEntity.setOpenListing(Boolean.FALSE);
-
-        em.remove(auctionListingEntity);
-        em.flush();
     }
 
     @Override

@@ -50,7 +50,7 @@ public class CreditTransactionEntityController implements CreditTransactionEntit
     public CreditTransactionEntity createCreditTransactionEntity(CreditTransactionEntity creditTransactionEntity) {
         em.persist(creditTransactionEntity);
 
-        CustomerEntity customerEntity = creditTransactionEntity.getCustomerEntity();
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, creditTransactionEntity.getCustomerEntity().getCustomerId());
         customerEntity.getCreditTransactions().add(creditTransactionEntity);
         em.flush();
         em.refresh(creditTransactionEntity);
