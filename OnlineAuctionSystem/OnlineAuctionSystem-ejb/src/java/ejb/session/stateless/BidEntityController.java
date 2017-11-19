@@ -74,10 +74,13 @@ public class BidEntityController implements BidEntityControllerRemote, BidEntity
             customerEntityControllerLocal.useCredits(customerEntity.getCustomerId(), bidEntity.getBidAmount());
 
             //refund
-            List<BidEntity> bidEntities = auctionListingEntity.getBidEntities();
+            Query query = em.createQuery("SELECT b FROM BidEntity b WHERE b.auctionListingEntity.auctionListingId = :inAuctionListingId ORDER BY b.bidId DESC" );
+            query.setParameter("inAuctionListingId", auctionListingEntity.getAuctionListingId());
+            
+            List<BidEntity> bidEntities = query.getResultList();
 
             if (bidEntities.size() > 1) {
-                BidEntity refundBid = bidEntities.get(bidEntities.size() - 2);
+                BidEntity refundBid = bidEntities.get(1);
                 //System.out.println(refundBid.getCustomerEntity().getCustomerId() + " " + refundBid.getBidAmount());
                 customerEntityControllerLocal.refundCredits(refundBid.getCustomerEntity().getCustomerId(), refundBid.getBidAmount());
             }
@@ -126,6 +129,10 @@ public class BidEntityController implements BidEntityControllerRemote, BidEntity
                 } else {
 
                     if (proxyBiddingEntity.getMaximumAmount().compareTo(nextBidAmount) >= 0) {
+                        if(proxyBiddingEntity.getCustomerEntity().getAvailableBalance().compareTo(nextBidAmount) < 0){
+                            proxyBiddingEntity.setEnabled(Boolean.FALSE);
+                            continue;
+                        }
                         BidEntity newBidEntity = new BidEntity();
                         newBidEntity.setBidAmount(nextBidAmount);
                         newBidEntity.setDateTime(Calendar.getInstance());

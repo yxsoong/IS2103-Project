@@ -14,4 +14,6 @@ public interface ProxyBiddingEntityControllerLocal {
     public ProxyBiddingEntity createProxyBidding(ProxyBiddingEntity proxyBiddingEntity) throws InsufficientCreditsException;
 
     public ProxyBiddingEntity retrieveHighestProxyBid(Long auctionListingId) throws ProxyBiddingNotFoundException;
+
+    public void disableProxyBids(Long auctionListingId);
 }

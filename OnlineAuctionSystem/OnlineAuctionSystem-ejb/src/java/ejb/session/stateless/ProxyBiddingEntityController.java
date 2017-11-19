@@ -127,4 +127,16 @@ public class ProxyBiddingEntityController implements ProxyBiddingEntityControlle
             throw new ProxyBiddingNotFoundException();
         }
     }
+    
+    @Override
+    public void disableProxyBids(Long auctionListingId){
+        Query query = em.createQuery("SELECT p FROM ProxyBiddingEntity p WHERE p.auctionListingEntity.auctionListingId = :inAuctionListId");
+        query.setParameter("inAuctionListId", auctionListingId);
+        
+        List<ProxyBiddingEntity> proxyBiddingEntities = query.getResultList();
+        
+        for(ProxyBiddingEntity proxyBiddingEntity: proxyBiddingEntities){
+            proxyBiddingEntity.setEnabled(Boolean.FALSE);
+        }
+    }
 }

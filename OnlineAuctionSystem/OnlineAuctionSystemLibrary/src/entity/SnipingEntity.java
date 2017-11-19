@@ -31,7 +31,7 @@ public class SnipingEntity implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Calendar snipingDate;
     @Column(nullable = false, precision = 18, scale = 4)
-    private BigDecimal maxAmount;
+    private BigDecimal amount;
     @Column(nullable = false)
     private Boolean enabled;
     @ManyToOne(optional = false)
@@ -46,7 +46,7 @@ public class SnipingEntity implements Serializable {
     
     public SnipingEntity(Calendar snipingDate, BigDecimal amount, Boolean enabled) {
         this.snipingDate = snipingDate;
-        this.maxAmount = amount;
+        this.amount = amount;
         this.enabled = enabled;
     }
 
@@ -66,12 +66,12 @@ public class SnipingEntity implements Serializable {
         this.snipingDate = snipingDate;
     }
 
-    public BigDecimal getMaxAmount() {
-        return maxAmount;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setMaxAmount(BigDecimal maxAmount) {
-        this.maxAmount = maxAmount;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public Boolean getEnabled() {

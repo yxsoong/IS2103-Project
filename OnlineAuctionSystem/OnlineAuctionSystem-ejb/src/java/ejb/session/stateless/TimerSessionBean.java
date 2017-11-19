@@ -75,12 +75,12 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
             query.setParameter("inAuctionListingId", auctionListingId);
 
             List<SnipingEntity> snipingEntities = query.getResultList();
-            if (snipingEntities.size() > 0) {
+            if (snipingEntities.size() > 1) {
                 return;
             }
 
         }
-
+        System.out.println("created!");
         timerService.createCalendarTimer(schedule, new TimerConfig(new TimerEntity(auctionListingId, type, maxAmt, customerId, dateTime), true));
     }
 
@@ -129,50 +129,37 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
             auctionListingEntityControllerLocal.closeAuctionListing(timerEntity.getAuctionListingId());
         } else if (timerEntity.getType().equals("snipe")) {
             Long auctionListingId = timerEntity.getAuctionListingId();
+            
+            Query query = em.createQuery("SELECT s FROM SnipingEntity s WHERE s.snipingDate = :inSnipingDate AND s.auctionListingEntity.auctionListingId = :inAuctionListingId AND s.enabled = true ORDER BY s.snipingId ASC");
+            query.setParameter("inSnipingDate", timerEntity.getRunDate(), TemporalType.TIMESTAMP);
+            query.setParameter("inAuctionListingId", auctionListingId);
+            
+            List<SnipingEntity> snipingEntities = query.getResultList();
+            
+            if(snipingEntities.isEmpty()){
+                return;
+            }
 
             CustomerEntity customerEntity = em.find(CustomerEntity.class, timerEntity.getCustomerId());
             AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, timerEntity.getAuctionListingId());
+
             
-            Query query = em.createQuery("SELECT s FROM SnipingEntity s WHERE s.snipingDate = :inSnipingDate AND s.auctionListingEntity.auctionListingId = :inAuctionListingId ORDER BY s.maxAmount DESC");
-            query.setParameter("inSnipingDate", timerEntity.getRunDate(), TemporalType.TIMESTAMP);
-            query.setParameter("inAuctionListingId", auctionListingId);
 
-            List<SnipingEntity> snipingEntities = query.getResultList();
             
-            BigDecimal currentBid = auctionListingEntity.getCurrentBidAmount();
 
-            if (currentBid == null) {
-                currentBid = auctionListingEntity.getStartingBidAmount();
-            }
+            for (SnipingEntity snipingEntity : snipingEntities) {
+                
+                BidEntity bidEntity = new BidEntity(snipingEntity.getAmount(), Calendar.getInstance());
+                bidEntity.setCustomerEntity(customerEntity);
+                bidEntity.setAuctionListingEntity(auctionListingEntity);
+                try {
+                    bidEntityControllerLocal.createNewBid(bidEntity);
+                    System.out.println("bid created");
+                } catch (InvalidBidException ex) {
 
-            BigDecimal nextMinBid = bidEntityControllerLocal.getBidIncrement(currentBid);
-            nextMinBid = currentBid.add(nextMinBid);
-
-            try {
-                ProxyBiddingEntity highestProxyBid = proxyBiddingEntityControllerLocal.retrieveHighestProxyBid(auctionListingId);
-
-                if (highestProxyBid.getMaximumAmount().compareTo(nextMinBid) > 0) {
-                    nextMinBid = highestProxyBid.getMaximumAmount();
                 }
-            } catch (ProxyBiddingNotFoundException ex) {
-
             }
 
-            BigDecimal makeBid;
-            if (timerEntity.getMaxAmount().compareTo(nextMinBid) >= 0) {
-                makeBid = nextMinBid;
-            } else {
-                makeBid = timerEntity.getMaxAmount();
-            }
-            BidEntity bidEntity = new BidEntity(makeBid, Calendar.getInstance());
-            bidEntity.setCustomerEntity(customerEntity);
-            bidEntity.setAuctionListingEntity(auctionListingEntity);
-            try {
-                bidEntityControllerLocal.createNewBid(bidEntity);
-                System.out.println("bid created");
-            } catch (InvalidBidException ex) {
-
-            }
         }
 
     }

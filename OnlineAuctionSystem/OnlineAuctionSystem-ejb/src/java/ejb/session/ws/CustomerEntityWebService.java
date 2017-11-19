@@ -66,6 +66,7 @@ public class CustomerEntityWebService {
                 customerEntity.setAddressEntities(null);
                 customerEntity.setCreditTransactions(null);
                 customerEntity.setProxyBiddingEntities(null);
+                customerEntity.setSnipingEntities(null);
                 return customerEntity;
             } else {
                 throw new InvalidLoginCredentialException("Please register to become a premium member");
