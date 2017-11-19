@@ -38,7 +38,7 @@ public class CreditPackageEntity implements Serializable {
     @Column(nullable = false)
     private Boolean enabled;
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = true)
     private EmployeeEntity employeeEntity;
     @OneToMany(mappedBy = "creditPackageEntity")
     private List<CreditTransactionEntity> creditTransactionEntities;

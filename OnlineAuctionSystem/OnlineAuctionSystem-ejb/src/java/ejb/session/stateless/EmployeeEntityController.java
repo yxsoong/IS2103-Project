@@ -115,15 +115,13 @@ public class EmployeeEntityController implements EmployeeEntityControllerRemote,
             q1.setParameter("inEmployee", employeeEntity);
             List<CreditPackageEntity> toRemove1 = q1.getResultList();
             for (CreditPackageEntity creditPackageEntity : toRemove1) {
-                //cannot be null so set to first employee, the sysadmin
-                creditPackageEntity.setEmployeeEntity(retrieveEmployeeById(1L));
+                creditPackageEntity.setEmployeeEntity(null);
             }
             Query q2 = em.createQuery("SELECT a FROM AuctionListingEntity a WHERE a.employeeEntity = :inEmployee");
             q2.setParameter("inEmployee", employeeEntity);
             List<AuctionListingEntity> toRemove2 = q2.getResultList();
             for (AuctionListingEntity auctionListingEntity : toRemove2) {
-                //cannot be null so set to first employee, the sysadmin
-                auctionListingEntity.setEmployeeEntity(retrieveEmployeeById(1L));
+                auctionListingEntity.setEmployeeEntity(null);
             }
             em.remove(employeeEntity);
         } catch (EmployeeNotFoundException ex) {

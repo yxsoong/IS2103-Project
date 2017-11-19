@@ -103,7 +103,14 @@ public class SalesStaffModule {
                 System.out.println("Starting bid amount cannot be negative or zero!\n");
             }
             System.out.print("Enter starting bid amount> ");
-            startingBidAmount = sc.nextBigDecimal();
+            String input = sc.nextLine().trim();
+            try {
+                startingBidAmount = new BigDecimal(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("Please enter numeric values.\n");
+                startingBidAmount = BigDecimal.ZERO;
+                continue;
+            }
             count++;
         } while (startingBidAmount.compareTo(BigDecimal.ZERO) <= 0);
 
@@ -115,24 +122,32 @@ public class SalesStaffModule {
             }
 
             System.out.print("Enter starting date and time (yyyymmddhhmm)> ");
-            if (count == 0) {
-                sc.nextLine();      //consume the enter character
-            }
             sDateTime = sc.nextLine().trim();
-            count++;
-            if (sDateTime.isEmpty()) {
-                System.out.println("Start date time cannot be empty!\n");
+
+            if (sDateTime.isEmpty() || sDateTime.length() != 12) {
+                System.out.println("Start date time cannot be empty and should be length 12!");
                 count = -1;
+                //dummy value to loop
+                endDateTime.set(1990, 0, 1, 0, 0);
                 continue;
             }
 
-            year = Integer.parseInt(sDateTime.substring(0, 4).trim());
-            month = Integer.parseInt(sDateTime.substring(4, 6).trim());
-            day = Integer.parseInt(sDateTime.substring(6, 8).trim());
-            hour = Integer.parseInt(sDateTime.substring(8, 10).trim());
-            min = Integer.parseInt(sDateTime.substring(10).trim());
-            startDateTime.clear();
-            startDateTime.set(year, month - 1, day, hour, min);
+            try {
+                year = Integer.parseInt(sDateTime.substring(0, 4).trim());
+                month = Integer.parseInt(sDateTime.substring(4, 6).trim());
+                day = Integer.parseInt(sDateTime.substring(6, 8).trim());
+                hour = Integer.parseInt(sDateTime.substring(8, 10).trim());
+                min = Integer.parseInt(sDateTime.substring(10).trim());
+                startDateTime.clear();
+                startDateTime.set(year, month - 1, day, hour, min);
+            } catch (NumberFormatException ex) {
+                System.out.println("Please enter numeric values.");
+                //dummy value to loop
+                startDateTime.set(1990, 0, 1, 0, 0);
+                count = 0;
+                continue;
+            }
+            count++;
         } while (now.compareTo(startDateTime) > 0);
 
         count = 0;
@@ -145,21 +160,30 @@ public class SalesStaffModule {
             System.out.print("Enter end date and time (yyyymmddhhmm)> ");
             eDateTime = sc.nextLine().trim();
 
-            count++;
-            if (eDateTime.isEmpty()) {
-                System.out.println("End date time cannot be empty!");
+            if (eDateTime.isEmpty() || eDateTime.length() < 12) {
+                System.out.println("End date time cannot be empty and should be length 12!");
+                //dummy value to loop
+                endDateTime.set(1990, 0, 1, 0, 0);
                 count = 0;
                 continue;
             }
 
-            year = Integer.parseInt(eDateTime.substring(0, 4).trim());
-            month = Integer.parseInt(eDateTime.substring(4, 6).trim());
-            day = Integer.parseInt(eDateTime.substring(6, 8).trim());
-            hour = Integer.parseInt(eDateTime.substring(8, 10).trim());
-            min = Integer.parseInt(eDateTime.substring(10, 12).trim());
-            endDateTime.clear();
-            endDateTime.set(year, month - 1, day, hour, min);
-
+            try {
+                year = Integer.parseInt(eDateTime.substring(0, 4).trim());
+                month = Integer.parseInt(eDateTime.substring(4, 6).trim());
+                day = Integer.parseInt(eDateTime.substring(6, 8).trim());
+                hour = Integer.parseInt(eDateTime.substring(8, 10).trim());
+                min = Integer.parseInt(eDateTime.substring(10, 12).trim());
+                endDateTime.clear();
+                endDateTime.set(year, month - 1, day, hour, min);
+            } catch (NumberFormatException ex) {
+                System.out.println("Please enter numeric values.");
+                //dummy value to loop
+                endDateTime.set(1990, 0, 1, 0, 0);
+                count = 0;
+                continue;
+            }
+            count++;
         } while (now.compareTo(endDateTime) > 0 || Long.parseLong(eDateTime) < Long.parseLong(sDateTime));
 
         count = 0;
@@ -309,7 +333,7 @@ public class SalesStaffModule {
 
                 System.out.printf("%20s%20s%14s%26s%26s%16s%14s%8s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getCurrentBidAmount(), startDate, endDate, auctionListingEntity.getReservePrice(), auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled());
             }
-            if(listingsBelowReserve.isEmpty()){
+            if (listingsBelowReserve.isEmpty()) {
                 System.out.print("Press Enter to continue...");
                 sc.nextLine();
                 return;

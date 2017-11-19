@@ -57,7 +57,7 @@ public class AuctionListingEntity implements Serializable {
     @OneToMany(mappedBy = "auctionListingEntity")
     private List<BidEntity> bidEntities;
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = true)
     private EmployeeEntity employeeEntity;
     @OneToMany(mappedBy = "auctionListingEntity")
     private List<ProxyBiddingEntity> proxyBiddingEntities;

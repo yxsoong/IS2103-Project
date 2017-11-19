@@ -341,6 +341,7 @@ public class MainApp {
                 continue;
             }
 
+            try{
             year = Integer.parseInt(snipeString.substring(0, 4).trim());
             month = Integer.parseInt(snipeString.substring(4, 6).trim());
             day = Integer.parseInt(snipeString.substring(6, 8).trim());
@@ -349,7 +350,10 @@ public class MainApp {
             sec = Integer.parseInt(snipeString.substring(12, 14).trim());
             snipingDateTime.clear();
             snipingDateTime.set(year, month - 1, day, hour, min, sec);
-
+            } catch(NumberFormatException ex){
+                System.out.println("Please enter numeric values.");
+                continue;
+            }
             if (snipingDateTime.compareTo(endDateTime) < 0 || snipingDateTime.compareTo(startDateTime) > 0) {
                 break;
             }
