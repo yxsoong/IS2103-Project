@@ -7,11 +7,12 @@ package ejb.session.stateless;
 
 import entity.ProxyBiddingEntity;
 import util.exception.InsufficientCreditsException;
+import util.exception.InvalidProxyBidException;
 import util.exception.ProxyBiddingNotFoundException;
 
 public interface ProxyBiddingEntityControllerLocal {
     
-    public ProxyBiddingEntity createProxyBidding(ProxyBiddingEntity proxyBiddingEntity) throws InsufficientCreditsException;
+    public ProxyBiddingEntity createProxyBidding(ProxyBiddingEntity proxyBiddingEntity) throws InsufficientCreditsException, InvalidProxyBidException;
 
     public ProxyBiddingEntity retrieveHighestProxyBid(Long auctionListingId) throws ProxyBiddingNotFoundException;
 

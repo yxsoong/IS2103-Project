@@ -11,6 +11,7 @@ import ejb.session.ws.CreditBalance;
 import ejb.session.ws.CustomerEntity;
 import ejb.session.ws.InsufficientCreditsException_Exception;
 import ejb.session.ws.InvalidLoginCredentialException_Exception;
+import ejb.session.ws.InvalidProxyBidException_Exception;
 import ejb.session.ws.InvalidRegistrationException_Exception;
 import ejb.session.ws.InvalidSnipingException_Exception;
 import ejb.session.ws.ProxyBiddingEntity;
@@ -294,11 +295,23 @@ public class MainApp {
 
         ProxyBiddingEntity proxyBiddingEntity = new ProxyBiddingEntity();
         BigDecimal maxAmount;
+        
+        BigDecimal currentBidAmt = auctionListingEntity.getCurrentBidAmount();
+        
+        if(currentBidAmt == null)
+            currentBidAmt = auctionListingEntity.getStartingBidAmount();
+        
+        BigDecimal nextBid = currentBidAmt.add(getBidIncrement(currentBidAmt));
+        
         while (true) {
+            System.out.println("Minimum bid price is " + nextBid.doubleValue() + "\n");
             System.out.print("Insert maximum bid> ");
             maxAmount = sc.nextBigDecimal();
             if (maxAmount.compareTo(MAX_BIG_DECIMAL) >= 0) {
                 System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
+                continue;
+            } else if(maxAmount.compareTo(currentBidAmt) <= 0){
+                System.out.println("Proxy amount has to be greater than or equal to the current bid amount");
                 continue;
             }
             break;
@@ -309,7 +322,7 @@ public class MainApp {
         try {
             proxyBiddingEntity = createProxyBidding(proxyBiddingEntity, currentCustomerEntity.getCustomerId(), auctionListingEntity.getAuctionListingId());
             System.out.println("Proxy bid created: " + proxyBiddingEntity.getProxyBiddingId());
-        } catch (InsufficientCreditsException_Exception ex) {
+        } catch (InsufficientCreditsException_Exception | InvalidProxyBidException_Exception ex) {
             System.out.println(ex.getMessage());
         }
 
@@ -445,12 +458,6 @@ public class MainApp {
         return port.viewWonAuctionListings(customerId);
     }
 
-    private static ProxyBiddingEntity createProxyBidding(ejb.session.ws.ProxyBiddingEntity proxyBiddingEntity, java.lang.Long customerId, java.lang.Long auctionListingId) throws InsufficientCreditsException_Exception {
-        ejb.session.ws.BidEntityWebService_Service service = new ejb.session.ws.BidEntityWebService_Service();
-        ejb.session.ws.BidEntityWebService port = service.getBidEntityWebServicePort();
-        return port.createProxyBidding(proxyBiddingEntity, customerId, auctionListingId);
-    }
-
     private static void createSnipingAuctionListing(javax.xml.datatype.XMLGregorianCalendar snipingDateTime, java.lang.Long auctionListingId, java.math.BigDecimal maximumAmount, java.lang.Long customerId) throws InvalidSnipingException_Exception {
         ejb.session.ws.BidEntityWebService_Service service = new ejb.session.ws.BidEntityWebService_Service();
         ejb.session.ws.BidEntityWebService port = service.getBidEntityWebServicePort();
@@ -461,6 +468,12 @@ public class MainApp {
         ejb.session.ws.BidEntityWebService_Service service = new ejb.session.ws.BidEntityWebService_Service();
         ejb.session.ws.BidEntityWebService port = service.getBidEntityWebServicePort();
         return port.getBidIncrement(currentPrice);
+    }
+
+    private static ProxyBiddingEntity createProxyBidding(ejb.session.ws.ProxyBiddingEntity proxyBiddingEntity, java.lang.Long customerId, java.lang.Long auctionListingId) throws InvalidProxyBidException_Exception, InsufficientCreditsException_Exception {
+        ejb.session.ws.BidEntityWebService_Service service = new ejb.session.ws.BidEntityWebService_Service();
+        ejb.session.ws.BidEntityWebService port = service.getBidEntityWebServicePort();
+        return port.createProxyBidding(proxyBiddingEntity, customerId, auctionListingId);
     }
 
 }

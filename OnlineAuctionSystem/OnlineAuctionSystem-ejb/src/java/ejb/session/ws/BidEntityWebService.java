@@ -28,6 +28,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.TimerTypeEnum;
 import util.exception.InsufficientCreditsException;
+import util.exception.InvalidProxyBidException;
 import util.exception.InvalidSnipingException;
 
 /**
@@ -51,7 +52,7 @@ public class BidEntityWebService {
     private EntityManager em;
 
     @WebMethod(operationName = "createProxyBidding")
-    public ProxyBiddingEntity createProxyBidding(@WebParam(name = "proxyBiddingEntity") ProxyBiddingEntity proxyBiddingEntity, @WebParam(name = "customerId") Long customerId, @WebParam(name = "auctionListingId") Long auctionListingId) throws InsufficientCreditsException {
+    public ProxyBiddingEntity createProxyBidding(@WebParam(name = "proxyBiddingEntity") ProxyBiddingEntity proxyBiddingEntity, @WebParam(name = "customerId") Long customerId, @WebParam(name = "auctionListingId") Long auctionListingId) throws InsufficientCreditsException, InvalidProxyBidException {
         try {
             CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
             AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
@@ -63,7 +64,7 @@ public class BidEntityWebService {
             proxyBiddingEntity.setBidEntities(null);
             proxyBiddingEntity.setCustomerEntity(null);
             return proxyBiddingEntity;
-        } catch (InsufficientCreditsException ex) {
+        } catch (InsufficientCreditsException | InvalidProxyBidException ex) {
             throw ex;
         }
     }
