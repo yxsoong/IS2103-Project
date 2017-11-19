@@ -29,6 +29,7 @@ public class SystemAdministratorModule {
 
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
+        String input;
 
         while (true) {
             System.out.println("*** OAS System Administrator Menu ***\n");
@@ -41,7 +42,14 @@ public class SystemAdministratorModule {
             while (response < 1 || response > 4) {
                 System.out.print("> ");
 
-                response = scanner.nextInt();
+                input = scanner.nextLine().trim();
+                
+                try{
+                    response = Integer.parseInt(input);
+                } catch (NumberFormatException ex){
+                    System.out.println("Please enter a numeric value.");
+                    continue;
+                }
 
                 if (response == 1) {
                     createNewEmployee();

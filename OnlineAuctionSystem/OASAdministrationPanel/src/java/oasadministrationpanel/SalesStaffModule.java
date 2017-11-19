@@ -32,7 +32,7 @@ public class SalesStaffModule {
             throw new InvalidAccessRightException("You don't have SALES rights to access the system administrator module.");
         }
 
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         Integer response = 0;
 
         while (true) {
@@ -47,7 +47,14 @@ public class SalesStaffModule {
             while (response < 1 || response > 5) {
                 System.out.print("> ");
 
-                response = scanner.nextInt();
+                String input = sc.nextLine().trim();
+
+                try {
+                    response = Integer.parseInt(input);
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.\n");
+                    continue;
+                }
 
                 if (response == 1) {
                     createAuctionListing();
@@ -74,7 +81,7 @@ public class SalesStaffModule {
         System.out.println("*** OAS Administration Panel :: Sales Staff :: Create New Auction Listing ***\n");
         Scanner sc = new Scanner(System.in);
 
-        String itemName, sDateTime, eDateTime, result;
+        String itemName, sDateTime, eDateTime;
         BigDecimal startingBidAmount, reservePrice, currentBidAmount = null;
         Calendar startDateTime = Calendar.getInstance();
         Calendar endDateTime = Calendar.getInstance();
@@ -104,12 +111,18 @@ public class SalesStaffModule {
             }
             System.out.print("Enter starting bid amount> ");
             String input = sc.nextLine().trim();
-            try {
-                startingBidAmount = new BigDecimal(input);
-            } catch (NumberFormatException ex) {
-                System.out.println("Please enter numeric values.\n");
+            if (input.isEmpty()) {
                 startingBidAmount = BigDecimal.ZERO;
+                System.out.println("Starting bid cannot be empty!");
                 continue;
+            } else {
+                try {
+                    startingBidAmount = new BigDecimal(input);
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.\n");
+                    startingBidAmount = BigDecimal.ZERO;
+                    continue;
+                }
             }
             count++;
         } while (startingBidAmount.compareTo(BigDecimal.ZERO) <= 0);
@@ -193,9 +206,16 @@ public class SalesStaffModule {
                 System.out.println("Reserve price cannot be negative!\n");
             }
             System.out.print("Enter reserve price (0 for no reserve price)> ");
-            reservePrice = sc.nextBigDecimal();
+            String input = sc.nextLine().trim();
+            try {
+                reservePrice = new BigDecimal(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("Enter numeric values.");
+                reservePrice = BigDecimal.ZERO;
+                continue;
+            }
             count++;
-        } while (reservePrice.compareTo(BigDecimal.ZERO) < 0);
+        } while (reservePrice.compareTo(BigDecimal.ZERO) <= 0);
 
         count = 0;
 
@@ -207,9 +227,7 @@ public class SalesStaffModule {
 
         newAuctionListingEntity = new AuctionListingEntity(itemName, startingBidAmount, currentBidAmount, startDateTime, endDateTime, reservePrice, open, enabled, manualAssignment);
 
-        newAuctionListingEntity.setEmployeeEntity(currentEmployeeEntity);
-
-        newAuctionListingEntity = auctionListingEntityControllerRemote.createAuctionListing(newAuctionListingEntity);
+        newAuctionListingEntity = auctionListingEntityControllerRemote.createAuctionListing(newAuctionListingEntity, currentEmployeeEntity.getEmployeeID());
 
         System.out.println("Auction Listing created! Auction Listing ID: " + newAuctionListingEntity.getAuctionListingId() + "\n\n");
 
@@ -319,6 +337,9 @@ public class SalesStaffModule {
         } catch (AuctionListingNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
+        
+        System.out.println("Press enter to continue...");
+        sc.nextLine();
     }
 
     private void viewListingsBelowReservePrice() {
@@ -442,12 +463,20 @@ public class SalesStaffModule {
             auctionListingEntity.setItemName(input);
         }
 
-        System.out.print("Enter Starting Bid Amount (-1 if no change)> ");
-        bigDecInput = sc.nextBigDecimal();
-        if (bigDecInput.compareTo(BigDecimal.ZERO) > -1) {
-            auctionListingEntity.setStartingBidAmount(bigDecInput);
+        while (true) {
+            System.out.print("Enter Starting Bid Amount (-1 if no change)> ");
+            input = sc.nextLine().trim();
+            try {
+                bigDecInput = new BigDecimal(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("Please enter numeric values.\n");
+                continue;
+            }
+            if (bigDecInput.compareTo(BigDecimal.ZERO) > -1) {
+                auctionListingEntity.setStartingBidAmount(bigDecInput);
+            }
+            break;
         }
-        sc.nextLine(); //consume enter character
 
         count = 0;
         do {
@@ -465,14 +494,21 @@ public class SalesStaffModule {
             }
             if (dateTime.length() == 12) {
                 count++;
-
-                year = Integer.parseInt(dateTime.substring(0, 4).trim());
-                month = Integer.parseInt(dateTime.substring(4, 6).trim());
-                day = Integer.parseInt(dateTime.substring(6, 8).trim());
-                hour = Integer.parseInt(dateTime.substring(8, 10).trim());
-                min = Integer.parseInt(dateTime.substring(10, 12).trim());
-                startDateTime.clear();
-                startDateTime.set(year, month - 1, day, hour, min);
+                try {
+                    year = Integer.parseInt(dateTime.substring(0, 4).trim());
+                    month = Integer.parseInt(dateTime.substring(4, 6).trim());
+                    day = Integer.parseInt(dateTime.substring(6, 8).trim());
+                    hour = Integer.parseInt(dateTime.substring(8, 10).trim());
+                    min = Integer.parseInt(dateTime.substring(10, 12).trim());
+                    startDateTime.clear();
+                    startDateTime.set(year, month - 1, day, hour, min);
+                } catch (NumberFormatException ex) {
+                    System.out.println("Enter numeric values!\n");
+                    count = 0;
+                    //Dummy
+                    startDateTime.set(1990, 0, 1, 0, 0);
+                    continue;
+                }
             } else {
                 count = -1;
             }
@@ -497,34 +533,58 @@ public class SalesStaffModule {
             }
             if (dateTime.length() == 12) {
                 count++;
-                year = Integer.parseInt(dateTime.substring(0, 4).trim());
-                month = Integer.parseInt(dateTime.substring(4, 6).trim());
-                day = Integer.parseInt(dateTime.substring(6, 8).trim());
-                hour = Integer.parseInt(dateTime.substring(8, 10).trim());
-                min = Integer.parseInt(dateTime.substring(10, 12).trim());
-                endDateTime.clear();
-                endDateTime.set(year, month - 1, day, hour, min);
+                try {
+                    year = Integer.parseInt(dateTime.substring(0, 4).trim());
+                    month = Integer.parseInt(dateTime.substring(4, 6).trim());
+                    day = Integer.parseInt(dateTime.substring(6, 8).trim());
+                    hour = Integer.parseInt(dateTime.substring(8, 10).trim());
+                    min = Integer.parseInt(dateTime.substring(10, 12).trim());
+                    endDateTime.clear();
+                    endDateTime.set(year, month - 1, day, hour, min);
+                } catch (NumberFormatException ex) {
+                    System.out.println("Enter numeric values!\n");
+                    count = 0;
+                    //Dummy
+                    endDateTime.set(1990, 0, 1, 0, 0);
+                    continue;
+                }
             } else {
                 count = -1;
             }
-        } while (endDateTime.before(startDateTime) || count == -1);
+        } while (endDateTime.before(startDateTime) || count <= 0);
         if (!dateTime.isEmpty()) {
             auctionListingEntity.setEndDateTime(endDateTime);
         }
 
-        System.out.print("Enter Reserve Price (-1 if no change)> ");
-        bigDecInput = sc.nextBigDecimal();
-        if (bigDecInput.compareTo(BigDecimal.ZERO) > -1) {
-            auctionListingEntity.setReservePrice(bigDecInput);
+        while (true) {
+            System.out.print("Enter Reserve Price (-1 if no change)> ");
+            input = sc.nextLine();
+            try {
+                bigDecInput = new BigDecimal(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("Please enter numeric values!\n");
+                continue;
+            }
+            if (bigDecInput.compareTo(BigDecimal.ZERO) > -1) {
+                auctionListingEntity.setReservePrice(bigDecInput);
+            }
+            break;
         }
-        sc.nextLine(); //consume enter character
 
-        System.out.print("Enable Listing? (Enter Y, N, or blank if no change)> ");
-        input = sc.nextLine();
-        if (input.equals("Y")) {
-            auctionListingEntity.setEnabled(Boolean.TRUE);
-        } else if (input.equals("N")) {
-            auctionListingEntity.setEnabled(Boolean.FALSE);
+        while (true) {
+            System.out.print("Enable Listing? (Enter Y, N, or blank if no change)> ");
+            input = sc.nextLine();
+            if (input.equalsIgnoreCase("Y")) {
+                auctionListingEntity.setEnabled(Boolean.TRUE);
+                break;
+            } else if (input.equalsIgnoreCase("N")) {
+                auctionListingEntity.setEnabled(Boolean.FALSE);
+                break;
+            } else if (input.isEmpty()) {
+                break;
+            } else {
+                continue;
+            }
         }
 
         auctionListingEntityControllerRemote.updateAuctionListing(auctionListingEntity);
