@@ -241,7 +241,7 @@ public class FinanceStaffModule {
         System.out.printf("Confirm Delete Credit Package %s (Credit Package ID: %d) (Enter 'Y' to Delete)> ", creditPackageEntity.getCreditPackageName(), creditPackageEntity.getCreditPackageId());
         input = sc.nextLine().trim();
 
-        if (input.equals("Y")) {
+        if (input.equalsIgnoreCase("Y")) {
             creditPackageEntityControllerRemote.deleteCreditPackage(creditPackageEntity.getCreditPackageId());
             System.out.println("Credit Package deleted successfully!\n");
 

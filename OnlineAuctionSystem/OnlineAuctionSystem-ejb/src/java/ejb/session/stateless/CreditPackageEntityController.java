@@ -1,28 +1,20 @@
 package ejb.session.stateless;
 
 import entity.CreditPackageEntity;
-import entity.CreditTransactionEntity;
-import entity.CustomerEntity;
-import java.math.BigDecimal;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.EJBContext;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import util.enumeration.CreditTransactionTypeEnum;
 import util.exception.CreditPackageNotFoundException;
 
 @Local(CreditPackageEntityControllerLocal.class)
 @Remote(CreditPackageEntityControllerRemote.class)
 @Stateless
-public class CreditPackageEntityController implements CreditPackageEntityControllerRemote, CreditPackageEntityControllerLocal {  
-    
+public class CreditPackageEntityController implements CreditPackageEntityControllerRemote, CreditPackageEntityControllerLocal {
+
     @PersistenceContext(unitName = "OnlineAuctionSystem-ejbPU")
     private EntityManager em;
 
@@ -31,41 +23,44 @@ public class CreditPackageEntityController implements CreditPackageEntityControl
         em.persist(creditPackageEntity);
         em.flush();
         em.refresh(creditPackageEntity);
-        
+
         return creditPackageEntity;
     }
-    
+
     @Override
     public CreditPackageEntity retrieveCreditPackageById(Long creditPackageId) throws CreditPackageNotFoundException {
         CreditPackageEntity creditPackageEntity = em.find(CreditPackageEntity.class, creditPackageId);
-        
-        if(creditPackageEntity != null){
+
+        if (creditPackageEntity != null) {
             return creditPackageEntity;
-        }
-        else{
-            throw new CreditPackageNotFoundException("Credit Package ID: " + creditPackageId  + " does not exist");
+        } else {
+            throw new CreditPackageNotFoundException("Credit Package ID: " + creditPackageId + " does not exist");
         }
     }
-    
+
     @Override
-    public List<CreditPackageEntity> retrieveAllCreditPackages(){
+    public List<CreditPackageEntity> retrieveAllCreditPackages() {
         Query query = em.createQuery("SELECT e FROM CreditPackageEntity e");
-        
+
         return query.getResultList();
     }
-    
+
     @Override
-    public void updateCreditPackage(CreditPackageEntity creditPackageEntity){
+    public void updateCreditPackage(CreditPackageEntity creditPackageEntity) {
         em.merge(creditPackageEntity);
     }
-    
+
     @Override
-    public void deleteCreditPackage(Long creditPackageId){
-        try{
-        CreditPackageEntity creditPackageEntity = retrieveCreditPackageById(creditPackageId);
-        em.remove(creditPackageEntity);
-        } catch (CreditPackageNotFoundException ex){
-            
+    public void deleteCreditPackage(Long creditPackageId) {
+        try {
+            CreditPackageEntity creditPackageEntity = retrieveCreditPackageById(creditPackageId);
+            if (creditPackageEntity.getCreditTransactionEntities().isEmpty()) {
+                em.remove(creditPackageEntity);
+            } else {
+                creditPackageEntity.setEnabled(Boolean.FALSE);
+            }
+        } catch (CreditPackageNotFoundException ex) {
+
         }
     }
 }
