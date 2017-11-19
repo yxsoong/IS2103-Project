@@ -7,13 +7,14 @@ package ejb.session.stateless;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import util.enumeration.TimerTypeEnum;
 
 public interface TimerSessionBeanRemote {
 
-    public void createTimers(Long auctionListingId, Calendar dateTime, String type, BigDecimal maxAmt, Long customerId);
+    public void createTimers(Long auctionListingId, Calendar dateTime, TimerTypeEnum type, BigDecimal maxAmt, Long customerId);
 
     public void cancelTimers();
 
-    public void updateTimer(Long auctionListingId, Calendar dateTime, String type);
+    public void updateTimer(Long auctionListingId, Calendar dateTime, TimerTypeEnum type);
 
 }

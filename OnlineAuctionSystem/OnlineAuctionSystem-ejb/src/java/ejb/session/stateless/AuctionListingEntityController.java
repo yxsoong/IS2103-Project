@@ -24,6 +24,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.CreditTransactionTypeEnum;
+import util.enumeration.TimerTypeEnum;
 import util.exception.AuctionListingNotFoundException;
 
 @Local(AuctionListingEntityControllerLocal.class)
@@ -48,8 +49,8 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         em.persist(auctionListingEntity);
         em.flush();
         em.refresh(auctionListingEntity);
-        timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getStartDateTime(), "openListing", null, null);
-        timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getEndDateTime(), "closeListing", null, null);
+        timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getStartDateTime(), TimerTypeEnum.OPEN, null, null);
+        timerSessionBeanLocal.createTimers(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getEndDateTime(), TimerTypeEnum.CLOSING, null, null);
         
         EmployeeEntity employeeEntity = em.find(EmployeeEntity.class,employeeId);
         auctionListingEntity.setEmployeeEntity(employeeEntity);
@@ -181,8 +182,8 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     @Override
     public void updateAuctionListing(AuctionListingEntity auctionListingEntity) {
         auctionListingEntity = em.merge(auctionListingEntity);
-        timerSessionBeanLocal.updateTimer(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getStartDateTime(), "openListing");
-        timerSessionBeanLocal.updateTimer(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getEndDateTime(), "closeListing");
+        timerSessionBeanLocal.updateTimer(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getStartDateTime(), TimerTypeEnum.OPEN);
+        timerSessionBeanLocal.updateTimer(auctionListingEntity.getAuctionListingId(), auctionListingEntity.getEndDateTime(), TimerTypeEnum.CLOSING);
     }
 
     @Override

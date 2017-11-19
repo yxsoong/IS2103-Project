@@ -31,6 +31,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
+import util.enumeration.TimerTypeEnum;
 import util.exception.AuctionListingNotFoundException;
 import util.exception.InvalidBidException;
 import util.exception.ProxyBiddingNotFoundException;
@@ -62,14 +63,14 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
     }
 
     @Override
-    public void createTimers(Long auctionListingId, Calendar dateTime, String type, BigDecimal maxAmt, Long customerId) {
+    public void createTimers(Long auctionListingId, Calendar dateTime, TimerTypeEnum type, BigDecimal maxAmt, Long customerId) {
         TimerService timerService = sessionContext.getTimerService();
         ScheduleExpression schedule = new ScheduleExpression();
 
         schedule.year(dateTime.get(Calendar.YEAR)).month(dateTime.get(Calendar.MONTH) + 1).dayOfMonth(dateTime.get(Calendar.DATE))
                 .hour(dateTime.get(Calendar.HOUR_OF_DAY)).minute(dateTime.get(Calendar.MINUTE)).second(dateTime.get(Calendar.SECOND));
 
-        if (type.equals("snipe")) {
+        if (type.equals(TimerTypeEnum.SNIPING)) {
             Query query = em.createQuery("SELECT s FROM SnipingEntity s WHERE s.snipingDate = :inSnipingDate AND s.auctionListingEntity.auctionListingId = :inAuctionListingId");
             query.setParameter("inSnipingDate", dateTime, TemporalType.TIMESTAMP);
             query.setParameter("inAuctionListingId", auctionListingId);
@@ -102,7 +103,7 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
     }
 
     @Override
-    public void updateTimer(Long auctionListingId, Calendar dateTime, String type) {
+    public void updateTimer(Long auctionListingId, Calendar dateTime, TimerTypeEnum type) {
         TimerService timerService = sessionContext.getTimerService();
         Collection<Timer> timers = timerService.getTimers();
 
@@ -122,12 +123,12 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
     @Timeout
     public void handleTimeout(Timer timer) {
         TimerEntity timerEntity = (TimerEntity) timer.getInfo();
-        if (timerEntity.getType().equals("openListing")) {
+        if (timerEntity.getType().equals(TimerTypeEnum.OPEN)) {
             System.out.println("Timeout!");
             auctionListingEntityControllerLocal.openAuctionListing(timerEntity.getAuctionListingId());
-        } else if (timerEntity.getType().equals("closeListing")) {
+        } else if (timerEntity.getType().equals(TimerTypeEnum.CLOSING)) {
             auctionListingEntityControllerLocal.closeAuctionListing(timerEntity.getAuctionListingId());
-        } else if (timerEntity.getType().equals("snipe")) {
+        } else if (timerEntity.getType().equals(TimerTypeEnum.SNIPING)) {
             Long auctionListingId = timerEntity.getAuctionListingId();
             
             Query query = em.createQuery("SELECT s FROM SnipingEntity s WHERE s.snipingDate = :inSnipingDate AND s.auctionListingEntity.auctionListingId = :inAuctionListingId AND s.enabled = true ORDER BY s.snipingId ASC");
@@ -142,10 +143,6 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
 
             CustomerEntity customerEntity = em.find(CustomerEntity.class, timerEntity.getCustomerId());
             AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, timerEntity.getAuctionListingId());
-
-            
-
-            
 
             for (SnipingEntity snipingEntity : snipingEntities) {
                 

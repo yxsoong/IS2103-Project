@@ -26,6 +26,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.TimerTypeEnum;
 import util.exception.InsufficientCreditsException;
 import util.exception.InvalidSnipingException;
 
@@ -96,7 +97,7 @@ public class BidEntityWebService {
         snipingEntity.setAuctionListingEntity(auctionListingEntity);
 
         em.persist(snipingEntity);
-        timerSessionBeanLocal.createTimers(auctionListingId, snipingDateTime, "snipe", maximumAmount, customerId);
+        timerSessionBeanLocal.createTimers(auctionListingId, snipingDateTime, TimerTypeEnum.SNIPING, maximumAmount, customerId);
     }
 
     @WebMethod(operationName = "getBidIncrement")

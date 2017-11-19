@@ -8,6 +8,7 @@ package datamodel;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import util.enumeration.TimerTypeEnum;
 
 
 public class TimerEntity implements Serializable {
@@ -16,7 +17,7 @@ public class TimerEntity implements Serializable {
    
     private Long timerId;
     private Long auctionListingId;
-    private String type;
+    private TimerTypeEnum type;
     private BigDecimal maxAmount;
     private Long customerId;
     private Calendar runDate;
@@ -24,7 +25,7 @@ public class TimerEntity implements Serializable {
     public TimerEntity() {
     }
 
-    public TimerEntity(Long auctionListingId, String type, BigDecimal maxAmount, Long customerId, Calendar runDate) {
+    public TimerEntity(Long auctionListingId, TimerTypeEnum type, BigDecimal maxAmount, Long customerId, Calendar runDate) {
         this.auctionListingId = auctionListingId;
         this.type = type;
         this.maxAmount = maxAmount;
@@ -48,11 +49,11 @@ public class TimerEntity implements Serializable {
         this.auctionListingId = auctionListingId;
     }
 
-    public String getType() {
+    public TimerTypeEnum getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TimerTypeEnum type) {
         this.type = type;
     }
 
