@@ -38,8 +38,12 @@ public class AddressEntityController implements AddressEntityControllerRemote, A
     private EntityManager em;
     
     @Override
-    public AddressEntity createAddress(AddressEntity addressEntity){
+    public AddressEntity createAddress(AddressEntity addressEntity, Long customerId){
         em.persist(addressEntity);
+        
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
+        customerEntity.getAddressEntities().add(addressEntity);
+        
         em.flush();
         em.refresh(addressEntity);
         

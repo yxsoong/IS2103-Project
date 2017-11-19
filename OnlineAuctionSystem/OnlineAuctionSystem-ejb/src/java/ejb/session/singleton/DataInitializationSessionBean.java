@@ -79,15 +79,12 @@ public class DataInitializationSessionBean {
 
         CustomerEntity customerEntity = customerEntityControllerLocal.createCustomer(new CustomerEntity("A", "A", "123", "123", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, Boolean.FALSE, "customer", "password"));
 
-        AddressEntity addressEntity1 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-10", "111111", Boolean.TRUE));
-        AddressEntity addressEntity2 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-11", "222222", Boolean.TRUE));
-
-        customerEntity.getAddressEntities().add(addressEntity1);
-        customerEntity.getAddressEntities().add(addressEntity2);
+        AddressEntity addressEntity1 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-10", "111111", Boolean.TRUE), customerEntity.getCustomerId());
+        AddressEntity addressEntity2 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-11", "222222", Boolean.TRUE), customerEntity.getCustomerId());
         
         CustomerEntity customerEntity2 = customerEntityControllerLocal.createCustomer(new CustomerEntity("A", "A", "456", "456", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, Boolean.FALSE, "customer2", "password"));
 
-        AddressEntity addressEntity3 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-11", "333333", Boolean.TRUE));
+        AddressEntity addressEntity3 = addressEntityControllerLocal.createAddress(new AddressEntity("Heng Mui Keng", "10-11", "333333", Boolean.TRUE), customerEntity.getCustomerId());
 
         customerEntity2.getAddressEntities().add(addressEntity3);
 

@@ -186,8 +186,8 @@ public class FinanceStaffModule {
             for (CreditPackageEntity creditPackageEntity : creditPackageEntities) {
                 System.out.printf("%12s%25s%12s%20s%10s\n", creditPackageEntity.getCreditPackageId().toString(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getPrice().toString(), creditPackageEntity.getNumberOfCredits().toString(), creditPackageEntity.getEnabled());
             }
-        } catch (NullPointerException ex) {
-            System.out.println(ex);
+        } catch (CreditPackageNotFoundException ex) {
+            System.out.println(ex.getMessage());
         }
 
         System.out.print("Press enter to continue...> ");

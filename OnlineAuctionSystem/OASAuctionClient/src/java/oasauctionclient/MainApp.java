@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Scanner;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionListingNotFoundException;
+import util.exception.CreditPackageNotFoundException;
 import util.exception.InvalidBidException;
 import util.exception.InvalidLoginCredentialException;
 
@@ -353,10 +354,44 @@ public class MainApp {
             currentCustomerEntity.setLastName(input);
         }
 
-        System.out.print("Enter Phone Number (blank if no change)> ");
-        input = sc.nextLine().trim();
-        if (input.length() > 0) {
-            currentCustomerEntity.setPhoneNumber(input);
+        boolean isUnique = true;
+        int count = 0;
+        while (true) {
+            if (!isUnique) {
+                System.out.println("Phone number is not available.\n");
+                count = 0;
+            }
+            if (count > 0) {
+                System.out.println("Phone number cannot be empty!\n");
+            }
+            System.out.print("Enter Phone Number (blank if no change)> ");
+            input = sc.nextLine().trim();
+            if (!input.isEmpty()) {
+                try {
+                    Integer.parseInt(input);
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.\n");
+                    input = "";
+                    continue;
+                }
+            } else {
+                break;
+            }
+
+            if (input.length() != 8) {
+                System.out.println("Phone number should be of length 8 E.g. 91234567");
+                count = 0;
+                input = "";
+                continue;
+            }
+            isUnique = !customerEntityControllerRemote.checkPhoneNumber(input);
+
+            count++;
+
+            if (isUnique) {
+                currentCustomerEntity.setPhoneNumber(input);
+                break;
+            }
         }
 
         // I'm not sure if we should let customer change username
@@ -403,16 +438,8 @@ public class MainApp {
             count++;
         } while (streetAddress.isEmpty());
 
-        count = 0;
-
-        do {
-            if (count > 0) {
-                System.out.println("Unit number cannot be empty!\n");
-            }
-            System.out.print("Enter Unit number> ");
-            unitNumber = sc.nextLine().trim();
-            count++;
-        } while (unitNumber.isEmpty());
+        System.out.print("Enter Unit number> ");
+        unitNumber = sc.nextLine().trim();
 
         count = 0;
 
@@ -422,19 +449,34 @@ public class MainApp {
             }
             System.out.print("Enter postal code> ");
             postalCode = sc.nextLine().trim();
+
             count++;
-        } while (postalCode.isEmpty());
+
+            boolean isValid = true;
+
+            try {
+                Integer.parseInt(postalCode);
+            } catch (NumberFormatException ex) {
+                isValid = false;
+            }
+
+            if (postalCode.length() != 6) {
+                isValid = false;
+            }
+
+            if (!isValid) {
+                System.out.println("Postal code must be 6 digits long");
+                postalCode = "";
+                count = 0;
+            }
+
+        } while (postalCode.isEmpty() || postalCode.length() != 6);
 
         System.out.println();
 
         AddressEntity addressEntity = new AddressEntity(streetAddress, unitNumber, postalCode, enabled);
 
-        addressEntity = addressEntityControllerRemote.createAddress(addressEntity);
-
-        // cannot do this!!
-        currentCustomerEntity.getAddressEntities().add(addressEntity);
-
-        customerEntityControllerRemote.updateCustomer(currentCustomerEntity);
+        addressEntity = addressEntityControllerRemote.createAddress(addressEntity, currentCustomerEntity.getCustomerId());
 
         System.out.println("Address created! Address ID: " + addressEntity.getAddressID());
 
@@ -566,10 +608,13 @@ public class MainApp {
     private void viewCreditTransactionHistory() {
         Scanner sc = new Scanner(System.in);
         List<CreditTransactionEntity> creditTransactionEntities = creditTransactionEntityControllerRemote.retrieveCreditTransactions(currentCustomerEntity.getCustomerId());
-
-        System.out.printf("%20s%10s%20s\n", "Transaction Id", "Credits", "Transaction Type");
-        for (CreditTransactionEntity creditTransactionEntity : creditTransactionEntities) {
-            System.out.printf("%20s%10s%20s\n", creditTransactionEntity.getCreditPackageTransactionId(), creditTransactionEntity.getNumberOfCredits(), creditTransactionEntity.getTransactionType());
+        if (!creditTransactionEntities.isEmpty()) {
+            System.out.printf("%20s%10s%20s\n", "Transaction Id", "Credits", "Transaction Type");
+            for (CreditTransactionEntity creditTransactionEntity : creditTransactionEntities) {
+                System.out.printf("%20s%10s%20s\n", creditTransactionEntity.getCreditPackageTransactionId(), creditTransactionEntity.getNumberOfCredits(), creditTransactionEntity.getTransactionType());
+            }
+        } else {
+            System.out.println("No credit transactions.");
         }
 
         System.out.println("Press enter to continue...");
@@ -579,59 +624,63 @@ public class MainApp {
     private void purchaseCreditPacakge() {
         Scanner sc = new Scanner(System.in);
 
-        //need to edit. should only retrieve the enabled ones
-        List<CreditPackageEntity> creditPackageEntities = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
+        //need to edit. should only retrieve the enabled ones\
+        try {
+            List<CreditPackageEntity> creditPackageEntities = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
 
-        int quantityToPurchase;
+            int quantityToPurchase;
 
-        HashMap<Long, CreditPackageEntity> enabledPackages = new HashMap();
-        //Print out all enabled credit packages for customer to choose
-        System.out.printf("%20s%25s%20s%20s\n", "Credit Package Id", "Credit Package Name", "Number of Credits", "Price");
-        for (CreditPackageEntity creditPackageEntity : creditPackageEntities) {
-            if (creditPackageEntity.getEnabled() == true) {
-                System.out.printf("%20s%25s%20s%20s\n", creditPackageEntity.getCreditPackageId(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getNumberOfCredits(), creditPackageEntity.getPrice());
-                enabledPackages.put(creditPackageEntity.getCreditPackageId(), creditPackageEntity);
-            }
-        }
-
-        Long response = 0L;
-
-        CreditPackageEntity creditPackageEntity;
-        //NEED TO ROLLBACK. HOWHOW?
-        while (true) {
-            System.out.print("Enter Credit Package ID for Purchase> ");
-            try {
-                response = Long.parseLong(sc.next());
-            } catch (NumberFormatException ex) {
-                System.out.println("Please enter numeric values.\n");
-                continue;
-            }
-
-            //Check if exist in enabled
-            for (int i = 0; i < enabledPackages.size(); i++) {
-                if (enabledPackages.containsKey(response)) {
-                    break;
-                }
-                if (i == enabledPackages.size() - 1) {
-                    System.out.println("Invalid option, please try again!\n");
+            HashMap<Long, CreditPackageEntity> enabledPackages = new HashMap();
+            //Print out all enabled credit packages for customer to choose
+            System.out.printf("%20s%25s%20s%20s\n", "Credit Package Id", "Credit Package Name", "Number of Credits", "Price");
+            for (CreditPackageEntity creditPackageEntity : creditPackageEntities) {
+                if (creditPackageEntity.getEnabled() == true) {
+                    System.out.printf("%20s%25s%20s%20s\n", creditPackageEntity.getCreditPackageId(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getNumberOfCredits(), creditPackageEntity.getPrice());
+                    enabledPackages.put(creditPackageEntity.getCreditPackageId(), creditPackageEntity);
                 }
             }
 
-            creditPackageEntity = enabledPackages.get(response);
-            System.out.print("Enter required quantity for " + creditPackageEntity.getCreditPackageName() + "> ");
-            quantityToPurchase = sc.nextInt();
+            Long response = 0L;
 
-            if (quantityToPurchase > 0) {
-                sc.nextLine(); // consume enter character
-                //call the purchase thing here
-                creditTransactionEntityControllerRemote.purchaseCreditPackage(creditPackageEntity, quantityToPurchase, currentCustomerEntity.getCustomerId());
-                System.out.println(creditPackageEntity.getCreditPackageName() + " purchased successfully!: " + quantityToPurchase + " unit of " + creditPackageEntity.getCreditPackageName() + "\n");
-                System.out.print("Press enter to continue...");
-                sc.nextLine();
-                return;
-            } else {
-                System.out.println("Invalid quantity!\n");
+            CreditPackageEntity creditPackageEntity;
+            //NEED TO ROLLBACK. HOWHOW?
+            while (true) {
+                System.out.print("Enter Credit Package ID for Purchase> ");
+                try {
+                    response = Long.parseLong(sc.next());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Please enter numeric values.\n");
+                    continue;
+                }
+
+                //Check if exist in enabled
+                for (int i = 0; i < enabledPackages.size(); i++) {
+                    if (enabledPackages.containsKey(response)) {
+                        break;
+                    }
+                    if (i == enabledPackages.size() - 1) {
+                        System.out.println("Invalid option, please try again!\n");
+                    }
+                }
+
+                creditPackageEntity = enabledPackages.get(response);
+                System.out.print("Enter required quantity for " + creditPackageEntity.getCreditPackageName() + "> ");
+                quantityToPurchase = sc.nextInt();
+
+                if (quantityToPurchase > 0) {
+                    sc.nextLine(); // consume enter character
+                    //call the purchase thing here
+                    creditTransactionEntityControllerRemote.purchaseCreditPackage(creditPackageEntity, quantityToPurchase, currentCustomerEntity.getCustomerId());
+                    System.out.println(creditPackageEntity.getCreditPackageName() + " purchased successfully!: " + quantityToPurchase + " unit of " + creditPackageEntity.getCreditPackageName() + "\n");
+                    System.out.print("Press enter to continue...");
+                    sc.nextLine();
+                    return;
+                } else {
+                    System.out.println("Invalid quantity!\n");
+                }
             }
+        } catch (CreditPackageNotFoundException ex) {
+            System.out.println(ex.getMessage());
         }
 
     }
@@ -773,11 +822,13 @@ public class MainApp {
 
         List<AuctionListingEntity> auctionListingEntities = auctionListingEntityControllerRemote.retrieveWonAuctionListings(currentCustomerEntity.getCustomerId());
 
-        if(auctionListingEntities.isEmpty()){
+        if (auctionListingEntities.isEmpty()) {
             System.out.println("No won listings.");
+            System.out.println("Press enter to continue...");
+            sc.nextLine();
             return;
         }
-        
+
         System.out.printf("%5s%25s%20s\n", "Row", "Auction Listing ID", "Item name");
         int i = 1;
         for (AuctionListingEntity auctionListingEntity : auctionListingEntities) {
@@ -845,10 +896,10 @@ public class MainApp {
                         System.out.println("Please enter valid rows.");
                     }
 
-                    System.out.print("Select row> ");
+                    System.out.print("Select address row> ");
                     addressRow = sc.nextInt();
 
-                } while (addressRow >= addressEntities.size() || addressRow <= 0);
+                } while (addressRow > addressEntities.size() || addressRow <= 0);
 
                 sc.nextLine(); //consume enter character
 
@@ -860,6 +911,8 @@ public class MainApp {
                 sc.nextLine();
             } catch (AddressNotFoundException ex) {
                 System.out.println("Please create addresses first.");
+                System.out.println("Press enter to continue...");
+                sc.nextLine();
             }
         }
 

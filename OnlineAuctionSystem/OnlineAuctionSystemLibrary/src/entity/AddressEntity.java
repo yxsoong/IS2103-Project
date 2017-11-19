@@ -28,7 +28,7 @@ public class AddressEntity implements Serializable {
     private Long addressID;
     @Column(nullable = false, length = 255)
     private String streetAddress;
-    @Column(nullable = false, length = 10)
+    @Column(nullable = true, length = 10)
     private String unitNumber;
     @Column(nullable = false, length = 10)
     private String postalCode;

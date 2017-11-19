@@ -11,7 +11,7 @@ import util.exception.AddressNotFoundException;
 
 
 public interface AddressEntityControllerLocal {
-    public AddressEntity createAddress(AddressEntity addressEntity);
+    public AddressEntity createAddress(AddressEntity addressEntity, Long customerId);
     
     public AddressEntity retrieveAddressById(Long addressId, Long customerId) throws AddressNotFoundException;
     

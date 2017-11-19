@@ -10,9 +10,11 @@ public interface CreditPackageEntityControllerLocal {
 
     public CreditPackageEntity retrieveCreditPackageById(Long creditPackageId) throws CreditPackageNotFoundException;
 
-    public List<CreditPackageEntity> retrieveAllCreditPackages();
+    public List<CreditPackageEntity> retrieveAllCreditPackages()  throws CreditPackageNotFoundException;
 
     public void updateCreditPackage(CreditPackageEntity creditPackageEntity);
 
     public void deleteCreditPackage(Long creditPackageId);
+    
+    public List<CreditPackageEntity> retrieveEnabledCreditPackages() throws CreditPackageNotFoundException;
 }
