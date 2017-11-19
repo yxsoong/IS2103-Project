@@ -133,7 +133,7 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
             CustomerEntity customerEntity = em.find(CustomerEntity.class, timerEntity.getCustomerId());
             AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, timerEntity.getAuctionListingId());
             
-            Query query = em.createQuery("SELECT s FROM SnipingEntity s WHERE s.snipingDate = :inSnipingDate AND s.auctionListingEntity.auctionListingId = :inAuctionListingId");
+            Query query = em.createQuery("SELECT s FROM SnipingEntity s WHERE s.snipingDate = :inSnipingDate AND s.auctionListingEntity.auctionListingId = :inAuctionListingId ORDER BY s.maxAmount DESC");
             query.setParameter("inSnipingDate", timerEntity.getRunDate(), TemporalType.TIMESTAMP);
             query.setParameter("inAuctionListingId", auctionListingId);
 
