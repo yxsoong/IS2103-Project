@@ -34,6 +34,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class MainApp {
 
     private CustomerEntity currentCustomerEntity;
+    public static final BigDecimal MAX_BIG_DECIMAL = new BigDecimal(100000000000000.0000);
 
     public MainApp() {
     }
@@ -292,9 +293,17 @@ public class MainApp {
         Scanner sc = new Scanner(System.in);
 
         ProxyBiddingEntity proxyBiddingEntity = new ProxyBiddingEntity();
-
-        System.out.print("Insert maximum bid> ");
-        proxyBiddingEntity.setMaximumAmount(sc.nextBigDecimal());
+        BigDecimal maxAmount;
+        while (true) {
+            System.out.print("Insert maximum bid> ");
+            maxAmount = sc.nextBigDecimal();
+            if (maxAmount.compareTo(MAX_BIG_DECIMAL) >= 0) {
+                System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
+                continue;
+            }
+            break;
+        }
+        proxyBiddingEntity.setMaximumAmount(maxAmount);
         proxyBiddingEntity.setEnabled(true);
         sc.nextLine(); //consume enter character
         try {
@@ -368,13 +377,19 @@ public class MainApp {
 
         BigDecimal maxAmount;
         count = 0;
-        do {
+        while (true) {
             System.out.println("Minimum bid price is " + nextBid.doubleValue() + "\n");
 
             System.out.print("Enter maximum amount> ");
             maxAmount = sc.nextBigDecimal();
-
-        } while (maxAmount.compareTo(nextBid) < 0);
+            if (maxAmount.compareTo(MAX_BIG_DECIMAL) >= 0) {
+                System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
+                continue;
+            }
+            if (maxAmount.compareTo(nextBid) >= 0) {
+                break;
+            }
+        }
         sc.nextLine(); //consume enter character
 
         XMLGregorianCalendar xc;
