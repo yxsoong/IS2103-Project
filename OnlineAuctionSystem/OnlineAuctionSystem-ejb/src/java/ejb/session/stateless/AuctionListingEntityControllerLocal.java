@@ -9,6 +9,7 @@ import entity.AddressEntity;
 import entity.AuctionListingEntity;
 import java.util.List;
 import util.exception.AuctionListingNotFoundException;
+import util.exception.InvalidAuctionListingException;
 
 public interface AuctionListingEntityControllerLocal {
 
@@ -38,5 +39,5 @@ public interface AuctionListingEntityControllerLocal {
 
     public void noWinningBidEntity(Long auctionListingId);
 
-    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity, Long employeeId);
+    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity, Long employeeId) throws InvalidAuctionListingException;
 }

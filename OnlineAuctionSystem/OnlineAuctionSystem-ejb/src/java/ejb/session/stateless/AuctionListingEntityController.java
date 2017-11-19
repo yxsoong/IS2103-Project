@@ -26,6 +26,7 @@ import javax.persistence.Query;
 import util.enumeration.CreditTransactionTypeEnum;
 import util.enumeration.TimerTypeEnum;
 import util.exception.AuctionListingNotFoundException;
+import util.exception.InvalidAuctionListingException;
 
 @Local(AuctionListingEntityControllerLocal.class)
 @Remote(AuctionListingEntityControllerRemote.class)
@@ -45,7 +46,10 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     private EntityManager em;
 
     @Override
-    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity, Long employeeId) {
+    public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity, Long employeeId) throws InvalidAuctionListingException{
+        if(auctionListingEntity.getStartDateTime().compareTo(Calendar.getInstance()) <= 0){
+            throw new InvalidAuctionListingException("Invalid start date time");
+        }
         EmployeeEntity employeeEntity = em.find(EmployeeEntity.class,employeeId);
         auctionListingEntity.setEmployeeEntity(employeeEntity);
         em.persist(auctionListingEntity);

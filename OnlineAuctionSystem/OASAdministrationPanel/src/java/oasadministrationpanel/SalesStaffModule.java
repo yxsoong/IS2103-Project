@@ -12,6 +12,7 @@ import java.util.Scanner;
 import util.enumeration.EmployeeAccessRightEnum;
 import util.exception.AuctionListingNotFoundException;
 import util.exception.InvalidAccessRightException;
+import util.exception.InvalidAuctionListingException;
 
 public class SalesStaffModule {
 
@@ -238,9 +239,15 @@ public class SalesStaffModule {
 
         newAuctionListingEntity = new AuctionListingEntity(itemName, startingBidAmount, currentBidAmount, startDateTime, endDateTime, reservePrice, open, enabled, manualAssignment);
 
-        newAuctionListingEntity = auctionListingEntityControllerRemote.createAuctionListing(newAuctionListingEntity, currentEmployeeEntity.getEmployeeID());
-
-        System.out.println("Auction Listing created! Auction Listing ID: " + newAuctionListingEntity.getAuctionListingId() + "\n\n");
+        try {
+            newAuctionListingEntity = auctionListingEntityControllerRemote.createAuctionListing(newAuctionListingEntity, currentEmployeeEntity.getEmployeeID());
+            System.out.println("Auction Listing created! Auction Listing ID: " + newAuctionListingEntity.getAuctionListingId() + "\n");
+        } catch (InvalidAuctionListingException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        System.out.println("Press enter to continue...");
+        sc.nextLine();
 
     }
 
@@ -342,7 +349,7 @@ public class SalesStaffModule {
                         auctionListingEntity.getStartingBidAmount(), startDate, endDate, auctionListingEntity.getReservePrice(),
                         auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled(), deliveryAddress);
             }
-            
+
         } catch (AuctionListingNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
