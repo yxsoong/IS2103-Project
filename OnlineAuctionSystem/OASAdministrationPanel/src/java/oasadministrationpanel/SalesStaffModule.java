@@ -269,7 +269,6 @@ public class SalesStaffModule {
 
             try {
                 AuctionListingEntity auctionListingEntity = auctionListingEntityControllerRemote.retrieveAuctionListingById(auctionListingId);
-                //System.out.println("Auction Listing ID\tItem Name\tStarting Bid Amount\tStart Date Time\tEnd Date Time\tReserve Price\tOpen\tEnabled\tDelivery Address");
                 String highestBidder = auctionListingEntityControllerRemote.getHighestBidder(auctionListingEntity.getAuctionListingId());
                 System.out.printf("%20s%20s%14s%20s%26s%26s%16s%14s%8s%20s\n", "Auction Listing ID", "Item Name", "Current Bid", "Highest Bidder", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable", "Delivery Address");
 
@@ -291,7 +290,6 @@ public class SalesStaffModule {
                         auctionListingEntity.getCurrentBidAmount(), highestBidder, startDate, endDate, auctionListingEntity.getReservePrice(),
                         auctionListingEntity.getOpenListing(), auctionListingEntity.getEnabled(), deliveryAddress);
 
-                //System.out.println("\t" + auctionListingEntity.getAuctionListingId() + "\t\t" + auctionListingEntity.getItemName() + "\t\t" + auctionListingEntity.getStartingBidAmount() + "\t\t" + auctionListingEntity.getStartDateTime().toString() + "\t\t" + auctionListingEntity.getEndDateTime().toString() + "\t\t" + auctionListingEntity.getReservePrice() + "\t\t" + auctionListingEntity.getOpenListing() + "\t\t" + auctionListingEntity.getDeliveryAddress());
                 System.out.println("------------------------");
                 System.out.println("1: Update Auction Listing");
                 System.out.println("2: Delete Auction Listing");

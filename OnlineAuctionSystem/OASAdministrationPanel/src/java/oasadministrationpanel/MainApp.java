@@ -6,7 +6,6 @@ import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.EmployeeEntityControllerRemote;
 import entity.EmployeeEntity;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Scanner;
 import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;

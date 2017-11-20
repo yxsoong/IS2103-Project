@@ -187,8 +187,8 @@ public class SystemAdministratorModule {
 
         try {
             EmployeeEntity employeeEntity = employeeEntityControllerRemote.retrieveEmployeeById(employeeId);
-            System.out.println("Employee ID\tFirst Name\tLast Name\tAccess Right\t\t\tUsername\tPassword");
-            System.out.println(employeeEntity.getEmployeeID().toString()+"\t\t"+employeeEntity.getFirstName()+"\t\t"+employeeEntity.getLastName()+"\t\t"+employeeEntity.getAccessRight().toString()+" \t\t\t"+employeeEntity.getUsername()+"\t\t"+employeeEntity.getPassword());
+            System.out.printf("%20s%20s%20s%15s%15s%15s\n","Employee ID", "First Name", "Last Name", "Access Right", "Username", "Password");
+            System.out.printf("%20s%20s%20s%15s%15s%15s\n",employeeEntity.getEmployeeID().toString(), employeeEntity.getFirstName(), employeeEntity.getLastName(), employeeEntity.getAccessRight().toString(), employeeEntity.getUsername(), employeeEntity.getPassword());
             System.out.println("------------------------");
             System.out.println("1: Update Employee");
             System.out.println("2: Delete Employee");
@@ -303,10 +303,10 @@ public class SystemAdministratorModule {
         System.out.println("*** OAS Administration Panel :: System Administration :: View All Employees ***\n");
 
         List<EmployeeEntity> employeeEntities = employeeEntityControllerRemote.retrieveAllEmployees();
-        System.out.printf("%8s%20s%20s%15s%20s%20s\n", "Employee ID", "First Name", "Last Name", "Access Right", "Username", "Password");
+        System.out.printf("%15s%20s%20s%15s%20s%20s\n", "Employee ID", "First Name", "Last Name", "Access Right", "Username", "Password");
 
         for (EmployeeEntity employeeEntity : employeeEntities) {
-            System.out.printf("%8s%20s%20s%15s%20s%20s\n", employeeEntity.getEmployeeID().toString(), employeeEntity.getFirstName(), employeeEntity.getLastName(), employeeEntity.getAccessRight().toString(), employeeEntity.getUsername(), employeeEntity.getPassword());
+            System.out.printf("%15s%20s%20s%15s%20s%20s\n", employeeEntity.getEmployeeID().toString(), employeeEntity.getFirstName(), employeeEntity.getLastName(), employeeEntity.getAccessRight().toString(), employeeEntity.getUsername(), employeeEntity.getPassword());
         }
 
         System.out.print("Press enter to continue...> ");
