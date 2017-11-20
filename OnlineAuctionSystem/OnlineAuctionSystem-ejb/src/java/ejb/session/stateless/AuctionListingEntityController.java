@@ -223,24 +223,31 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     }
 
     @Override
-    public void setWinningBidEntity(Long auctionListingId) {
+    public AuctionListingEntity setWinningBidEntity(Long auctionListingId) {
         AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
-        int lastIndex = auctionListingEntity.getBidEntities().size() - 1;
-        BidEntity winningBidEntity = auctionListingEntity.getBidEntities().get(lastIndex);
+        Query query = em.createQuery("SELECT b FROM BidEntity b WHERE b.auctionListingEntity.auctionListingId = :inAuctionListingId ORDER BY b.bidId DESC");
+        query.setParameter("inAuctionListingId", auctionListingId);
+        
+        List<BidEntity> bidEntities = query.getResultList();
+        BidEntity winningBidEntity = bidEntities.get(0);
         auctionListingEntity.setWinningBidEntity(winningBidEntity);
         auctionListingEntity.setManualAssignment(Boolean.FALSE);
-        em.persist(auctionListingEntity);
+        
         em.flush();
         em.refresh(auctionListingEntity);
+        
+        return auctionListingEntity;
     }
 
     @Override
-    public void noWinningBidEntity(Long auctionListingId) {
+    public AuctionListingEntity noWinningBidEntity(Long auctionListingId) {
         AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
         auctionListingEntity.setManualAssignment(Boolean.FALSE);
-        em.persist(auctionListingEntity);
+
         em.flush();
         em.refresh(auctionListingEntity);
+        
+        return auctionListingEntity;
     }
     
     @Override
