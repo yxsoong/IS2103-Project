@@ -418,6 +418,7 @@ public class MainApp {
 
                 if (input.equals(confirmPassword)) {
                     currentCustomerEntity.setPassword(input);
+                    break;
                 }
             } else {
                 break;
@@ -840,7 +841,7 @@ public class MainApp {
             return;
         }
 
-        System.out.printf("%5s%25s%20s%20s\n", "Row", "Auction Listing ID", "Item name", "Bid Amount Paid");
+        System.out.printf("%5s%25s%20s%20s\n", "Row", "Auction Listing ID", "Item name", "Bid Amount");
         int i = 1;
         for (AuctionListingEntity auctionListingEntity : auctionListingEntities) {
             System.out.printf("%5s%25s%20s%20s\n", i, auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getWinningBidEntity().getBidAmount());

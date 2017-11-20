@@ -277,10 +277,10 @@ public class MainApp {
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Calendar cal;
 
-            System.out.printf("%20s%15s%20s%25s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "End Date Time");
+            System.out.printf("%20s%15s%20s%25s\n", "Auction Listing Id", "Item Name", "Bid Amount", "End Date Time");
             for (AuctionListingEntity auctionListingEntity : wonListings) {
                 cal = auctionListingEntity.getEndDateTime().toGregorianCalendar();
-                System.out.printf("%20s%15s%20s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), dateFormat.format(cal.getTime()));
+                System.out.printf("%20s%15s%20s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getCurrentBidAmount(), dateFormat.format(cal.getTime()));
             }
         } catch (AuctionListingNotFoundException_Exception ex) {
             System.out.println(ex.getMessage());
