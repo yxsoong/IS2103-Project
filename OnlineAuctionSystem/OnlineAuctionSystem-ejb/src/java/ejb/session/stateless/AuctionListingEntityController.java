@@ -233,6 +233,8 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         auctionListingEntity.setWinningBidEntity(winningBidEntity);
         auctionListingEntity.setManualAssignment(Boolean.FALSE);
         
+        customerEntityControllerLocal.deductCreditBalance(winningBidEntity.getCustomerEntity().getCustomerId(), winningBidEntity.getBidAmount());
+        
         em.flush();
         em.refresh(auctionListingEntity);
         
@@ -243,6 +245,16 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     public AuctionListingEntity noWinningBidEntity(Long auctionListingId) {
         AuctionListingEntity auctionListingEntity = em.find(AuctionListingEntity.class, auctionListingId);
         auctionListingEntity.setManualAssignment(Boolean.FALSE);
+        
+        Query query = em.createQuery("SELECT b FROM BidEntity b WHERE b.auctionListingEntity.auctionListingId = :inAuctionListingId ORDER BY b.bidId DESC");
+        query.setParameter("inAuctionListingId", auctionListingId);
+        
+        List<BidEntity> bidEntities = query.getResultList();
+        BidEntity winningBidEntity = bidEntities.get(0);
+        auctionListingEntity.setWinningBidEntity(winningBidEntity);
+        auctionListingEntity.setManualAssignment(Boolean.FALSE);
+        
+        customerEntityControllerLocal.refundCredits(winningBidEntity.getCustomerEntity().getCustomerId(), winningBidEntity.getBidAmount());
 
         em.flush();
         em.refresh(auctionListingEntity);
