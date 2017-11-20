@@ -269,6 +269,7 @@ public class SalesStaffModule {
 
             try {
                 AuctionListingEntity auctionListingEntity = auctionListingEntityControllerRemote.retrieveAuctionListingById(auctionListingId);
+                //get username string of current highest bidder. Empty if no current highest bid.
                 String highestBidder = auctionListingEntityControllerRemote.getHighestBidder(auctionListingEntity.getAuctionListingId());
                 System.out.printf("%20s%20s%14s%20s%26s%26s%16s%14s%8s%20s\n", "Auction Listing ID", "Item Name", "Current Bid", "Highest Bidder", "Start Date", "End Date", "Reserve Price", "Open Listing", "Enable", "Delivery Address");
 
@@ -466,7 +467,7 @@ public class SalesStaffModule {
         System.out.println("*** OAS Administration Panel :: Sales Staff :: Update Auction Listing ***\n");
 
         Scanner sc = new Scanner(System.in);
-        String input, dateTime, type;
+        String input, dateTime;
         BigDecimal bigDecInput;
         int year, month, day, hour, min;
         int count = 0;

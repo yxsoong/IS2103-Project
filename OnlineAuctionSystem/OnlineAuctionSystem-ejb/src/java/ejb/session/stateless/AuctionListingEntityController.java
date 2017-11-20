@@ -264,12 +264,15 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     
     @Override
     public String getHighestBidder(Long auctionListingId){
+        //Get a list of bid entities for an auction listing based on its Id
         Query query = em.createQuery("SELECT b FROM BidEntity b WHERE b.auctionListingEntity.auctionListingId = :inAuctionListingId ORDER BY b.bidId ASC");
         query.setParameter("inAuctionListingId", auctionListingId);
         List<BidEntity> bidEntities = query.getResultList();
+        //No bids on auction listing
         if(bidEntities.isEmpty()){
             return "";
         }
+        //Get the latest bid entity and return customer username
         BidEntity bidEntity = bidEntities.get(bidEntities.size()- 1);
         String highestBidder = bidEntity.getCustomerEntity().getUsername();
         return highestBidder;

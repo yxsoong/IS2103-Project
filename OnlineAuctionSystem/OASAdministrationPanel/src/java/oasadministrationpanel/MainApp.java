@@ -171,7 +171,6 @@ public class MainApp {
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Provide current password> ");
-        //sc.nextLine();  // consume the enter character
         String currentPassword = sc.nextLine().trim();
         if (currentPassword.equals(currentEmployeeEntity.getPassword())) {
             System.out.print("Enter New Password> ");
