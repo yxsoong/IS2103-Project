@@ -13,7 +13,7 @@ public interface TimerSessionBeanRemote {
 
     public void createTimers(Long auctionListingId, Calendar dateTime, TimerTypeEnum type, BigDecimal maxAmt, Long customerId);
 
-    public void cancelTimers();
+    //public void cancelTimers();
 
     public void updateTimer(Long auctionListingId, Calendar dateTime, TimerTypeEnum type);
 

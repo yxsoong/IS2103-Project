@@ -81,26 +81,25 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
             }
 
         }
-        System.out.println("created!");
         timerService.createCalendarTimer(schedule, new TimerConfig(new TimerEntity(auctionListingId, type, maxAmt, customerId, dateTime), true));
     }
 
-    @Override
-    public void cancelTimers() {
-        TimerService timerService = sessionContext.getTimerService();
-        Collection<Timer> timers = timerService.getTimers();
-
-        for (Timer timer : timers) {
-            try {
-                //timer.cancel();
-                TimerEntity timerEntity = (TimerEntity) timer.getInfo();
-
-                System.out.println("********** EjbTimerSession.cancelTimers(): " + timerEntity.getAuctionListingId() + " " + timerEntity.getType());
-            } catch (NoSuchObjectLocalException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
-    }
+//    @Override
+//    public void cancelTimers() {
+//        TimerService timerService = sessionContext.getTimerService();
+//        Collection<Timer> timers = timerService.getTimers();
+//
+//        for (Timer timer : timers) {
+//            try {
+//                //timer.cancel();
+//                TimerEntity timerEntity = (TimerEntity) timer.getInfo();
+//
+//                System.out.println("********** EjbTimerSession.cancelTimers(): " + timerEntity.getAuctionListingId() + " " + timerEntity.getType());
+//            } catch (NoSuchObjectLocalException ex) {
+//                System.out.println(ex.getMessage());
+//            }
+//        }
+//    }
 
     @Override
     public void updateTimer(Long auctionListingId, Calendar dateTime, TimerTypeEnum type) {
@@ -124,7 +123,6 @@ public class TimerSessionBean implements TimerSessionBeanRemote, TimerSessionBea
     public void handleTimeout(Timer timer) {
         TimerEntity timerEntity = (TimerEntity) timer.getInfo();
         if (timerEntity.getType().equals(TimerTypeEnum.OPEN)) {
-            System.out.println("Timeout!");
             auctionListingEntityControllerLocal.openAuctionListing(timerEntity.getAuctionListingId());
         } else if (timerEntity.getType().equals(TimerTypeEnum.CLOSING)) {
             auctionListingEntityControllerLocal.closeAuctionListing(timerEntity.getAuctionListingId());
