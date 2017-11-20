@@ -37,6 +37,7 @@ public class AuctionListingEntityWebService {
             auctionListingEntity.setWinningBidEntity(null);
             auctionListingEntity.setEmployeeEntity(null);
             auctionListingEntity.setProxyBiddingEntities(null);
+            auctionListingEntity.setSnipingEntities(null);
             return auctionListingEntity;
         } catch (AuctionListingNotFoundException ex) {
             throw ex;
@@ -79,5 +80,10 @@ public class AuctionListingEntityWebService {
             auctionListingEntity.setSnipingEntities(null);
         }
         return wonListings;
+    }
+
+    @WebMethod(operationName = "getHighestBidder")
+    public String getHighestBidder(@WebParam(name = "auctionListingId") Long auctionListingId) {
+        return auctionListingEntityControllerLocal.getHighestBidder(auctionListingId);
     }
 }

@@ -210,9 +210,9 @@ public class MainApp {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 BigDecimal curentBidAmount = ((auctionListingEntity.getCurrentBidAmount() == null) ? auctionListingEntity.getStartingBidAmount() : auctionListingEntity.getCurrentBidAmount());
                 Calendar cal = auctionListingEntity.getEndDateTime().toGregorianCalendar();
-
-                System.out.printf("%20s%15s%25s%25s%25s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "Current Bid Amount", "End Date Time");
-                System.out.printf("%20s%15s%25s%25s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), curentBidAmount, dateFormat.format(cal.getTime()));
+                String username = getHighestBidder(auctionListingId);
+                System.out.printf("%20s%15s%25s%25s%25s%25s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "Current Bid Amount", "Highest Bidder", "End Date Time");
+                System.out.printf("%20s%15s%25s%25s%25s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), curentBidAmount, username, dateFormat.format(cal.getTime()));
 
                 System.out.println("------------------------");
                 System.out.println("1: Configure Proxy Bidding for Auction Listing");
@@ -295,14 +295,15 @@ public class MainApp {
 
         ProxyBiddingEntity proxyBiddingEntity = new ProxyBiddingEntity();
         BigDecimal maxAmount;
-        
+
         BigDecimal currentBidAmt = auctionListingEntity.getCurrentBidAmount();
-        
-        if(currentBidAmt == null)
+
+        if (currentBidAmt == null) {
             currentBidAmt = auctionListingEntity.getStartingBidAmount();
-        
+        }
+
         BigDecimal nextBid = currentBidAmt.add(getBidIncrement(currentBidAmt));
-        
+
         while (true) {
             System.out.println("Minimum bid price is " + nextBid.doubleValue() + "\n");
             System.out.print("Insert maximum bid> ");
@@ -310,7 +311,7 @@ public class MainApp {
             if (maxAmount.compareTo(MAX_BIG_DECIMAL) >= 0) {
                 System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
                 continue;
-            } else if(maxAmount.compareTo(currentBidAmt) <= 0){
+            } else if (maxAmount.compareTo(currentBidAmt) <= 0) {
                 System.out.println("Proxy amount has to be greater than or equal to the current bid amount");
                 continue;
             }
@@ -476,4 +477,9 @@ public class MainApp {
         return port.createProxyBidding(proxyBiddingEntity, customerId, auctionListingId);
     }
 
+    private static String getHighestBidder(java.lang.Long auctionListingId) {
+        ejb.session.ws.AuctionListingEntityWebService_Service service = new ejb.session.ws.AuctionListingEntityWebService_Service();
+        ejb.session.ws.AuctionListingEntityWebService port = service.getAuctionListingEntityWebServicePort();
+        return port.getHighestBidder(auctionListingId);
+    }
 }
