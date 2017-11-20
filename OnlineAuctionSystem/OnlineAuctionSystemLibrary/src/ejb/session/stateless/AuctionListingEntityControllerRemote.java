@@ -40,4 +40,6 @@ public interface AuctionListingEntityControllerRemote {
     public void noWinningBidEntity(Long auctionListingId);
 
     public AuctionListingEntity createAuctionListing(AuctionListingEntity auctionListingEntity, Long employeeId) throws InvalidAuctionListingException;
+
+    public String getHighestBidder(Long auctionListingId);
 }
