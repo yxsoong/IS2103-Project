@@ -744,9 +744,9 @@ public class MainApp {
                 Integer response = 0;
                 while (true) {
                     BigDecimal curentBidAmount = ((auctionListingEntity.getCurrentBidAmount() == null) ? auctionListingEntity.getStartingBidAmount() : auctionListingEntity.getCurrentBidAmount());
-
-                    System.out.printf("%20s%15s%25s%25s%25s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "Current Bid Amount", "End Date Time");
-                    System.out.printf("%20s%15s%25s%25s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), curentBidAmount, dateFormat.format(cal.getTime()));
+                    String highestBidder = auctionListingEntityControllerRemote.getHighestBidder(auctionListingEntity.getAuctionListingId());
+                    System.out.printf("%20s%15s%25s%25s%25s%25s\n", "Auction Listing Id", "Item Name", "Starting Bid Amount", "Current Bid Amount", "Highest Bidder", "End Date Time");
+                    System.out.printf("%20s%15s%25s%25s%25s%25s\n", auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getStartingBidAmount(), curentBidAmount, highestBidder, dateFormat.format(cal.getTime()));
                     System.out.println("------------------------");
                     System.out.println("1: Place New Bid");
                     System.out.println("2: Refresh Auction Listing Bids");
@@ -840,10 +840,10 @@ public class MainApp {
             return;
         }
 
-        System.out.printf("%5s%25s%20s\n", "Row", "Auction Listing ID", "Item name");
+        System.out.printf("%5s%25s%20s%20s\n", "Row", "Auction Listing ID", "Item name", "Bid Amount Paid");
         int i = 1;
         for (AuctionListingEntity auctionListingEntity : auctionListingEntities) {
-            System.out.printf("%5s%25s%20s\n", i, auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName());
+            System.out.printf("%5s%25s%20s%20s\n", i, auctionListingEntity.getAuctionListingId(), auctionListingEntity.getItemName(), auctionListingEntity.getWinningBidEntity().getBidAmount());
             i++;
         }
         System.out.println("------------------------");

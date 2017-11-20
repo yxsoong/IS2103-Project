@@ -166,8 +166,8 @@ public class FinanceStaffModule {
 
             try {
                 CreditPackageEntity creditPackageEntity = creditPackageEntityControllerRemote.retrieveCreditPackageById(creditPackageId);
-                System.out.println("Credit Package ID\tCredit Package Name\tPrice\tNumber of Credits\tEnable");
-                System.out.println("\t" + creditPackageEntity.getCreditPackageId().toString() + "\t\t\t" + creditPackageEntity.getCreditPackageName() + "\t" + creditPackageEntity.getPrice() + "\t\t" + creditPackageEntity.getNumberOfCredits() + "\t\t" + creditPackageEntity.getEnabled());
+                System.out.printf("%20s%20s%15s%20s%15s\n", "Credit Package ID", "Credit Package Name", "Price", "Number of Credits", "Enable");
+                System.out.printf("%20s%20s%15.4f%20.4f%15s\n", creditPackageEntity.getCreditPackageId().toString(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getPrice(), creditPackageEntity.getNumberOfCredits(), creditPackageEntity.getEnabled());
                 System.out.println("------------------------");
                 System.out.println("1: Update Credit Package");
                 System.out.println("2: Delete Credit Package");
@@ -214,10 +214,10 @@ public class FinanceStaffModule {
 
         try {
             List<CreditPackageEntity> creditPackageEntities = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
-            System.out.printf("%20s%23s%8s%20s%8s\n", "Credit Package ID", "Credit Package Name", "Price", "Number of Credits", "Enable");
+            System.out.printf("%20s%23s%15s%20s%8s\n", "Credit Package ID", "Credit Package Name", "Price", "Number of Credits", "Enable");
 
             for (CreditPackageEntity creditPackageEntity : creditPackageEntities) {
-                System.out.printf("%12s%25s%12s%20s%10s\n", creditPackageEntity.getCreditPackageId().toString(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getPrice().toString(), creditPackageEntity.getNumberOfCredits().toString(), creditPackageEntity.getEnabled());
+                System.out.printf("%20s%23s%15.2f%20.4f%8s\n", creditPackageEntity.getCreditPackageId().toString(), creditPackageEntity.getCreditPackageName(), creditPackageEntity.getPrice(), creditPackageEntity.getNumberOfCredits(), creditPackageEntity.getEnabled());
             }
         } catch (CreditPackageNotFoundException ex) {
             System.out.println(ex.getMessage());

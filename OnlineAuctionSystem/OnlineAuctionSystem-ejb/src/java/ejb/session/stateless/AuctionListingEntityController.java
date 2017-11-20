@@ -242,4 +242,17 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         em.flush();
         em.refresh(auctionListingEntity);
     }
+    
+    @Override
+    public String getHighestBidder(Long auctionListingId){
+        Query query = em.createQuery("SELECT b FROM BidEntity b WHERE b.auctionListingEntity.auctionListingId = :inAuctionListingId ORDER BY b.bidId ASC");
+        query.setParameter("inAuctionListingId", auctionListingId);
+        List<BidEntity> bidEntities = query.getResultList();
+        if(bidEntities.isEmpty()){
+            return "";
+        }
+        BidEntity bidEntity = bidEntities.get(bidEntities.size()- 1);
+        String highestBidder = bidEntity.getCustomerEntity().getUsername();
+        return highestBidder;
+    }
 }
