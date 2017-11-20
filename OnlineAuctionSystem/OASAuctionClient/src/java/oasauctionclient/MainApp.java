@@ -47,7 +47,7 @@ public class MainApp {
     private CreditTransactionEntityControllerRemote creditTransactionEntityControllerRemote;
 
     private CustomerEntity currentCustomerEntity;
-    
+
     public static final BigDecimal MAX_BIG_DECIMAL = new BigDecimal(100000000000000.0000);
 
     public MainApp() {
@@ -293,9 +293,9 @@ public class MainApp {
             while (response < 1 || response > 12) {
                 System.out.print("> ");
 
-                try{
+                try {
                     response = Integer.parseInt(sc.next());
-                } catch(NumberFormatException ex){
+                } catch (NumberFormatException ex) {
                     System.out.println("Please enter numeric values\n");
                     continue;
                 }
@@ -800,10 +800,11 @@ public class MainApp {
 
             System.out.print("Enter Bid Amount> ");
             userBid = sc.nextBigDecimal();
-            
-            if(userBid.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0)
+
+            if (userBid.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0) {
                 System.out.println("Amount is too large. Max digits: 14 + 4 decimal places.");
-            
+            }
+
         } while (userBid.compareTo(BigDecimal.ZERO) <= 0 || userBid.compareTo(nextExpectedBid) < 0 || userBid.compareTo(MainApp.MAX_BIG_DECIMAL) >= 0);
 
         sc.nextLine(); //consume enter character
@@ -871,17 +872,21 @@ public class MainApp {
         Scanner sc = new Scanner(System.in);
 
         int row, count = 0;
-        do {
-            if (count > 0) {
-                System.out.println("Please enter valid rows.");
-            }
-
+        while (true) {
             System.out.print("Select item row> ");
-            row = sc.nextInt();
-
-        } while (row > auctionListingEntities.size() || row <= 0);
-
-        sc.nextLine(); //consume enter character
+            String input = sc.nextLine();
+            try {
+                row = Integer.parseInt(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("Enter numeric values!\n");
+                continue;
+            }
+            if (row > auctionListingEntities.size() || row <= 0) {
+                System.out.println("Please enter valid rows.");
+                continue;
+            }
+            break;
+        }
 
         AuctionListingEntity auctionListingEntity = auctionListingEntities.get(row - 1);
 
@@ -901,17 +906,25 @@ public class MainApp {
                 }
 
                 int addressRow;
-                do {
+                while (true) {
                     if (count > 0) {
                         System.out.println("Please enter valid rows.");
                     }
 
                     System.out.print("Select address row> ");
-                    addressRow = sc.nextInt();
-
-                } while (addressRow > addressEntities.size() || addressRow <= 0);
-
-                sc.nextLine(); //consume enter character
+                    String input = sc.nextLine();
+                    try {
+                        addressRow = Integer.parseInt(input);
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Please enter numeric values!\n");
+                        continue;
+                    }
+                    if (addressRow > addressEntities.size() || addressRow <= 0) {
+                        System.out.println("Please enter valid rows.");
+                        continue;
+                    }
+                    break;
+                }
 
                 auctionListingEntity.setDeliveryAddress(addressEntities.get(addressRow - 1));
                 auctionListingEntityControllerRemote.updateAuctionListing(auctionListingEntity);
