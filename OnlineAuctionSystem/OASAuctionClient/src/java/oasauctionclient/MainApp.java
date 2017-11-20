@@ -23,7 +23,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import util.exception.AddressNotFoundException;
@@ -151,6 +150,7 @@ public class MainApp {
             }
             System.out.print("Enter identification number> ");
             identificationNo = sc.nextLine().trim();
+            //identification num pattern type [Alphabet][7 digits][Alphabet]; total 9 characters
             if (identificationNo.length() != 9 || !identificationNo.matches("^[a-zA-Z]+\\p{Digit}+[a-zA-Z]$")) {
                 System.out.println("Identification number should be of length 9 and formatted e.g. S1234567A");
                 count = 0;
@@ -402,12 +402,6 @@ public class MainApp {
             }
         }
 
-        // I'm not sure if we should let customer change username
-        /*System.out.print("Enter Username (blank if no change)> ");
-        input = sc.nextLine().trim();
-        if (input.length() > 0) {
-            currentCustomerEntity.setUsername(input);
-        }*/
         while (true) {
             System.out.print("Enter Password (blank if no change)> ");
             input = sc.nextLine().trim();
@@ -633,7 +627,7 @@ public class MainApp {
     private void purchaseCreditPacakge() {
         Scanner sc = new Scanner(System.in);
 
-        //need to edit. should only retrieve the enabled ones\
+        //Retrieve the enabled credit packages
         try {
             List<CreditPackageEntity> creditPackageEntities = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
 
@@ -652,24 +646,19 @@ public class MainApp {
             Long response = 0L;
 
             CreditPackageEntity creditPackageEntity;
-            //NEED TO ROLLBACK. HOWHOW?
+            //NEED TO ROLLBACK. 
             while (true) {
                 System.out.print("Enter Credit Package ID for Purchase> ");
                 try {
                     response = Long.parseLong(sc.next());
+                    //check if exist in enabled
+                    if (!enabledPackages.containsKey(response)) {
+                        System.out.println("Invalid option.");
+                        continue;
+                    }
                 } catch (NumberFormatException ex) {
                     System.out.println("Please enter numeric values.\n");
                     continue;
-                }
-
-                //Check if exist in enabled
-                for (int i = 0; i < enabledPackages.size(); i++) {
-                    if (enabledPackages.containsKey(response)) {
-                        break;
-                    }
-                    if (i == enabledPackages.size() - 1) {
-                        System.out.println("Invalid option, please try again!\n");
-                    }
                 }
 
                 creditPackageEntity = enabledPackages.get(response);
@@ -815,11 +804,6 @@ public class MainApp {
         bidEntity.setAuctionListingEntity(auctionListingEntity);
         try {
             bidEntity = bidEntityControllerRemote.createNewBid(bidEntity);
-//            try{
-//            customerEntityControllerRemote.useCredits(currentCustomerEntity.getCustomerId(), userBid);
-//            } catch(InsufficientCreditsException ex){
-//                System.out.println(ex.getMessage());
-//            }
             System.out.println("Bid placed! Bid ID: " + bidEntity.getBidId());
         } catch (InvalidBidException ex) {
             System.out.println(ex.getMessage());

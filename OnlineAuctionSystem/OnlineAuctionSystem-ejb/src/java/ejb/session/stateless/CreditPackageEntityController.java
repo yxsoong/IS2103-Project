@@ -40,7 +40,7 @@ public class CreditPackageEntityController implements CreditPackageEntityControl
 
     @Override
     public List<CreditPackageEntity> retrieveAllCreditPackages() throws CreditPackageNotFoundException{
-        Query query = em.createQuery("SELECT e FROM CreditPackageEntity e");
+        Query query = em.createQuery("SELECT e FROM CreditPackageEntity e WHERE e.enabled = true");
         List<CreditPackageEntity> creditPackageEntities = query.getResultList();
         
         if(creditPackageEntities.isEmpty()){
