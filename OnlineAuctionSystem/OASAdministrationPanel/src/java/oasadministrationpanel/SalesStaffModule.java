@@ -452,10 +452,8 @@ public class SalesStaffModule {
 
         if (response == 1) {
             auctionListingEntityControllerRemote.setWinningBidEntity(auctionListingEntity.getAuctionListingId());
-            customerEntityControllerRemote.deductCreditBalance(auctionListingEntity.getWinningBidEntity().getCustomerEntity().getCustomerId(), auctionListingEntity.getCurrentBidAmount());
         } else if (response == 2) {
-            auctionListingEntityControllerRemote.noWinningBidEntity(auctionListingEntity.getAuctionListingId());
-            customerEntityControllerRemote.refundCredits(auctionListingEntity.getWinningBidEntity().getCustomerEntity().getCustomerId(), auctionListingEntity.getCurrentBidAmount());
+            auctionListingEntity = auctionListingEntityControllerRemote.noWinningBidEntity(auctionListingEntity.getAuctionListingId());
             System.out.println("No winning bid for auction listing " + auctionListingEntity.getAuctionListingId());
             System.out.println(auctionListingEntity.getManualAssignment());
         } else if (response == 3) {
